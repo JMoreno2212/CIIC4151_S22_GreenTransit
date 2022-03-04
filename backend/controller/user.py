@@ -22,3 +22,12 @@ class BaseUser:
                 obj = build_user_map_dict(row)
                 result_list.append(obj)
             return jsonify(result_list), 200
+
+    def getUserById(self, user_id):
+        user_dao = UserDAO()
+        user_tuple = user_dao.getUserById(user_id)
+        if not user_tuple:
+            return jsonify("User Not Found"), 404
+        else:
+            result = build_user_map_dict(user_tuple)
+            return jsonify(result), 200

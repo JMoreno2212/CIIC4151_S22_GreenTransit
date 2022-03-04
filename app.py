@@ -27,6 +27,14 @@ def handleUsers():
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/User/users/<int:user_id>', methods=['GET'])
+def handleUsersById(user_id):
+    if request.method == 'GET':
+        return BaseUser().getUserById(user_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # Dispensary
 # --------------------------------------------------------------------------------------
