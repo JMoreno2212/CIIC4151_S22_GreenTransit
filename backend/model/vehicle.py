@@ -24,3 +24,10 @@ class VehicleDAO:
             result.append(row)
         cursor.close()
         return result
+
+    def getVehicleById(self, vehicle_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Vehicle" where vehicle_id = %s;'
+        cursor.execute(query, (vehicle_id,))
+        result = cursor.fetchone()
+        return result

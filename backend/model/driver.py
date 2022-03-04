@@ -24,3 +24,10 @@ class DriverDAO:
             result.append(row)
         cursor.close()
         return result
+
+    def getDriverById(self, driver_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Driver" where driver_id = %s;'
+        cursor.execute(query, (driver_id,))
+        result = cursor.fetchone()
+        return result

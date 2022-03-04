@@ -24,3 +24,10 @@ class ItemDAO:
             result.append(row)
         cursor.close()
         return result
+
+    def getItemById(self, item_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where item_id = %s;'
+        cursor.execute(query, (item_id,))
+        result = cursor.fetchone()
+        return result

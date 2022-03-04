@@ -24,3 +24,11 @@ class DispensaryDAO:
             result.append(row)
         cursor.close()
         return result
+
+    def getDispensaryById(self, dispensary_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Dispensary" where dispensary_id = %s;'
+        cursor.execute(query, (dispensary_id,))
+        result = cursor.fetchone()
+        return result
+
