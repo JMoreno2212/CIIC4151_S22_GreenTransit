@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
+from backend.controller.delivery import BaseDelivery
 from backend.controller.dispensary import BaseDispensary
 from backend.controller.driver import BaseDriver
 from backend.controller.item import BaseItem
+from backend.controller.license import BaseLicense
+from backend.controller.purchase import BasePurchase
 from backend.controller.user import BaseUser
 from backend.controller.vehicle import BaseVehicle
 
@@ -17,20 +20,20 @@ def hello_world():
 
 
 # --------------------------------------------------------------------------------------
-# User
+# Delivery
 # --------------------------------------------------------------------------------------
-@app.route('/User/users', methods=['GET'])
-def handleUsers():
+@app.route('/Delivery/deliveries', methods=['GET'])
+def handleDeliveries():
     if request.method == 'GET':
-        return BaseUser().getAllUsers()
+        return BaseDelivery().getAllDeliveries()
     else:
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/User/users/<int:user_id>', methods=['GET'])
-def handleUsersById(user_id):
+@app.route('/Delivery/deliveries/<int:delivery_id>', methods=['GET'])
+def handleDeliveryById(delivery_id):
     if request.method == 'GET':
-        return BaseUser().getUserById(user_id)
+        return BaseDelivery().getDeliveryById(delivery_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -100,6 +103,63 @@ def handleItemById(item_id):
     #     return BaseItem().updateItem(item_id, request.json)
     # elif request.method == 'DELETE':
     #     return BaseItem().deleteItem(item_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+# --------------------------------------------------------------------------------------
+# Licenses
+# --------------------------------------------------------------------------------------
+@app.route('/License/licenses', methods=['GET'])
+def handleLicenses():
+    if request.method == 'GET':
+        return BaseLicense().getAllLicenses()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/License/licenses/<int:license_id>', methods=['GET'])
+def handleLicenseById(license_id):
+    if request.method == 'GET':
+        return BaseLicense().getLicensesById(license_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+# --------------------------------------------------------------------------------------
+# Purchase
+# --------------------------------------------------------------------------------------
+@app.route('/Purchase/purchases', methods=['GET'])
+def handlePurchases():
+    if request.method == 'GET':
+        return BasePurchase().getAllPurchases()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Purchase/purchases/<int:purchase_id>', methods=['GET'])
+def handlePurchasesById(purchase_id):
+    if request.method == 'GET':
+        return BasePurchase().getPurchaseById(purchase_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+# --------------------------------------------------------------------------------------
+# User
+# --------------------------------------------------------------------------------------
+@app.route('/User/users', methods=['GET'])
+def handleUsers():
+    if request.method == 'GET':
+        return BaseUser().getAllUsers()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/User/users/<int:user_id>', methods=['GET'])
+def handleUsersById(user_id):
+    if request.method == 'GET':
+        return BaseUser().getUserById(user_id)
     else:
         return jsonify("Method Not Allowed"), 405
 

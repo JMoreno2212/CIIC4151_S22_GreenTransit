@@ -11,6 +11,7 @@ def build_user_map_dict(row):
 
 
 class BaseUser:
+
     def getAllUsers(self):
         user_dao = UserDAO()
         users_list = user_dao.getAllUsers()
@@ -26,7 +27,7 @@ class BaseUser:
     def getUserById(self, user_id):
         user_dao = UserDAO()
         user_tuple = user_dao.getUserById(user_id)
-        if not user_tuple:
+        if not user_tuple: # User Not Found
             return jsonify("User Not Found"), 404
         else:
             result = build_user_map_dict(user_tuple)

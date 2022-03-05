@@ -3,16 +3,16 @@ import os
 import psycopg2
 
 
-class UserDAO:
+class LicenseDAO:
     def __init__(self):
         self.conn = psycopg2.connect(os.getenv('DATABASE_URL'))
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
     # ----------------------------------------------------------------------------------------------------------------
-    def getAllUsers(self):
+    def getAllLicenses(self):
         cursor = self.conn.cursor()
-        query = 'select * from "User";'
+        query = 'select * from "License";'
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -20,10 +20,10 @@ class UserDAO:
         cursor.close()
         return result
 
-    def getUserById(self, user_id):
+    def getLicenseById(self, license_id):
         cursor = self.conn.cursor()
-        query = 'select * from "User" where user_id = %s'
-        cursor.execute(query, (user_id,))
+        query = 'select * from "License" where license_id = %s'
+        cursor.execute(query, (license_id,))
         result = cursor.fetchone()
         cursor.close()
         return result
