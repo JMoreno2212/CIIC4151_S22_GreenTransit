@@ -20,7 +20,7 @@ class UserDAO:
                                generate_password_hash(user_password), license_id),)
         user_id = cursor.fetchone()[0]
         self.conn.commit()
-        self.conn.close()
+        cursor.close()
         return user_id
 
     # ----------------------------------------------------------------------------------------------------------------
@@ -29,6 +29,16 @@ class UserDAO:
     def getAllUsers(self):
         cursor = self.conn.cursor()
         query = 'select * from "User";'
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
+    def getAllActiveUsers(self):
+        cursor = self.conn.cursor()
+        query = 'select * from "User" where user_active = True;'
         cursor.execute(query)
         result = []
         for row in cursor:

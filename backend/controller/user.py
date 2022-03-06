@@ -51,6 +51,18 @@ class BaseUser:
                 result_list.append(obj)
             return jsonify(result_list), 200
 
+    def getAllActiveUsers(self):
+        user_dao = UserDAO()
+        users_list = user_dao.getAllActiveUsers()
+        if not users_list:  # User List is empty
+            return jsonify("No Users Found"), 404
+        else:
+            result_list = []
+            for row in users_list:
+                obj = build_user_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
     def getUserById(self, user_id):
         user_dao = UserDAO()
         user_tuple = user_dao.getUserById(user_id)

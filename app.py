@@ -149,12 +149,18 @@ def handlePurchasesById(purchase_id):
 # --------------------------------------------------------------------------------------
 # User
 # --------------------------------------------------------------------------------------
-@app.route('/User/users', methods=['GET', 'POST'])
+@app.route('/User/users/all', methods=['GET'])
 def handleUsers():
     if request.method == 'GET':
         return BaseUser().getAllUsers()
-    elif request.method == 'POST':
-        return BaseUser().createNewUser(request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/User/users/active', methods=['GET'])
+def handleActiveUsers():
+    if request.method == 'GET':
+        return BaseUser().getAllActiveUsers()
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -167,7 +173,15 @@ def handleUsersById(user_id):
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/User/register', methods=['POST'])
+def verifyUserRegistration():
+    if request.method == 'POST':
+        return BaseUser().createNewUser(request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/User/login', methods=['POST'])
 def verifyUserLogin():
     if request.method == 'POST':
         return BaseUser().verifyUserLogin(request.json)

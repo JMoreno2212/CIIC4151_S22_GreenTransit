@@ -14,7 +14,7 @@ class BaseVehicle:
     def getAllVehicles(self):
         vehicle_dao = VehicleDAO()
         vehicles_list = vehicle_dao.getAllVehicles()
-        if not vehicles_list:  # Item List is empty
+        if not vehicles_list:  # Vehicle List is empty
             return jsonify("No Vehicles Found"), 404
         else:
             result_list = []
