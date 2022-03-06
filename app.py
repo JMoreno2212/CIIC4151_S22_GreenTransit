@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, url_for
 from flask_cors import CORS
 
 from backend.controller.delivery import BaseDelivery
@@ -16,7 +16,8 @@ CORS(app)
 
 @app.route('/')
 def hello_world():
-    return "Welcome to the Green Transit App Homepage"
+    return "<h1>Welcome to the Green Transit App Homepage</h1> <p>This we application was created by the Green " \
+           "Transit Team and it serves as its Capstone Project Demonstration </p>"
 
 
 # --------------------------------------------------------------------------------------
@@ -148,10 +149,12 @@ def handlePurchasesById(purchase_id):
 # --------------------------------------------------------------------------------------
 # User
 # --------------------------------------------------------------------------------------
-@app.route('/User/users', methods=['GET'])
+@app.route('/User/users', methods=['GET', 'POST'])
 def handleUsers():
     if request.method == 'GET':
         return BaseUser().getAllUsers()
+    elif request.method == 'POST':
+        return BaseUser().createNewUser(request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -160,6 +163,14 @@ def handleUsers():
 def handleUsersById(user_id):
     if request.method == 'GET':
         return BaseUser().getUserById(user_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/login', methods=['POST'])
+def verifyUserLogin():
+    if request.method == 'POST':
+        return BaseUser().verifyUserLogin(request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
