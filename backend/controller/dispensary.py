@@ -10,11 +10,50 @@ def build_dispensary_map_dict(row):
     return result
 
 
+def build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_location, dispensary_email,
+                               dispensary_password, license_id, dispensary_active):
+    result = {'dispensary_id': dispensary_id, 'dispensary_name': dispensary_name, 'dispensary_phone': dispensary_phone,
+              'dispensary_location': dispensary_location, 'dispensary_email': dispensary_email,
+              'dispensary_password': dispensary_password, 'license_id': license_id,
+              'dispensary_active': dispensary_active}
+    return result
+
+
 class BaseDispensary:
+
+    def createDispensary(self, json):
+        dispensary_name = json['dispensary_name']
+        dispensary_phone = json['dispensary_phone']
+        dispensary_location = json['dispensary_location']
+        dispensary_email = json['dispensary_email']
+        dispensary_password = json['dispensary_password']
+        license_id = json['license_id']
+        dispensary_dao = DispensaryDAO()
+        existing_dispensary = dispensary_dao.getDispensaryByEmail(dispensary_email)
+        if not existing_dispensary:  # Dispensary with that email does not exist
+            dispensary_id = dispensary_dao.createDispensary(dispensary_name, dispensary_phone, dispensary_location,
+                                                            dispensary_email, dispensary_password, license_id)
+            result = build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_location,
+                                                dispensary_email, dispensary_password, license_id, True)
+            return jsonify(result), 201
+        else:
+            return jsonify("An user with that email already exists"), 409
 
     def getAllDispensaries(self):
         dispensary_dao = DispensaryDAO()
         dispensaries_list = dispensary_dao.getAllDispensaries()
+        if not dispensaries_list:  # Dispensary List is empty
+            return jsonify("No Dispensaries Found"), 404
+        else:
+            result_list = []
+            for row in dispensaries_list:
+                obj = build_dispensary_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
+    def getAllActiveDispensaries(self):
+        dispensary_dao = DispensaryDAO()
+        dispensaries_list = dispensary_dao.getAllActiveDispensaries()
         if not dispensaries_list:  # Dispensary List is empty
             return jsonify("No Dispensaries Found"), 404
         else:
@@ -32,3 +71,14 @@ class BaseDispensary:
         else:
             result = build_dispensary_map_dict(dispensary_tuple)
         return jsonify(result), 200
+
+    def verifyDispensaryLogin(self, json):
+        dispensary_email = json['login_email']
+        dispensary_password = json['login_password']
+        dispensary_dao = DispensaryDAO()
+        valid_dispensary = dispensary_dao.verifyDispensaryLogin(dispensary_email, dispensary_password)
+        if not valid_dispensary:
+            return jsonify("Username or Password entered incorrectly"), 404
+        else:
+            return jsonify("Dispensary logged in successfully", valid_dispensary[0],
+                           valid_dispensary[4]), 200  # Returns ID & Email

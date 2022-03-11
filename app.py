@@ -21,6 +21,35 @@ def hello_world():
 
 
 # --------------------------------------------------------------------------------------
+# Registration
+# --------------------------------------------------------------------------------------
+@app.route('/register', methods=['POST'])
+def verifyRegistration():
+    if request.method == 'POST':
+        if request.json['registration_type'] == "User":
+            return BaseUser().createUser(request.json)
+        elif request.json['registration_type'] == "Driver":
+            return BaseDriver().createDriver(request.json)
+        else:
+            return BaseDispensary().createDispensary(request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/login', methods=['POST'])
+def verifyLogin():
+    if request.method == 'POST':
+        if request.json['login_type'] == "User":
+            return BaseUser().verifyUserLogin(request.json)
+        elif request.json['login_type'] == "Driver":
+            return BaseDriver().verifyDriverLogin(request.json)
+        else:
+            return BaseDispensary().verifyDispensaryLogin(request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+# --------------------------------------------------------------------------------------
 # Delivery
 # --------------------------------------------------------------------------------------
 @app.route('/Delivery/deliveries', methods=['GET'])
@@ -42,10 +71,18 @@ def handleDeliveryById(delivery_id):
 # --------------------------------------------------------------------------------------
 # Dispensary
 # --------------------------------------------------------------------------------------
-@app.route('/Dispensary/dispensaries', methods=['GET'])
-def handleDispensary():
+@app.route('/Dispensary/dispensaries/all', methods=['GET'])
+def handleDispensaries():
     if request.method == 'GET':
         return BaseDispensary().getAllDispensaries()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Dispensary/dispensaries/active', methods=['GET'])
+def handleActiveDispensaries():
+    if request.method == 'GET':
+        return BaseDispensary().getAllActiveDispensaries()
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -65,10 +102,18 @@ def handleDispensaryById(dispensary_id):
 # --------------------------------------------------------------------------------------
 # Driver
 # --------------------------------------------------------------------------------------
-@app.route('/Driver/drivers', methods=['GET'])
-def handleUDriver():
+@app.route('/Driver/drivers/all', methods=['GET'])
+def handleDrivers():
     if request.method == 'GET':
         return BaseDriver().getAllDrivers()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Driver/drivers/active', methods=['GET'])
+def handleActiveDrivers():
+    if request.method == 'GET':
+        return BaseDriver().getAllActiveDrivers()
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -169,22 +214,6 @@ def handleActiveUsers():
 def handleUsersById(user_id):
     if request.method == 'GET':
         return BaseUser().getUserById(user_id)
-    else:
-        return jsonify("Method Not Allowed"), 405
-
-
-@app.route('/User/register', methods=['POST'])
-def verifyUserRegistration():
-    if request.method == 'POST':
-        return BaseUser().createNewUser(request.json)
-    else:
-        return jsonify("Method Not Allowed"), 405
-
-
-@app.route('/User/login', methods=['POST'])
-def verifyUserLogin():
-    if request.method == 'POST':
-        return BaseUser().verifyUserLogin(request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 

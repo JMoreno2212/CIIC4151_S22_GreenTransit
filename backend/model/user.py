@@ -62,17 +62,13 @@ class UserDAO:
         cursor.close()
         return result
 
-    def verifyLogin(self, user_email, user_password):
-        cursor = self.conn.cursor()
-        query = 'select * from "User" where user_email = %s'
-        cursor.execute(query, (user_email,))
-        result = cursor.fetchone()
+    def verifyUserLogin(self, user_email, user_password):
+        result = self.getUserByEmail(user_email)
         if not result:
-            return None  # jsonify("Email address does not exist"), 404
+            return None  # Email address does not exist
         hashed_password = result[6]
-        cursor.close()
         if check_password_hash(hashed_password, user_password):
             return result
         else:
-            return None  # Credentials are incorrect
+            return None  # Password is incorrect
 

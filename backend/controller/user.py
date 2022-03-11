@@ -20,7 +20,7 @@ def build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_da
 
 class BaseUser:
 
-    def createNewUser(self, json):
+    def createUser(self, json):
         user_first_name = json['user_first_name']
         user_last_name = json['user_last_name']
         user_birth_date = json['user_birth_date']
@@ -73,11 +73,11 @@ class BaseUser:
             return jsonify(result), 200
 
     def verifyUserLogin(self, json):
-        user_email = json['user_email']
-        user_password = json['user_password']
+        user_email = json['login_email']
+        user_password = json['login_password']
         user_dao = UserDAO()
-        valid_user = user_dao.verifyLogin(user_email, user_password)
+        valid_user = user_dao.verifyUserLogin(user_email, user_password)
         if not valid_user:
             return jsonify("Username or Password entered incorrectly"), 404
         else:
-            return jsonify("User logged in successfully", valid_user[0], valid_user[5]), 200
+            return jsonify("User logged in successfully", valid_user[0], valid_user[5]), 200  # Returns ID & Email
