@@ -1,5 +1,6 @@
 from flask import jsonify
 
+from backend.controller.license import LicenseDAO, BaseLicense
 from backend.model.user import UserDAO
 
 
@@ -21,16 +22,22 @@ def build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_da
 class BaseUser:
 
     def createUser(self, json):
-        user_first_name = json['user_first_name']
-        user_last_name = json['user_last_name']
-        user_birth_date = json['user_birth_date']
-        user_phone = json['user_phone']
-        user_email = json['user_email']
-        user_password = json['user_password']
-        license_id = json['license_id']
+        user_first_name = json['registration_first_name']
+        user_last_name = json['registration_last_name']
+        user_birth_date = json['registration_birth_date']
+        user_phone = json['registration_phone']
+        user_email = json['registration_email']
+        user_password = json['registration_password']
+        license_type = json['registration_type']
+        license_name = json['license_name']
+        license_expiration = json['license_expiration']
+        license_file = json['license_file']
         user_dao = UserDAO()
         existing_user = user_dao.getUserByEmail(user_email)
-        if not existing_user:  # User with that email does not exist
+        license_dao = LicenseDAO()
+        existing_license = license_dao.getLicenseByName(license_name)
+        if not existing_user and not existing_license:  # User with that email and license number does not exist
+            license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
             user_id = user_dao.createUser(user_first_name, user_last_name, user_birth_date, user_phone, user_email,
                                           user_password, license_id)
             result = build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_date, user_phone,

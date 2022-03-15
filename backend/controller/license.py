@@ -9,11 +9,44 @@ def build_license_map_dict(row):
     return result
 
 
+def build_license_attr_dict(license_id, license_type, license_name, license_expiration, license_file, license_active):
+    result = {'license_id': license_id, 'license_type': license_type, 'license_name': license_name,
+              'license_expiration': license_expiration, 'license_file': license_file, 'license_active': license_active}
+    return result
+
+
 class BaseLicense:
+
+    # def createLicense(self, json):  # THIS ONE WILL NOT HAVE AN ENDPOINT SINCE IT DOES NOT MAKE SENSE
+    #     license_type = json['registration_type']
+    #     license_name = json['license_name']
+    #     license_expiration = json['license_expiration']
+    #     license_file = json['license_file']
+    #     license_dao = LicenseDAO()
+    #     existing_license = license_dao.getLicenseByName(license_name)
+    #     if not existing_license:  # License is not already in use
+    #         license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
+    #         result = build_license_attr_dict(license_id, license_type, license_name, license_expiration, license_file,
+    #                                          True)
+    #         return result
+    #     else:
+    #         return None
 
     def getAllLicenses(self):
         license_dao = LicenseDAO()
         licenses_list = license_dao.getAllLicenses()
+        if not licenses_list:  # Licenses List is empty
+            return jsonify("No Licenses Found"), 404
+        else:
+            result_list = []
+            for row in licenses_list:
+                obj = build_license_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
+    def getAllActiveLicenses(self):
+        license_dao = LicenseDAO()
+        licenses_list = license_dao.getAllActiveLicenses()
         if not licenses_list:  # Licenses List is empty
             return jsonify("No Licenses Found"), 404
         else:

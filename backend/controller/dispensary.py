@@ -1,6 +1,7 @@
 from flask import jsonify
 
 from backend.model.dispensary import DispensaryDAO
+from backend.model.license import LicenseDAO
 
 
 def build_dispensary_map_dict(row):
@@ -23,14 +24,20 @@ class BaseDispensary:
 
     def createDispensary(self, json):
         dispensary_name = json['dispensary_name']
-        dispensary_phone = json['dispensary_phone']
+        dispensary_phone = json['registration_phone']
         dispensary_location = json['dispensary_location']
-        dispensary_email = json['dispensary_email']
-        dispensary_password = json['dispensary_password']
-        license_id = json['license_id']
+        dispensary_email = json['registration_email']
+        dispensary_password = json['registration_password']
+        license_type = json['registration_type']
+        license_name = json['license_name']
+        license_expiration = json['license_expiration']
+        license_file = json['license_file']
         dispensary_dao = DispensaryDAO()
         existing_dispensary = dispensary_dao.getDispensaryByEmail(dispensary_email)
-        if not existing_dispensary:  # Dispensary with that email does not exist
+        license_dao = LicenseDAO()
+        existing_license = license_dao.getLicenseByName(license_name)
+        if not existing_dispensary and not existing_license:  # Dispensary with that email and license does not exist
+            license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
             dispensary_id = dispensary_dao.createDispensary(dispensary_name, dispensary_phone, dispensary_location,
                                                             dispensary_email, dispensary_password, license_id)
             result = build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_location,

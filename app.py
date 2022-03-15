@@ -30,8 +30,10 @@ def verifyRegistration():
             return BaseUser().createUser(request.json)
         elif request.json['registration_type'] == "Driver":
             return BaseDriver().createDriver(request.json)
-        else:
+        elif request.json['registration_type'] == "Dispensary":
             return BaseDispensary().createDispensary(request.json)
+        else:
+            return jsonify("No registration type found"), 404
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -43,8 +45,10 @@ def verifyLogin():
             return BaseUser().verifyUserLogin(request.json)
         elif request.json['login_type'] == "Driver":
             return BaseDriver().verifyDriverLogin(request.json)
-        else:
+        elif request.json['registration_type'] == "Dispensary":
             return BaseDispensary().verifyDispensaryLogin(request.json)
+        else:
+            return jsonify("No login type found"), 404
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -87,14 +91,10 @@ def handleActiveDispensaries():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Dispensary/dispensaries/<int:dispensary_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>', methods=['GET'])
 def handleDispensaryById(dispensary_id):
     if request.method == 'GET':
         return BaseDispensary().getDispensaryById(dispensary_id)
-    # elif request.method == 'PUT':
-    #     return BaseDispensary().updateDispensary(dispensary_id, request.json)
-    # elif request.method == 'DELETE':
-    #     return BaseDispensary().deleteDispensary(dispensary_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -118,14 +118,18 @@ def handleActiveDrivers():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Driver/drivers/<int:driver_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/Driver/drivers/<int:driver_id>', methods=['GET'])
 def handleDriverById(driver_id):
     if request.method == 'GET':
         return BaseDriver().getDriverById(driver_id)
-    # elif request.method == 'PUT':
-    #     return BaseDriver().updateDriver(driver_id, request.json)
-    # elif request.method == 'DELETE':
-    #     return BaseDriver().deleteDriver(driver_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Driver/drivers/<int:driver_id>/registervehicle', methods=['POST'])
+def handleDriverVehicleRegistration(driver_id):
+    if request.method == 'POST':
+        return BaseVehicle().createVehicle(driver_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -141,14 +145,10 @@ def handleItem():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Item/items/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/Item/items/<int:item_id>', methods=['GET'])
 def handleItemById(item_id):
     if request.method == 'GET':
         return BaseItem().getItemById(item_id)
-    # elif request.method == 'PUT':
-    #     return BaseItem().updateItem(item_id, request.json)
-    # elif request.method == 'DELETE':
-    #     return BaseItem().deleteItem(item_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -156,10 +156,18 @@ def handleItemById(item_id):
 # --------------------------------------------------------------------------------------
 # Licenses
 # --------------------------------------------------------------------------------------
-@app.route('/License/licenses', methods=['GET'])
+@app.route('/License/licenses/all', methods=['GET'])
 def handleLicenses():
     if request.method == 'GET':
         return BaseLicense().getAllLicenses()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/License/licenses/active', methods=['GET'])
+def handleActiveLicenses():
+    if request.method == 'GET':
+        return BaseLicense().getAllActiveLicenses()
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -229,14 +237,10 @@ def handleVehicles():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Vehicle/vehicles/<int:vehicle_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/Vehicle/vehicles/<int:vehicle_id>', methods=['GET'])
 def handleVehicleById(vehicle_id):
     if request.method == 'GET':
         return BaseVehicle().getVehicleById(vehicle_id)
-    # elif request.method == 'PUT':
-    #     return BaseVehicle().updateVehicle(vehicle_id, request.json)
-    # elif request.method == 'DELETE':
-    #     return BaseVehicle().deleteVehicle(vehicle_id)
     else:
         return jsonify("Method Not Allowed"), 405
 

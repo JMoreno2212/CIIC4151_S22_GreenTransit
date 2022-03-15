@@ -1,38 +1,57 @@
 from flask import jsonify
 
 from backend.model.driver import DriverDAO
+from backend.model.license import LicenseDAO
 
 
 def build_driver_map_dict(row):
-    result = {'driver_id': row[0], 'driver_first_name': row[1], 'driver_last_name': row[2], 'driver_phone': row[3],
-              'driver_email': row[4], 'driver_password': row[5], 'license_id': row[6], 'driver_active': row[7]}
+    result = {'driver_id': row[0], 'driver_first_name': row[1], 'driver_last_name': row[2], 'driver_birth_date': row[3],
+              'driver_phone': row[4], 'driver_email': row[5], 'driver_password': row[6],
+              'driver_driving_license': row[7], 'driver_gmp_certificate': row[8],
+              'driver_dispensary_technician': row[9], 'occupational_license_id': row[10], 'driver_active': row[11]}
     return result
 
 
-def build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_phone, driver_email, driver_password,
-                           license_id, driver_active):
+def build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_birth_date, driver_phone,
+                           driver_email, driver_password, driver_driving_license, driver_gmp_certificate,
+                           driver_dispensary_technician, occupational_license_id, driver_active):
     result = {'driver_id': driver_id, 'driver_first_name': driver_first_name, 'driver_last_name': driver_last_name,
-              'driver_phone': driver_phone, 'driver_email': driver_email, 'driver_password': driver_password,
-              'license_id': license_id, 'driver_active': driver_active}
+              'driver_birth_date': driver_birth_date, 'driver_phone': driver_phone, 'driver_email': driver_email,
+              'driver_password': driver_password, 'driver_driving_license': driver_driving_license,
+              'driver_gmp_certificate': driver_gmp_certificate,
+              'driver_dispensary_technician': driver_dispensary_technician,
+              'occupational_license_id': occupational_license_id, 'driver_active': driver_active}
     return result
 
 
 class BaseDriver:
 
     def createDriver(self, json):
-        driver_first_name = json['driver_first_name']
-        driver_last_name = json['driver_last_name']
-        driver_phone = json['driver_phone']
-        driver_email = json['driver_email']
-        driver_password = json['driver_password']
-        license_id = json['license_id']
+        driver_first_name = json['registration_first_name']
+        driver_last_name = json['registration_last_name']
+        driver_birth_date = json['registration_birth_date']
+        driver_phone = json['registration_phone']
+        driver_email = json['registration_email']
+        driver_password = json['registration_password']
+        driver_driving_license = json['driver_driving_license']
+        driver_gmp_certificate = json['driver_gmp_certificate']
+        driver_dispensary_technician = json['driver_dispensary_technician']
+        license_type = "Occupational"  # This occurs since Driver's License is asked on a separate field
+        license_name = json['license_name']
+        license_expiration = json['license_expiration']
+        license_file = json['license_file']
         driver_dao = DriverDAO()
         existing_driver = driver_dao.getDriverByEmail(driver_email)
-        if not existing_driver:  # Driver with that email does not exist
-            driver_id = driver_dao.createDriver(driver_first_name, driver_last_name, driver_phone,
-                                                driver_email, driver_password, license_id)
-            result = build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_phone, driver_email,
-                                            driver_password, license_id, True)
+        license_dao = LicenseDAO()
+        existing_license = license_dao.getLicenseByName(license_name)
+        if not existing_driver and not existing_license:  # Driver with that email and license does not exist
+            license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
+            driver_id = driver_dao.createDriver(driver_first_name, driver_last_name, driver_birth_date, driver_phone,
+                                                driver_email, driver_password, driver_driving_license,
+                                                driver_gmp_certificate, driver_dispensary_technician, license_id)
+            result = build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_birth_date,
+                                            driver_phone, driver_email, driver_password, driver_driving_license,
+                                            driver_gmp_certificate, driver_dispensary_technician, license_id, True)
             return jsonify(result), 201
         else:
             return jsonify("An user with that email already exists"), 409

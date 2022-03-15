@@ -11,13 +11,17 @@ class DriverDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Create                                                     #
     # ----------------------------------------------------------------------------------------------------------------
-    def createDriver(self, driver_first_name, driver_last_name, driver_phone, driver_email, driver_password,
-                     license_id):
+    def createDriver(self, driver_first_name, driver_last_name, driver_birth_date, driver_phone, driver_email,
+                     driver_password, driver_driving_license, driver_gmp_certificate, driver_dispensary_technician,
+                     occupational_license_id):
         cursor = self.conn.cursor()
-        query = 'insert into "Driver" (driver_first_name, driver_last_name, driver_phone, driver_email, ' \
-                'driver_password, license_id) values (%s, %s, %s, %s, %s, %s) returning driver_id'
-        cursor.execute(query, (driver_first_name, driver_last_name, driver_phone, driver_email,
-                               generate_password_hash(driver_password), license_id),)
+        query = 'insert into "Driver" (driver_first_name, driver_last_name, driver_birth_date, driver_phone,' \
+                'driver_email, driver_password, driver_driving_license, driver_gmp_certificate,' \
+                'driver_dispensary_technician, occupational_license_id) ' \
+                'values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning driver_id'
+        cursor.execute(query, (driver_first_name, driver_last_name, driver_birth_date, driver_phone, driver_email,
+                               generate_password_hash(driver_password), driver_driving_license, driver_gmp_certificate,
+                               driver_dispensary_technician, occupational_license_id,))
         driver_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
@@ -65,7 +69,7 @@ class DriverDAO:
         result = self.getDriverByEmail(driver_email)
         if not result:
             return None  # Email address does not exist
-        hashed_password = result[5]
+        hashed_password = result[6]
         if check_password_hash(hashed_password, driver_password):
             return result
         else:
