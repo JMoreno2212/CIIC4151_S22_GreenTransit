@@ -20,6 +20,16 @@ class ItemDAO:
         cursor.close()
         return result
 
+    def getAllActiveItems(self):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where item_active = True;'
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
     def getItemById(self, item_id):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where item_id = %s;'
