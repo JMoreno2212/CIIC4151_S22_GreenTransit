@@ -46,7 +46,7 @@ def verifyLogin():
             return BaseUser().verifyUserLogin(request.json)
         elif request.json['login_type'] == "Driver":
             return BaseDriver().verifyDriverLogin(request.json)
-        elif request.json['registration_type'] == "Dispensary":
+        elif request.json['login_type'] == "Dispensary":
             return BaseDispensary().verifyDispensaryLogin(request.json)
         else:
             return jsonify("No login type found"), 404
