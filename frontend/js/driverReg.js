@@ -4,7 +4,7 @@
 
 
 async function driverReg() {
-    let registration_type = "Driver";
+    let registration_type= localStorage.getItem('registration_type');
     let registration_first_name = $('#firstNameDriver').val();
     let registration_last_name = $('#lastNameDriver').val();
     let registration_birth_date = $('#dobDriver').val();

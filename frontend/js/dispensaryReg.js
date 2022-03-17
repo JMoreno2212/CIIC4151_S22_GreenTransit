@@ -4,7 +4,7 @@
 
 
 async function dispensaryReg() {
-    let registration_type = "Dispensary";
+    let registration_type= localStorage.getItem('registration_type');
     let dispensary_name = $('#nameDispensary').val();
     let registration_phone = $('#phoneDispensary').val();
     let dispensary_location = $('#addressDispensary').val();
