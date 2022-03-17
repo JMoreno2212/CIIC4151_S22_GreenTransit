@@ -34,7 +34,7 @@ async function register() {
         window.location.href="http://localhost:63343/CIIC4151_S22_GreenTransit/frontend/userRegistrationPage.html?_ijt=7b67ai6dbicbr9hnusncjh0ovj&_ij_reload=RELOAD_ON_SAVE"
     }
     else if (registration_type === 'Driver'){
-        window.location.href="";
+        window.location.href="www.google.com";
     }
     else{
         window.location.href="";
