@@ -181,9 +181,9 @@ def handleActiveLicenses():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/testing/licenses', methods=['POST'])
-def handleCreateLicense():
-    return str(LicenseDAO().createLicense("Testing", "license123.pdf", "2030-10-10", "file.pdf"))
+# @app.route('/testing/licenses', methods=['POST'])
+# def handleCreateLicense():
+#     return str(LicenseDAO().createLicense("Testing", "license123.pdf", "2030-10-10", "file.pdf"))
 
 
 @app.route('/License/licenses/<int:license_id>', methods=['GET'])
