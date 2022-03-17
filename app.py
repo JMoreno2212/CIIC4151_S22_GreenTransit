@@ -9,6 +9,7 @@ from backend.controller.license import BaseLicense
 from backend.controller.purchase import BasePurchase
 from backend.controller.user import BaseUser
 from backend.controller.vehicle import BaseVehicle
+from backend.model.license import LicenseDAO
 
 app = Flask(__name__)
 CORS(app)
@@ -178,6 +179,11 @@ def handleActiveLicenses():
         return BaseLicense().getAllActiveLicenses()
     else:
         return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/testing/licenses', methods=['POST'])
+def handleCreateLicense():
+    return str(LicenseDAO().createLicense("Testing", "license123.pdf", "2030-10-10", "file.pdf"))
 
 
 @app.route('/License/licenses/<int:license_id>', methods=['GET'])
