@@ -44,7 +44,7 @@ class BaseUser:
                                           user_email, user_password, license_id, True)
             return jsonify(result), 201
         else:
-            return jsonify("An user with that email already exists"), 409
+            return jsonify("User already exists"), 409
 
     def getAllUsers(self):
         user_dao = UserDAO()

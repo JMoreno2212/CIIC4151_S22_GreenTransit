@@ -3,6 +3,7 @@ import os
 import psycopg2
 from cryptography.fernet import Fernet
 
+
 class LicenseDAO:
     def __init__(self):
         self.conn = psycopg2.connect(os.getenv('DATABASE_URL'))
@@ -15,7 +16,8 @@ class LicenseDAO:
         cursor = self.conn.cursor()
         query = 'insert into "License" (license_type, license_name, license_expiration, license_file) ' \
                 'values (%s, %s, %s, %s) returning license_id'
-        cursor.execute(query, (license_type, license_name, license_expiration, license_file,))
+        cursor.execute(query, (license_type, str(fernet.encrypt(license_name.encode())),
+                               license_expiration, str(fernet.encrypt(license_file.encode())),))
         license_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
@@ -47,8 +49,8 @@ class LicenseDAO:
     def getLicenseByName(self, license_name):
         fernet = Fernet(os.getenv('LICENSE_KEY'))
         cursor = self.conn.cursor()
-        query = 'select * from "License" where license_name = %s'
-        cursor.execute(query, (license_name,))
+        query = 'select * from "License" where license_name = %s and license_active = True'
+        cursor.execute(query, (str(fernet.encrypt(license_name.encode())),))
         result = cursor.fetchone()
         cursor.close()
         return result
