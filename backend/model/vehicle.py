@@ -33,6 +33,16 @@ class VehicleDAO:
         cursor.close()
         return result
 
+    def getAllActiveVehicles(self):
+        cursor = self.conn.cursor()
+        query = 'select * from "Vehicle" where vehicle_active = True;'
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
     def getVehicleById(self, vehicle_id):
         cursor = self.conn.cursor()
         query = 'select * from "Vehicle" where vehicle_id = %s;'

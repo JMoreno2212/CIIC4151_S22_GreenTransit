@@ -1,15 +1,20 @@
-from flask import jsonify
+import os
 
+from flask import jsonify
+from cryptography.fernet import Fernet
 from backend.model.license import LicenseDAO
 
 
 def build_license_map_dict(row):
+    # fernet = Fernet(os.getenv('LICENSE_KEY'))
     result = {'license_id': row[0], 'license_type': row[1], 'license_name': row[2], 'license_expiration': row[3],
               'license_file': row[4], 'license_active': row[5]}
+    # print(result)
     return result
 
 
 def build_license_attr_dict(license_id, license_type, license_name, license_expiration, license_file, license_active):
+    # fernet = Fernet(os.getenv('LICENSE_KEY'))
     result = {'license_id': license_id, 'license_type': license_type, 'license_name': license_name,
               'license_expiration': license_expiration, 'license_file': license_file, 'license_active': license_active}
     return result

@@ -23,6 +23,18 @@ class BaseItem:
                 result_list.append(obj)
             return jsonify(result_list), 200
 
+    def getAllActiveItems(self):
+        item_dao = ItemDAO()
+        items_list = item_dao.getAllActiveItems()
+        if not items_list:  # Item List is empty
+            return jsonify("No Items Found"), 404
+        else:
+            result_list = []
+            for row in items_list:
+                obj = build_item_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
     def getItemById(self, item_id):
         item_dao = ItemDAO()
         item_tuple = item_dao.getItemById(item_id)
