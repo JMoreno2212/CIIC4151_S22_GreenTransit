@@ -55,6 +55,18 @@ class BaseVehicle:
                 result_list.append(obj)
             return jsonify(result_list), 200
 
+    def getAllActiveVehicles(self):
+        vehicle_dao = VehicleDAO()
+        vehicles_list = vehicle_dao.getAllActiveVehicles()
+        if not vehicles_list:  # Vehicle List is empty
+            return jsonify("No Vehicles Found"), 404
+        else:
+            result_list = []
+            for row in vehicles_list:
+                obj = build_vehicle_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
     def getVehicleById(self, vehicle_id):
         vehicle_dao = VehicleDAO()
         vehicle_tuple = vehicle_dao.getVehicleById(vehicle_id)

@@ -56,7 +56,7 @@ def verifyLogin():
 # --------------------------------------------------------------------------------------
 # Delivery
 # --------------------------------------------------------------------------------------
-@app.route('/Delivery/deliveries', methods=['GET'])
+@app.route('/Delivery/deliveries/all', methods=['GET'])
 def handleDeliveries():
     if request.method == 'GET':
         return BaseDelivery().getAllDeliveries()
@@ -137,10 +137,18 @@ def handleDriverVehicleRegistration(driver_id):
 # --------------------------------------------------------------------------------------
 # Item
 # --------------------------------------------------------------------------------------
-@app.route('/Item/items', methods=['GET'])
-def handleItem():
+@app.route('/Item/items/all', methods=['GET'])
+def handleItems():
     if request.method == 'GET':
         return BaseItem().getAllItems()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Item/items/active', methods=['GET'])
+def handleActiveItems():
+    if request.method == 'GET':
+        return BaseItem().getAllActiveItems()
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -229,10 +237,18 @@ def handleUsersById(user_id):
 # --------------------------------------------------------------------------------------
 # Vehicle
 # --------------------------------------------------------------------------------------
-@app.route('/Vehicle/vehicles', methods=['GET'])
+@app.route('/Vehicle/vehicles/all', methods=['GET'])
 def handleVehicles():
     if request.method == 'GET':
         return BaseVehicle().getAllVehicles()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Vehicle/vehicles/active', methods=['GET'])
+def handleActiveVehicles():
+    if request.method == 'GET':
+        return BaseVehicle().getAllActiveVehicles()
     else:
         return jsonify("Method Not Allowed"), 405
 
