@@ -28,7 +28,7 @@ class BaseDispensary:
         dispensary_location = json['dispensary_location']
         dispensary_email = json['registration_email']
         dispensary_password = json['registration_password']
-        license_type = json['registration_type']
+        license_type = json['license_type']
         license_name = json['license_name']
         license_expiration = json['license_expiration']
         license_file = json['license_file']

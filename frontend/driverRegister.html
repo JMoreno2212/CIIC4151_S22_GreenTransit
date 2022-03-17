@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- JS: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="js/driverReg.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/driver-registration.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <title>Green Transit!</title>
+</head>
+<body>
+
+<div class="card border-dark mb-3" >
+    <div>&nbsp;</div>
+    <div class="card-body">
+        <h2 class="card-subtitle mb-2" style="color:#9cbc9c">We will need...</h2>
+        <div>&nbsp;</div>
+        <form method="post" class="row g-3">
+            <div class="col-md-6">
+                <label for="firstNameDriver" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="firstNameDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="lastNameDriver" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lastNameDriver">
+            </div>
+
+            <div class="col-md-6">
+                <label for="licenseDriver" class="form-label">Occupational License #</label>
+                <input type="text" class="form-control" id="licenseDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="licenseExpDateDriver" class="form-label">License Exp. Date</label>
+                <input type="date" class="form-control" id="licenseExpDateDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="driverLicenseDriver" class="form-label">Drivers License #</label>
+                <input type="text" class="form-control" id="driverLicenseDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="dobDriver" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="dobDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="phoneDriver" class="form-label">Phone Number</label>
+                <input type="number" class="form-control" id="phoneDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="emailDriver" class="form-label">Email</label>
+                <input type="email" class="form-control" id="emailDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="passwordDriver" class="form-label">Password</label>
+                <input type="password" class="form-control" id="passwordDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="occupationalFileDriver" class="form-label">Occupational License (pdf)</label>
+                <input class="form-control" type="file" id="occupationalFileDriver">
+            </div>
+            <div class="col-md-6">
+                <label for="technicianFileDriver" class="form-label">Dispensary Technician (pdf)</label>
+                <input class="form-control" type="file" id="technicianFileDriver">
+            </div>
+            <div class="col-md">
+                <label for="gmpFileDriver" class="form-label">GMP Certificate (pdf)</label>
+                <input class="form-control" type="file" id="gmpFileDriver">
+            </div>
+
+            <div>&nbsp;</div>
+            <div class="d-flex justify-content-center">
+            <button type="submit" class="btn-round-lg" onclick="driverReg()">Register</button>
+            </div>
+            <div>&nbsp;</div>
+
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

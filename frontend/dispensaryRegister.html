@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- JS: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="js/dispensaryReg.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/dispensary-registration.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <title>Green Transit!</title>
+</head>
+<body>
+
+<div class="card border-dark mb-3" >
+    <div>&nbsp;</div>
+    <div class="card-body">
+        <h2 class="card-subtitle mb-2" style="color:#9cbc9c">We will need...</h2>
+        <div>&nbsp;</div>
+        <form method="post" class="row g-3">
+            <div class="col-md-6">
+                <label for="nameDispensary" class="form-label">Commercial Name</label>
+                <input type="text" class="form-control" id="nameDispensary">
+            </div>
+            <div class="col-md-6">
+                <label for="licenseDispensary" class="form-label">License #</label>
+                <input type="text" class="form-control" id="licenseDispensary">
+            </div>
+            <div class="col-md-6">
+                <label for="licenseExpDateDispensary" class="form-label">License Exp. Date</label>
+                <input type="date" class="form-control" id="licenseExpDateDispensary">
+            </div>
+            <div class="col-md-6">
+                <label for="addressDispensary" class="form-label">Dispensary Physical Address</label>
+                <input type="text" class="form-control" id="addressDispensary">
+            </div>
+            <div class="col-md-6">
+                <label for="emailDispensary" class="form-label">Email</label>
+                <input type="email" class="form-control" id="emailDispensary">
+            </div>
+            <div class="col-md-6">
+                <label for="passwordDispensary" class="form-label">Password</label>
+                <input type="password" class="form-control" id="passwordDispensary">
+            </div>
+            <div class="col-md-6">
+                <label for="phoneDispensary" class="form-label">Phone Number</label>
+                <input type="text" class="form-control" id="phoneDispensary">
+            </div>
+            <div class="col-md-6">
+                <label for="dispensaryLicenseFile" class="form-label">License Documentation (pdf)</label>
+                <input class="form-control" type="file" id="dispensaryLicenseFile">
+            </div>
+
+            <div>&nbsp;</div>
+            <div class="d-flex justify-content-center">
+            <button type="submit" class="btn-round-lg" onclick="dispensaryReg()">Register</button>
+            </div>
+            <div>&nbsp;</div>
+
+        </form>
+
+    </div>
+</div>
+</body>
+</html>
