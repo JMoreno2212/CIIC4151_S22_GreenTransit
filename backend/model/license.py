@@ -15,7 +15,8 @@ class LicenseDAO:
         cursor = self.conn.cursor()
         query = 'insert into "License" (license_type, license_name, license_expiration, license_file) ' \
                 'values (%s, %s, %s, %s) returning license_id'
-        cursor.execute(query, (license_type, license_name, license_expiration, license_file,))
+        cursor.execute(query, (license_type, str(fernet.encrypt(license_name.encode())),
+                               license_expiration, str(fernet.encrypt(license_file.encode())),))
         license_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
