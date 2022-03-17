@@ -54,7 +54,7 @@ class BaseDriver:
                                             driver_gmp_certificate, driver_dispensary_technician, license_id, True)
             return jsonify(result), 201
         else:
-            return jsonify("An user with that email already exists"), 409
+            return jsonify("User already exists"), 409
 
     def getAllDrivers(self):
         driver_dao = DriverDAO()

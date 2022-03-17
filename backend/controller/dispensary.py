@@ -44,7 +44,7 @@ class BaseDispensary:
                                                 dispensary_email, dispensary_password, license_id, True)
             return jsonify(result), 201
         else:
-            return jsonify("An user with that email already exists"), 409
+            return jsonify("User already exists"), 409
 
     def getAllDispensaries(self):
         dispensary_dao = DispensaryDAO()
