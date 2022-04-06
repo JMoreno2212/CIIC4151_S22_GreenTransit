@@ -85,7 +85,7 @@ class BaseDispensary:
         dispensary_dao = DispensaryDAO()
         valid_dispensary = dispensary_dao.verifyDispensaryLogin(dispensary_email, dispensary_password)
         if not valid_dispensary:
-            return jsonify("Username or Password entered incorrectly"), 404
+            return None
         else:
             return jsonify("Dispensary logged in successfully", valid_dispensary[0],
                            valid_dispensary[4]), 200  # Returns ID & Email

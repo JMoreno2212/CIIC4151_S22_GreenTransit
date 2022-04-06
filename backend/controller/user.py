@@ -85,6 +85,6 @@ class BaseUser:
         user_dao = UserDAO()
         valid_user = user_dao.verifyUserLogin(user_email, user_password)
         if not valid_user:
-            return jsonify("Username or Password entered incorrectly"), 404
+            return None
         else:
             return jsonify("User logged in successfully", valid_user[0], valid_user[5]), 200  # Returns ID & Email

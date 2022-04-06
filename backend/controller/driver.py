@@ -95,6 +95,6 @@ class BaseDriver:
         driver_dao = DriverDAO()
         valid_driver = driver_dao.verifyDriverLogin(driver_email, driver_password)
         if not valid_driver:
-            return jsonify("Username or Password entered incorrectly"), 404
+            return None
         else:
             return jsonify("Driver logged in successfully", valid_driver[0], valid_driver[4]), 200  # Returns ID & Email

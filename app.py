@@ -42,14 +42,16 @@ def verifyRegistration():
 @app.route('/login', methods=['POST'])
 def verifyLogin():
     if request.method == 'POST':
-        if request.json['login_type'] == "User":
-            return BaseUser().verifyUserLogin(request.json)
-        elif request.json['login_type'] == "Driver":
-            return BaseDriver().verifyDriverLogin(request.json)
-        elif request.json['login_type'] == "Dispensary":
-            return BaseDispensary().verifyDispensaryLogin(request.json)
-        else:
-            return jsonify("No login type found"), 404
+        user = BaseUser().verifyUserLogin(request.json)
+        if user is not None:
+            return user
+        driver = BaseDriver().verifyDriverLogin(request.json)
+        if driver is not None:
+            return driver
+        dispensary = BaseDispensary().verifyDispensaryLogin(request.json)
+        if dispensary is not None:
+            return dispensary
+        return jsonify("Username or Password entered incorrectly"), 404
     else:
         return jsonify("Method Not Allowed"), 405
 
