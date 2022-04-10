@@ -80,10 +80,9 @@ class UserDAO:
         cursor = self.conn.cursor()
         query = 'update "User" set user_phone = %s, user_email = %s, user_password = %s where user_id = %s'
         cursor.execute(query, (user_phone, user_email, generate_password_hash(user_password), user_id,))
-        updated_user = cursor.fetchone()
         self.conn.commit()
         cursor.close()
-        return updated_user
+        return True
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Login                                                      #

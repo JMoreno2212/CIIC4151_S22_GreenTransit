@@ -56,6 +56,16 @@ class BaseDriver:
         else:
             return jsonify("User already exists"), 409
 
+    def deleteDriver(self, driver_id):
+        driver_dao = DriverDAO()
+        driver_dao.deleteDriver(driver_id)
+        deleted_driver = driver_dao.getDriverById(driver_id)
+        deleted_license_id = deleted_driver[10]
+        license_dao = LicenseDAO()
+        license_dao.deleteLicense(deleted_license_id)
+        result = build_driver_map_dict(deleted_driver)
+        return jsonify(result), 200
+
     def getAllDrivers(self):
         driver_dao = DriverDAO()
         drivers_list = driver_dao.getAllDrivers()
@@ -88,6 +98,21 @@ class BaseDriver:
         else:
             result = build_driver_map_dict(driver_tuple)
         return jsonify(result), 200
+
+    def updateDriver(self, driver_id, json):
+        driver_dao = DriverDAO()
+        driver_phone = json['driver_phone']
+        driver_email = json['driver_email']
+        driver_password = json['driver_password']
+        new_email = driver_dao.getDriverByEmail(driver_email)
+        # New email doesn't exist or is the same as current
+        if (not new_email) or (driver_email == driver_dao.getDriverById(driver_id)[5]):
+            driver_dao.updateDriver(driver_id, driver_phone, driver_email, driver_password)
+            updated_driver = driver_dao.getDriverById(driver_id)
+            result = build_driver_map_dict(updated_driver)
+            return jsonify(result), 200
+        else:
+            return jsonify("Email address is already in use"), 409
 
     def verifyDriverLogin(self, json):
         driver_email = json['login_email']

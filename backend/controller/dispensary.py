@@ -88,4 +88,4 @@ class BaseDispensary:
             return None
         else:
             return jsonify("Dispensary logged in successfully", valid_dispensary[0],
-                           valid_dispensary[4]), 200  # Returns ID & Email
+                           valid_dispensary[6]), 200  # Returns ID & Email

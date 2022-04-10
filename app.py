@@ -121,10 +121,14 @@ def handleActiveDrivers():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Driver/drivers/<int:driver_id>', methods=['GET'])
+@app.route('/Driver/drivers/<int:driver_id>', methods=['GET', 'DELETE', 'PUT'])
 def handleDriverById(driver_id):
     if request.method == 'GET':
         return BaseDriver().getDriverById(driver_id)
+    elif request.method == 'DELETE':
+        return BaseDriver().deleteDriver(driver_id)
+    elif request.method == 'PUT':
+        return BaseDriver().updateDriver(driver_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -229,13 +233,13 @@ def handleActiveUsers():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/User/users/<int:user_id>', methods=['GET', 'DELETE', 'UPDATE'])
+@app.route('/User/users/<int:user_id>', methods=['GET', 'DELETE', 'PUT'])
 def handleUsersById(user_id):
     if request.method == 'GET':
         return BaseUser().getUserById(user_id)
     elif request.method == 'DELETE':
         return BaseUser().deleteUser(user_id)
-    elif request.method == 'UPDATE':
+    elif request.method == 'PUT':
         return BaseUser().updateUser(user_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405

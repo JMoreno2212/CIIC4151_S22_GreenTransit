@@ -28,6 +28,17 @@ class DriverDAO:
         return driver_id
 
     # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Delete                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    def deleteDriver(self, driver_id):
+        cursor = self.conn.cursor()
+        query = 'update "Driver" set driver_active = False where driver_id = %s'
+        cursor.execute(query, (driver_id,))
+        self.conn.commit()
+        cursor.close()
+        return True
+
+    # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
     # ----------------------------------------------------------------------------------------------------------------
     def getAllDrivers(self):
@@ -65,6 +76,20 @@ class DriverDAO:
         result = cursor.fetchone()
         return result
 
+    # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Update                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    def updateDriver(self, driver_id, driver_phone, driver_email, driver_password):  # REQUIRES ALL FIELDS TO BE FILLED
+        cursor = self.conn.cursor()
+        query = 'update "Driver" set driver_phone = %s, driver_email = %s, driver_password = %s where driver_id = %s'
+        cursor.execute(query, (driver_phone, driver_email, generate_password_hash(driver_password), driver_id,))
+        self.conn.commit()
+        cursor.close()
+        return True
+
+    # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Login                                                      #
+    # ----------------------------------------------------------------------------------------------------------------
     def verifyDriverLogin(self, driver_email, driver_password):
         result = self.getDriverByEmail(driver_email)
         if not result:

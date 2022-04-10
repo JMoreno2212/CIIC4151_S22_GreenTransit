@@ -94,9 +94,11 @@ class BaseUser:
         user_phone = json['user_phone']
         user_email = json['user_email']
         user_password = json['user_password']
-        existing_email = user_dao.getUserByEmail(user_email)
-        if not existing_email:
-            updated_user = user_dao.updateUser(user_id, user_phone, user_email, user_password)
+        new_email = user_dao.getUserByEmail(user_email)
+        # New email doesn't exist or is the same as current
+        if (not new_email) or (user_email == user_dao.getUserById(user_id)[5]):
+            user_dao.updateUser(user_id, user_phone, user_email, user_password)
+            updated_user = user_dao.getUserById(user_id)
             result = build_user_map_dict(updated_user)
             return jsonify(result), 200
         else:
