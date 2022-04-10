@@ -69,10 +69,12 @@ def handleDeliveries():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Delivery/deliveries/<int:delivery_id>', methods=['GET'])
+@app.route('/Delivery/deliveries/<int:delivery_id>', methods=['GET', 'PUT'])
 def handleDeliveryById(delivery_id):
     if request.method == 'GET':
         return BaseDelivery().getDeliveryById(delivery_id)
+    elif request.method == 'PUT':
+        return BaseDelivery().updateDelivery(delivery_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 

@@ -76,3 +76,15 @@ class BaseDelivery:
         else:
             result = build_delivery_map_dict(delivery_tuple)
             return jsonify(result), 200
+
+    def updateDelivery(self, delivery_id, json):
+        delivery_dao = DeliveryDAO()
+        delivery_date = json['delivery_date']
+        delivery_direction = json['delivery_direction']
+        delivery_municipality = json['delivery_municipality']
+        delivery_zipcode = json['delivery_zipcode']
+        delivery_dao.updateDelivery(delivery_id, delivery_date, delivery_direction, delivery_municipality,
+                                    delivery_zipcode)
+        updated_delivery = delivery_dao.getDeliveryById(delivery_id)
+        result = build_delivery_map_dict(updated_delivery)
+        return jsonify(result), 200
