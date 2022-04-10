@@ -24,6 +24,17 @@ class LicenseDAO:
         return license_id
 
     # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Delete                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    def deleteLicense(self, license_id):
+        cursor = self.conn.cursor()
+        query = 'update "License" set license_active = False where license_id = %s'
+        cursor.execute(query, (license_id,))
+        self.conn.commit()
+        cursor.close()
+        return True
+
+    # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
     # ----------------------------------------------------------------------------------------------------------------
     def getAllLicenses(self):
