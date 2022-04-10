@@ -17,11 +17,22 @@ class UserDAO:
         query = 'insert into "User" (user_first_name, user_last_name, user_birth_date, user_phone, user_email, ' \
                 'user_password, license_id) values (%s, %s, %s, %s, %s, %s, %s) returning user_id'
         cursor.execute(query, (user_first_name, user_last_name, user_birth_date, user_phone, user_email,
-                               generate_password_hash(user_password), license_id),)
+                               generate_password_hash(user_password), license_id))
         user_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
         return user_id
+
+    # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Delete                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    def deleteUser(self, user_id):
+        cursor = self.conn.cursor()
+        query = 'update "User" set user_active = False where user_id = %s'
+        cursor.execute(query, (user_id,))
+        self.conn.commit()
+        cursor.close()
+        return True
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
@@ -62,6 +73,21 @@ class UserDAO:
         cursor.close()
         return result
 
+    # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Update                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    def updateUser(self, user_id, user_phone, user_email, user_password):  # REQUIRES ALL FIELDS TO BE FILLED
+        cursor = self.conn.cursor()
+        query = 'update "User" set user_phone = %s, user_email = %s, user_password = %s where user_id = %s'
+        cursor.execute(query, (user_phone, user_email, generate_password_hash(user_password), user_id,))
+        updated_user = cursor.fetchone()
+        self.conn.commit()
+        cursor.close()
+        return updated_user
+
+    # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Login                                                      #
+    # ----------------------------------------------------------------------------------------------------------------
     def verifyUserLogin(self, user_email, user_password):
         result = self.getUserByEmail(user_email)
         if not result:
@@ -71,4 +97,3 @@ class UserDAO:
             return result
         else:
             return None  # Password is incorrect
-

@@ -229,10 +229,14 @@ def handleActiveUsers():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/User/users/<int:user_id>', methods=['GET'])
+@app.route('/User/users/<int:user_id>', methods=['GET', 'DELETE', 'UPDATE'])
 def handleUsersById(user_id):
     if request.method == 'GET':
         return BaseUser().getUserById(user_id)
+    elif request.method == 'DELETE':
+        return BaseUser().deleteUser(user_id)
+    elif request.method == 'UPDATE':
+        return BaseUser().updateUser(user_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 

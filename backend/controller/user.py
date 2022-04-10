@@ -1,6 +1,6 @@
 from flask import jsonify
 
-from backend.controller.license import LicenseDAO, BaseLicense
+from backend.controller.license import LicenseDAO
 from backend.model.user import UserDAO
 
 
@@ -46,6 +46,16 @@ class BaseUser:
         else:
             return jsonify("User already exists"), 409
 
+    def deleteUser(self, user_id):
+        user_dao = UserDAO()
+        user_dao.deleteUser(user_id)
+        deleted_user = user_dao.getUserById(user_id)
+        deleted_license_id = deleted_user[7]
+        license_dao = LicenseDAO()
+        license_dao.deleteLicense(deleted_license_id)
+        result = build_user_map_dict(deleted_user)
+        return jsonify(result), 200
+
     def getAllUsers(self):
         user_dao = UserDAO()
         users_list = user_dao.getAllUsers()
@@ -78,6 +88,19 @@ class BaseUser:
         else:
             result = build_user_map_dict(user_tuple)
             return jsonify(result), 200
+
+    def updateUser(self, user_id, json):
+        user_dao = UserDAO()
+        user_phone = json['user_phone']
+        user_email = json['user_email']
+        user_password = json['user_password']
+        existing_email = user_dao.getUserByEmail(user_email)
+        if not existing_email:
+            updated_user = user_dao.updateUser(user_id, user_phone, user_email, user_password)
+            result = build_user_map_dict(updated_user)
+            return jsonify(result), 200
+        else:
+            return jsonify("Email address is already in use"), 409
 
     def verifyUserLogin(self, json):
         user_email = json['login_email']
