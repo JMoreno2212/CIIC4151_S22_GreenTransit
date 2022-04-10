@@ -8,6 +8,22 @@ class DeliveryDAO:
         self.conn = psycopg2.connect(os.getenv('DATABASE_URL'))
 
     # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Create                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    def createDelivery(self, delivery_date, delivery_price, delivery_direction, delivery_municipality, delivery_zipcode,
+                       driver_id, vehicle_id, purchase_id):
+        cursor = self.conn.cursor()
+        query = 'insert into "Delivery" (delivery_date, delivery_price, delivery_direction, delivery_municipality,' \
+                'delivery_zipcode, driver_id, vehicle_id, purchase_id) values (%s, %s, %s, %s, %s, %s, %s, %s)' \
+                'returning delivery_id'
+        cursor.execute(query, (delivery_date, delivery_price, delivery_direction, delivery_municipality,
+                               delivery_zipcode, driver_id, vehicle_id, purchase_id))
+        delivery_id = cursor.fetchone()[0]
+        self.conn.commit()
+        cursor.close()
+        return delivery_id
+
+    # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
     # ----------------------------------------------------------------------------------------------------------------
     def getAllDeliveries(self):

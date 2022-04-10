@@ -6,15 +6,18 @@ from backend.model.license import LicenseDAO
 
 def build_dispensary_map_dict(row):
     result = {'dispensary_id': row[0], 'dispensary_name': row[1], 'dispensary_phone': row[2],
-              'dispensary_location': row[3],
-              'dispensary_email': row[4], 'dispensary_password': row[5], 'dispensary_active': row[6]}
+              'dispensary_direction': row[3], 'dispensary_municipality': row[4], 'dispensary_zipcode': row[5],
+              'dispensary_email': row[6], 'dispensary_password': row[7], 'license_id': row[8],
+              'dispensary_active': row[9]}
     return result
 
 
-def build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_location, dispensary_email,
+def build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
+                               dispensary_municipality, dispensary_zipcode, dispensary_email,
                                dispensary_password, license_id, dispensary_active):
     result = {'dispensary_id': dispensary_id, 'dispensary_name': dispensary_name, 'dispensary_phone': dispensary_phone,
-              'dispensary_location': dispensary_location, 'dispensary_email': dispensary_email,
+              'dispensary_direction': dispensary_direction, 'dispensary_municipality': dispensary_municipality,
+              'dispensary_zipcode': dispensary_zipcode, 'dispensary_email': dispensary_email,
               'dispensary_password': dispensary_password, 'license_id': license_id,
               'dispensary_active': dispensary_active}
     return result
@@ -25,10 +28,12 @@ class BaseDispensary:
     def createDispensary(self, json):
         dispensary_name = json['dispensary_name']
         dispensary_phone = json['registration_phone']
-        dispensary_location = json['dispensary_location']
+        dispensary_direction = json['dispensary_direction']
+        dispensary_municipality = json['dispensary_municipality']
+        dispensary_zipcode = json['dispensary_zipcode']
         dispensary_email = json['registration_email']
         dispensary_password = json['registration_password']
-        license_type = json['license_type']
+        license_type = json['registration_type']
         license_name = json['license_name']
         license_expiration = json['license_expiration']
         license_file = json['license_file']
@@ -38,10 +43,12 @@ class BaseDispensary:
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_dispensary and not existing_license:  # Dispensary with that email and license does not exist
             license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
-            dispensary_id = dispensary_dao.createDispensary(dispensary_name, dispensary_phone, dispensary_location,
+            dispensary_id = dispensary_dao.createDispensary(dispensary_name, dispensary_phone, dispensary_direction,
+                                                            dispensary_municipality, dispensary_zipcode,
                                                             dispensary_email, dispensary_password, license_id)
-            result = build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_location,
-                                                dispensary_email, dispensary_password, license_id, True)
+            result = build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
+                                                dispensary_municipality, dispensary_zipcode, dispensary_email,
+                                                dispensary_password, license_id, True)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409

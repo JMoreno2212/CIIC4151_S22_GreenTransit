@@ -21,6 +21,17 @@ class VehicleDAO:
         return vehicle_id
 
     # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Delete                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    def deleteVehicle(self, vehicle_id):
+        cursor = self.conn.cursor()
+        query = 'update "Vehicle" set vehicle_active = False where vehicle_id = %s'
+        cursor.execute(query, (vehicle_id,))
+        self.conn.commit()
+        cursor.close()
+        return True
+
+    # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
     # ----------------------------------------------------------------------------------------------------------------
     def getAllVehicles(self):
@@ -41,6 +52,13 @@ class VehicleDAO:
         for row in cursor:
             result.append(row)
         cursor.close()
+        return result
+
+    def getVehicleByDriver(self, driver_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Vehicle" where driver_id = %s;'
+        cursor.execute(query, (driver_id,))
+        result = cursor.fetchone()
         return result
 
     def getVehicleById(self, vehicle_id):

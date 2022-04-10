@@ -11,13 +11,15 @@ class DispensaryDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Create                                                     #
     # ----------------------------------------------------------------------------------------------------------------
-    def createDispensary(self, dispensary_name, dispensary_phone, dispensary_location, dispensary_email,
-                         dispensary_password, license_id):
+    def createDispensary(self, dispensary_name, dispensary_phone, dispensary_direction, dispensary_municipality,
+                         dispensary_zipcode, dispensary_email, dispensary_password, license_id):
         cursor = self.conn.cursor()
-        query = 'insert into "Dispensary" (dispensary_name, dispensary_phone, dispensary_location, dispensary_email,' \
-                'dispensary_password, license_id) values (%s, %s, %s, %s, %s, %s) returning dispensary_id'
-        cursor.execute(query, (dispensary_name, dispensary_phone, dispensary_location, dispensary_email,
-                               generate_password_hash(dispensary_password), license_id),)
+        query = 'insert into "Dispensary" (dispensary_name, dispensary_phone, dispensary_direction,' \
+                'dispensary_municipality, dispensary_zipcode, dispensary_email, dispensary_password, license_id)' \
+                'values (%s, %s, %s, %s, %s, %s, %s, %s) returning dispensary_id'
+        cursor.execute(query, (dispensary_name, dispensary_phone, dispensary_direction, dispensary_municipality,
+                               dispensary_zipcode, dispensary_email, generate_password_hash(dispensary_password),
+                               license_id),)
         dispensary_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
@@ -64,7 +66,7 @@ class DispensaryDAO:
         result = self.getDispensaryByEmail(dispensary_email)
         if not result:
             return None  # Email address does not exist
-        hashed_password = result[5]
+        hashed_password = result[7]
         if check_password_hash(hashed_password, dispensary_password):
             return result
         else:

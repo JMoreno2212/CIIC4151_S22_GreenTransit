@@ -59,10 +59,12 @@ def verifyLogin():
 # --------------------------------------------------------------------------------------
 # Delivery
 # --------------------------------------------------------------------------------------
-@app.route('/Delivery/deliveries/all', methods=['GET'])
+@app.route('/Delivery/deliveries/all', methods=['GET', 'POST'])
 def handleDeliveries():
     if request.method == 'GET':
         return BaseDelivery().getAllDeliveries()
+    elif request.method == 'POST':
+        return BaseDelivery().createDelivery(request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 

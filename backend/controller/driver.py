@@ -2,6 +2,7 @@ from flask import jsonify
 
 from backend.model.driver import DriverDAO
 from backend.model.license import LicenseDAO
+from backend.model.vehicle import VehicleDAO
 
 
 def build_driver_map_dict(row):
@@ -63,6 +64,9 @@ class BaseDriver:
         deleted_license_id = deleted_driver[10]
         license_dao = LicenseDAO()
         license_dao.deleteLicense(deleted_license_id)
+        vehicle_dao = VehicleDAO()
+        deleted_vehicle_id = vehicle_dao.getVehicleByDriver(driver_id)
+        vehicle_dao.deleteVehicle(deleted_vehicle_id)
         result = build_driver_map_dict(deleted_driver)
         return jsonify(result), 200
 
