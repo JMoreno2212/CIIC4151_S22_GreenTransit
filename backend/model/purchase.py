@@ -27,3 +27,13 @@ class PurchaseDAO:
         result = cursor.fetchone()
         cursor.close()
         return result
+
+    def getPurchasesByUser(self, user_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Purchase" where user_id = %s'
+        cursor.execute(query, (user_id,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result

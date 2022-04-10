@@ -106,6 +106,24 @@ def handleDispensaryById(dispensary_id):
         return jsonify("Method Not Allowed"), 405
 
 
+# @app.route('/Dispensary/dispensaries/<int:dispensary_id>/item/<int:item_id>', methods=['GET'])
+# def handleDispensaryItemsById(dispensary_id, item_id):
+#     if request.method == 'GET':
+#         return BaseItem().getItemByDispensary(dispensary_id, item_id)
+#     else:
+#         return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/items', methods=['GET', 'POST'])
+def handleDispensaryItemsById(dispensary_id):
+    if request.method == 'GET':
+        return BaseItem().getItemsByDispensary(dispensary_id)
+    elif request.method == 'POST':
+        return BaseItem().createItem(dispensary_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # Driver
 # --------------------------------------------------------------------------------------
@@ -245,6 +263,14 @@ def handleUsersById(user_id):
         return BaseUser().deleteUser(user_id)
     elif request.method == 'PUT':
         return BaseUser().updateUser(user_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/User/users/<int:user_id>/purchases', methods=['GET'])
+def handleUserPurchasesById(user_id):
+    if request.method == 'GET':
+        return BasePurchase().getPurchasesByUser(user_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
