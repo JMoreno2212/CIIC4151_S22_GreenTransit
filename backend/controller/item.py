@@ -1,5 +1,6 @@
 from flask import jsonify
 
+from backend.model.dispensary import DispensaryDAO
 from backend.model.item import ItemDAO
 
 
@@ -67,9 +68,13 @@ class BaseItem:
             result = build_item_map_dict(item_tuple)
         return jsonify(result), 200
 
-    def getItemsByDispensary(self, dispensary_id):
+    def getAllItemsAtDispensary(self, dispensary_id):
+        dispensary_dao = DispensaryDAO()
+        valid_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        if not valid_dispensary:
+            return jsonify("Dispensary Not Found"), 404
         item_dao = ItemDAO()
-        items_list = item_dao.getItemsByDispensary(dispensary_id)
+        items_list = item_dao.getAllItemsAtDispensary(dispensary_id)
         if not items_list:
             return jsonify("No Items Found"), 404
         else:
@@ -78,3 +83,16 @@ class BaseItem:
                 obj = build_item_map_dict(row)
                 result_list.append(obj)
             return jsonify(result_list), 200
+
+    def getItemAtDispensary(self, dispensary_id, item_id):
+        dispensary_dao = DispensaryDAO()
+        valid_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        if not valid_dispensary:
+            return jsonify("Dispensary Not Found"), 404
+        item_dao = ItemDAO()
+        item_tuple = item_dao.getItemAtDispensary(dispensary_id, item_id)
+        if not item_tuple:  # Item Not Found
+            return jsonify("Item Not Found"), 404
+        else:
+            result = build_item_map_dict(item_tuple)
+        return jsonify(result), 200

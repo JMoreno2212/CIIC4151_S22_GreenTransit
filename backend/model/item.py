@@ -52,7 +52,7 @@ class ItemDAO:
         result = cursor.fetchone()
         return result
 
-    def getItemsByDispensary(self, dispensary_id):
+    def getAllItemsAtDispensary(self, dispensary_id):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where dispensary_id = %s;'
         cursor.execute(query, (dispensary_id,))
@@ -60,4 +60,11 @@ class ItemDAO:
         for row in cursor:
             result.append(row)
         cursor.close()
+        return result
+
+    def getItemAtDispensary(self, dispensary_id, item_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where item_id = %s and dispensary_id = %s;'
+        cursor.execute(query, (item_id, dispensary_id,))
+        result = cursor.fetchone()
         return result
