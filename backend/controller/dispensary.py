@@ -96,3 +96,34 @@ class BaseDispensary:
         else:
             return jsonify("Dispensary logged in successfully", valid_dispensary[0],
                            valid_dispensary[6]), 200  # Returns ID & Email
+
+    def updateDispensary(self, dispensary_id, json):
+        dispensary_dao = DispensaryDAO()
+        dispensary_name = json['dispensary_name']
+        dispensary_phone = json['dispensary_phone']
+        dispensary_direction = json['dispensary_direction']
+        dispensary_municipality = json['dispensary_municipality']
+        dispensary_zipcode = json['dispensary_zipcode']
+        dispensary_email = json['dispensary_email']
+        dispensary_password = json['dispensary_password']
+        new_email = dispensary_dao.getDispensaryByEmail(dispensary_email)
+        # New email doesn't exist or is the same as current
+        if (not new_email) or (dispensary_email == dispensary_dao.getDispensaryById(dispensary_id)[6]):
+            dispensary_dao.updateDispensary(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
+                                            dispensary_municipality, dispensary_zipcode, dispensary_email,
+                                            dispensary_password)
+            updated_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+            result = build_dispensary_map_dict(updated_dispensary)
+            return jsonify(result), 200
+        else:
+            return jsonify("Email address is already in use"), 409
+
+    def deleteDispensary(self, dispensary_id):
+        dispensary_dao = DispensaryDAO()
+        dispensary_dao.deleteDispesnary(dispensary_id)
+        deleted_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        deleted_license_id = deleted_dispensary[8]
+        license_dao = LicenseDAO()
+        license_dao.deleteLicense(deleted_license_id)
+        result = build_dispensary_map_dict(deleted_dispensary)
+        return jsonify(result), 200

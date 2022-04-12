@@ -102,6 +102,10 @@ def handleActiveDispensaries():
 def handleDispensaryById(dispensary_id):
     if request.method == 'GET':
         return BaseDispensary().getDispensaryById(dispensary_id)
+    elif request.method == 'DELETE':
+        return BaseDispensary().deleteDispensary(dispensary_id)
+    elif request.method == 'PUT':
+        return BaseDispensary().updateDispensary(dispensary_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
