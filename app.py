@@ -110,18 +110,18 @@ def handleDispensaryById(dispensary_id):
         return jsonify("Method Not Allowed"), 405
 
 
-# @app.route('/Dispensary/dispensaries/<int:dispensary_id>/item/<int:item_id>', methods=['GET'])
-# def handleDispensaryItemsById(dispensary_id, item_id):
-#     if request.method == 'GET':
-#         return BaseItem().getItemByDispensary(dispensary_id, item_id)
-#     else:
-#         return jsonify("Method Not Allowed"), 405
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/item/<int:item_id>', methods=['GET'])
+def handleDispensaryItemsById(dispensary_id, item_id):
+    if request.method == 'GET':
+        return BaseItem().getItemAtDispensary(dispensary_id, item_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
 
 
 @app.route('/Dispensary/dispensaries/<int:dispensary_id>/items', methods=['GET', 'POST'])
-def handleDispensaryItemsById(dispensary_id):
+def handleDispensaryItems(dispensary_id):
     if request.method == 'GET':
-        return BaseItem().getItemsByDispensary(dispensary_id)
+        return BaseItem().getAllItemsAtDispensary(dispensary_id)
     elif request.method == 'POST':
         return BaseItem().createItem(dispensary_id, request.json)
     else:
@@ -170,32 +170,28 @@ def handleDriverVehicleRegistration(driver_id):
 # --------------------------------------------------------------------------------------
 # Item
 # --------------------------------------------------------------------------------------
-@app.route('/Item/items/all', methods=['GET'])
-def handleItems():
-    if request.method == 'GET':
-        return BaseItem().getAllItems()
-    else:
-        return jsonify("Method Not Allowed"), 405
-
-
-@app.route('/Item/items/active', methods=['GET'])
-def handleActiveItems():
-    if request.method == 'GET':
-        return BaseItem().getAllActiveItems()
-    else:
-        return jsonify("Method Not Allowed"), 405
-
-
-@app.route('/Item/items/<int:item_id>', methods=['GET'])
-def handleItemById(item_id):
-    if request.method == 'GET':
-        return BaseItem().getItemById(item_id)
-    elif request.method == 'DELETE':
-        return BaseItem().deleteItem(item_id)
-    elif request.method == 'PUT':
-        return BaseItem().updateItem(item_id, request.json)
-    else:
-        return jsonify("Method Not Allowed"), 405
+# @app.route('/Item/items/all', methods=['GET'])
+# def handleItems():
+#     if request.method == 'GET':
+#         return BaseItem().getAllItems()
+#     else:
+#         return jsonify("Method Not Allowed"), 405
+#
+#
+# @app.route('/Item/items/active', methods=['GET'])
+# def handleActiveItems():
+#     if request.method == 'GET':
+#         return BaseItem().getAllActiveItems()
+#     else:
+#         return jsonify("Method Not Allowed"), 405
+#
+#
+# @app.route('/Item/items/<int:item_id>', methods=['GET'])
+# def handleItemById(item_id):
+#     if request.method == 'GET':
+#         return BaseItem().getItemById(item_id)
+#     else:
+#         return jsonify("Method Not Allowed"), 405
 
 
 # --------------------------------------------------------------------------------------
@@ -240,10 +236,6 @@ def handlePurchases():
 def handlePurchasesById(purchase_id):
     if request.method == 'GET':
         return BasePurchase().getPurchaseById(purchase_id)
-    # elif request.method == 'DELETE':
-    #     return BasePurchase().deletePurchase(purchase_id)
-    elif request.method == 'PUT':
-        return BasePurchase().updatePurchase(purchase_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -310,12 +302,9 @@ def handleActiveVehicles():
 def handleVehicleById(vehicle_id):
     if request.method == 'GET':
         return BaseVehicle().getVehicleById(vehicle_id)
-    elif request.method == 'DELETE':
-        return BaseVehicle().deleteVehicle(vehicle_id)
-    # elif request.method == 'PUT':
-    #     return BaseVehicle().updateVehicle(vehicle_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
+
 
 # --------------------------------------------------------------------------------------
 # Main

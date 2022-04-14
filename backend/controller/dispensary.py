@@ -120,7 +120,7 @@ class BaseDispensary:
 
     def deleteDispensary(self, dispensary_id):
         dispensary_dao = DispensaryDAO()
-        dispensary_dao.deleteDispesnary(dispensary_id)
+        dispensary_dao.deleteDispensary(dispensary_id)
         deleted_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
         deleted_license_id = deleted_dispensary[8]
         license_dao = LicenseDAO()

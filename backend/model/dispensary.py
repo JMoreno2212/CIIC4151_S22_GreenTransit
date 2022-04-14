@@ -79,10 +79,12 @@ class DispensaryDAO:
                          dispensary_municipality, dispensary_zipcode,
                          dispensary_email, dispensary_password):  # REQUIRES ALL FIELDS TO BE FILLED
         cursor = self.conn.cursor()
-        query = 'update "Dispensary" set dispensary_name = %s, dispensary_phone = %s, dispensary_direction = %s, dispensary_municipality = %s, dispensary_zipcode = %s, dispensary_email = %s, dispensary_password = %s where dispensary_id = %s'
-        cursor.execute(query, (
-        dispensary_name, dispensary_phone, dispensary_direction, dispensary_municipality, dispensary_zipcode,
-        dispensary_email, generate_password_hash(dispensary_password), dispensary_id,))
+        query = 'update "Dispensary" set dispensary_name = %s, dispensary_phone = %s, dispensary_direction = %s,' \
+                'dispensary_municipality = %s, dispensary_zipcode = %s, dispensary_email = %s,' \
+                'dispensary_password = %s where dispensary_id = %s'
+        cursor.execute(query, (dispensary_name, dispensary_phone, dispensary_direction, dispensary_municipality,
+                               dispensary_zipcode, dispensary_email, generate_password_hash(dispensary_password),
+                               dispensary_id,))
         self.conn.commit()
         cursor.close()
         return True
