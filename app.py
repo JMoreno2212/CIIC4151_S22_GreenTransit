@@ -190,6 +190,10 @@ def handleActiveItems():
 def handleItemById(item_id):
     if request.method == 'GET':
         return BaseItem().getItemById(item_id)
+    elif request.method == 'DELETE':
+        return BaseItem().deleteItem(item_id)
+    elif request.method == 'PUT':
+        return BaseItem().updateItem(item_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -236,6 +240,10 @@ def handlePurchases():
 def handlePurchasesById(purchase_id):
     if request.method == 'GET':
         return BasePurchase().getPurchaseById(purchase_id)
+    # elif request.method == 'DELETE':
+    #     return BasePurchase().deletePurchase(purchase_id)
+    elif request.method == 'PUT':
+        return BasePurchase().updatePurchase(purchase_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -302,9 +310,12 @@ def handleActiveVehicles():
 def handleVehicleById(vehicle_id):
     if request.method == 'GET':
         return BaseVehicle().getVehicleById(vehicle_id)
+    elif request.method == 'DELETE':
+        return BaseVehicle().deleteVehicle(vehicle_id)
+    # elif request.method == 'PUT':
+    #     return BaseVehicle().updateVehicle(vehicle_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
-
 
 # --------------------------------------------------------------------------------------
 # Main

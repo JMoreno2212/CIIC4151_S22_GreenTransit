@@ -78,3 +78,29 @@ class BaseItem:
                 obj = build_item_map_dict(row)
                 result_list.append(obj)
             return jsonify(result_list), 200
+
+    def updateItem(self, item_id, json):
+        item_dao = ItemDAO()
+        item_name = json['item_name']
+        item_description = json['item_description']
+        item_quantity = json['item_quantity']
+        item_price = json['item_price']
+        item_category = json['item_category']
+        item_type = json['item_type']
+        dispensary_id = json['dispensary_id']
+        new_email = user_dao.getUserByEmail(user_email)
+        # New email doesn't exist or is the same as current
+        if (not new_email) or (user_email == user_dao.getUserById(user_id)[5]):
+            item_dao.updateItem(user_id, user_phone, user_email, user_password)
+            updated_user = user_dao.getUserById(user_id)
+            result = build_user_map_dict(updated_user)
+            return jsonify(result), 200
+        else:
+            return jsonify("Email address is already in use"), 409
+
+    def deleteItem(self, item_id):
+        item_dao = ItemDAO()
+        item_dao.deleteItem(item_id)
+        deleted_item = item_dao.getItemById(item_id)
+        result = build_item_map_dict(deleted_item)
+        return jsonify(result), 200

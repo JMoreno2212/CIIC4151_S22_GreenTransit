@@ -75,3 +75,30 @@ class BaseVehicle:
         else:
             result = build_vehicle_map_dict(vehicle_tuple)
         return jsonify(result), 200
+
+    # def updateVehicle(self, vehicle_id, json):
+    #     vehicle_dao = VehicleDAO()
+    #     vehicle_plate = json['vehicle_plate']
+    #     vehicle_brand = json['vehicle_brand']
+    #     vehicle_model = json['vehicle_model']
+    #     vehicle_year = json['vehicle_year']
+    #     driver_id = json['driver_id']
+    #     new_email = user_dao.getUserByEmail(user_email)
+    #     # New email doesn't exist or is the same as current
+    #     if (not new_email) or (user_email == user_dao.getUserById(user_id)[5]):
+    #         user_dao.updateUser(user_id, user_phone, user_email, user_password)
+    #         updated_user = user_dao.getUserById(user_id)
+    #         result = build_user_map_dict(updated_user)
+    #         return jsonify(result), 200
+    #     else:
+    #         return jsonify("Email address is already in use"), 409
+
+    def deleteVehicle(self, vehicle_id):
+        vehicle_dao = VehicleDAO()
+        vehicle_dao.deleteVehicle(vehicle_id)
+        deleted_vehicle = vehicle_dao.getVehicleById(vehicle_id)
+        deleted_license_id = deleted_vehicle[6]
+        license_dao = LicenseDAO()
+        license_dao.deleteLicense(deleted_license_id)
+        result = build_vehicle_map_dict(deleted_vehicle)
+        return jsonify(result), 200

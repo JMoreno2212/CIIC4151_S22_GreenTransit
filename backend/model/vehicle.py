@@ -21,6 +21,17 @@ class VehicleDAO:
         return vehicle_id
 
     # ----------------------------------------------------------------------------------------------------------------
+    #                                                     Update                                                     #
+    # ----------------------------------------------------------------------------------------------------------------
+    # def updateVehicle(self, vehicle_id, vehicle_plate, vehicle_brand,vehicle_model, vehicle_year, driver_id,):  # REQUIRES ALL FIELDS TO BE FILLED
+    #     cursor = self.conn.cursor()
+    #     query = 'update "Vehicle" set vehicle_plate = %s, vehicle_brand = %s, vehicle_model = %s, vehicle_year = %s, driver_id = %s   where vehicle_id = %s'
+    #     cursor.execute(query, (vehicle_plate, vehicle_brand, vehicle_model, vehicle_year, driver_id, vehicle_id,))
+    #     self.conn.commit()
+    #     cursor.close()
+    #     return True
+
+    # ----------------------------------------------------------------------------------------------------------------
     #                                                     Delete                                                     #
     # ----------------------------------------------------------------------------------------------------------------
     def deleteVehicle(self, vehicle_id):
