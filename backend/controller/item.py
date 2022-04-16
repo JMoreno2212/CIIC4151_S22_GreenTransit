@@ -92,16 +92,10 @@ class BaseItem:
         item_price = json['item_price']
         item_category = json['item_category']
         item_type = json['item_type']
-        dispensary_id = json['dispensary_id']
-        new_email = user_dao.getUserByEmail(user_email)
-        # New email doesn't exist or is the same as current
-        if (not new_email) or (user_email == user_dao.getUserById(user_id)[5]):
-            item_dao.updateItem(user_id, user_phone, user_email, user_password)
-            updated_user = user_dao.getUserById(user_id)
-            result = build_user_map_dict(updated_user)
-            return jsonify(result), 200
-        else:
-            return jsonify("Email address is already in use"), 409
+        item_dao.updateItem(item_name, item_description, item_quantity, item_price, item_category, item_type)
+        updated_item = item_dao.getItemById(item_id)
+        result = build_item_map_dict(updated_item)
+        return jsonify(result), 200
 
     def deleteItem(self, item_id):
         item_dao = ItemDAO()

@@ -65,10 +65,10 @@ class ItemDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Update                                                      #
     # ----------------------------------------------------------------------------------------------------------------
-    def updateItem(self, item_id, item_name, item_description, item_quantity, item_price, item_category, item_type, dispensary_id):  # REQUIRES ALL FIELDS TO BE FILLED
+    def updateItem(self, item_id, item_name, item_description, item_quantity, item_price, item_category, item_type):  # REQUIRES ALL FIELDS TO BE FILLED
         cursor = self.conn.cursor()
-        query = 'update "Item" set item_name = %s, item_description = %s, item_quantity = %s, item_price = %s, item_category = %s, item_type = %s, dispensary_id = %s   where item_id = %s'
-        cursor.execute(query, (item_name, item_description, item_quantity,item_price, item_category, item_type, dispensary_id, item_id,))
+        query = 'update "Item" set item_name = %s, item_description = %s, item_quantity = %s, item_price = %s, item_category = %s, item_type = %s  where item_id = %s'
+        cursor.execute(query, (item_name, item_description, item_quantity,item_price, item_category, item_type, item_id,))
         self.conn.commit()
         cursor.close()
         return True

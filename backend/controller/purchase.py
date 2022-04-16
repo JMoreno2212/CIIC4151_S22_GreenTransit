@@ -8,14 +8,17 @@ def build_purchase_map_dict(row):
               'purchase_type': row[4], 'purchase_date': row[5], 'purchase_total': row[6]}
     return result
 
-def build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type, purchase_date, purchase_total):
-    result = {'purchase_id': purchase_id, 'user_id': user_id, 'dispensary_id': dispensary_id, 'purchase_number': purchase_number,
+def build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
+                             purchase_total):
+    result = {'purchase_id': purchase_id, 'user_id': user_id, 'dispensary_id': dispensary_id,
+              'purchase_number': purchase_number,
               'purchase_type': purchase_type, 'purchase_date': purchase_date, 'purchase_total': purchase_total}
     return result
 
 class BasePurchase:
 
-    def createPurchase(self, user_id, dispensary_id, json):
+    def createPurchase(self, user_id, json):
+        dispensary_id = json['dispensary_id']
         purchase_number = json['purchase_number']
         purchase_type = json['purchase_type']
         purchase_date = json['purchase_date']
@@ -63,17 +66,9 @@ class BasePurchase:
     def updatePurchase(self, purchase_id, json):
         purchase_dao = PurchaseDAO()
         purchase_id = json['purchase_id']
-        dispensary_id = json['dispensary_id']
-        purchase_number = json['purchase_number']
         purchase_type = json['purchase_type']
-        purchase_date = json['purchase_date']
         purchase_total = json['purchase_total']
-        new_email = user_dao.getUserByEmail(user_email)
-        # New email doesn't exist or is the same as current
-        if (not new_email) or (user_email == user_dao.getUserById(user_id)[5]):
-            purchase_dao.updatePurchase(user_id, user_phone, user_email, user_password)
-            updated_user = user_dao.getUserById(user_id)
-            result = build_user_map_dict(updated_user)
-            return jsonify(result), 200
-        else:
-            return jsonify("Email address is already in use"), 409
+        purchase_dao.updatePurchase(purchase_id, purchase_type, purchase_total)
+        updated_purchase = purchase_dao.getPurchaseById(purchase_id)
+        result = build_purchase_map_dict(updated_purchase)
+        return jsonify(result), 200
