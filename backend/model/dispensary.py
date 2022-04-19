@@ -87,7 +87,7 @@ class DispensaryDAO:
                                dispensary_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Delete                                                      #
@@ -98,4 +98,4 @@ class DispensaryDAO:
         cursor.execute(query, (dispensary_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0

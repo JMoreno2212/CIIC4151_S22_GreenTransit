@@ -32,7 +32,7 @@ class LicenseDAO:
         cursor.execute(query, (license_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #

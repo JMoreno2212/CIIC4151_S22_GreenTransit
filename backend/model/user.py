@@ -32,7 +32,7 @@ class UserDAO:
         cursor.execute(query, (user_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
@@ -82,7 +82,7 @@ class UserDAO:
         cursor.execute(query, (user_phone, user_email, generate_password_hash(user_password), user_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Login                                                      #

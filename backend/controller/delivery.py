@@ -8,17 +8,17 @@ from backend.model.vehicle import VehicleDAO
 
 def build_delivery_map_dict(row):
     result = {'delivery_id': row[0], 'delivery_date': row[1], 'delivery_price': row[2], 'delivery_direction': row[3],
-              'delivery_municipality': row[4], 'delivery_zipcode': row[5], 'driver_id': row[6], 'vehicle_id': row[7],
-              'purchase_id': row[8]}
+              'delivery_municipality': row[4], 'delivery_zipcode': row[5], 'delivery_status': row[6],
+              'driver_id': row[7], 'vehicle_id': row[8], 'purchase_id': row[9]}
     return result
 
 
 def build_delivery_attr_dict(delivery_id, delivery_date, delivery_price, delivery_direction, delivery_municipality,
-                             delivery_zipcode, driver_id, vehicle_id, purchase_id):
+                             delivery_zipcode, delivery_status, driver_id, vehicle_id, purchase_id):
     result = {'delivery_id': delivery_id, 'delivery_date': delivery_date, 'delivery_price': delivery_price,
               'delivery_direction': delivery_direction, 'delivery_municipality': delivery_municipality,
-              'delivery_zipcode': delivery_zipcode, 'driver_id': driver_id, 'vehicle_id': vehicle_id,
-              'purchase_id': purchase_id}
+              'delivery_zipcode': delivery_zipcode, 'delivery_status': delivery_status, 'driver_id': driver_id,
+              'vehicle_id': vehicle_id, 'purchase_id': purchase_id}
     return result
 
 
@@ -53,7 +53,8 @@ class BaseDelivery:
                                                   delivery_municipality, delivery_zipcode, driver_id, vehicle_id,
                                                   purchase_id)
         result = build_delivery_attr_dict(delivery_id, delivery_date, delivery_price, delivery_direction,
-                                          delivery_municipality, delivery_zipcode, driver_id, vehicle_id, purchase_id)
+                                          delivery_municipality, delivery_zipcode, "Awaiting Shipment", driver_id,
+                                          vehicle_id, purchase_id)
         return jsonify(result), 200
 
     def getAllDeliveries(self):
@@ -77,14 +78,22 @@ class BaseDelivery:
             result = build_delivery_map_dict(delivery_tuple)
             return jsonify(result), 200
 
-    def updateDelivery(self, delivery_id, json):
+    def updateDeliveryInformation(self, delivery_id, json):
         delivery_dao = DeliveryDAO()
         delivery_date = json['delivery_date']
         delivery_direction = json['delivery_direction']
         delivery_municipality = json['delivery_municipality']
         delivery_zipcode = json['delivery_zipcode']
-        delivery_dao.updateDelivery(delivery_id, delivery_date, delivery_direction, delivery_municipality,
-                                    delivery_zipcode)
+        delivery_dao.updateDeliveryInformation(delivery_id, delivery_date, delivery_direction, delivery_municipality,
+                                               delivery_zipcode)
+        updated_delivery = delivery_dao.getDeliveryById(delivery_id)
+        result = build_delivery_map_dict(updated_delivery)
+        return jsonify(result), 200
+
+    def updateDeliveryStatus(self, delivery_id, json):
+        delivery_dao = DeliveryDAO()
+        delivery_status = json['delivery_status']
+        delivery_dao.updateDeliveryStatus(delivery_id, delivery_status)
         updated_delivery = delivery_dao.getDeliveryById(delivery_id)
         result = build_delivery_map_dict(updated_delivery)
         return jsonify(result), 200

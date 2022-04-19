@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from backend.controller.delivery import BaseDelivery
@@ -9,7 +9,6 @@ from backend.controller.license import BaseLicense
 from backend.controller.purchase import BasePurchase
 from backend.controller.user import BaseUser
 from backend.controller.vehicle import BaseVehicle
-from backend.model.license import LicenseDAO
 
 app = Flask(__name__)
 CORS(app)
@@ -74,7 +73,15 @@ def handleDeliveryById(delivery_id):
     if request.method == 'GET':
         return BaseDelivery().getDeliveryById(delivery_id)
     elif request.method == 'PUT':
-        return BaseDelivery().updateDelivery(delivery_id, request.json)
+        return BaseDelivery().updateDeliveryInformation(delivery_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Delivery/deliveries/<int:delivery_id>/status', methods=['PUT'])
+def handleDeliveryByStatus(delivery_id):
+    if request.method == 'PUT':
+        return BaseDelivery().updateDeliveryStatus(delivery_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 

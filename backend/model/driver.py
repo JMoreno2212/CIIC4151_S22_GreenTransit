@@ -36,7 +36,7 @@ class DriverDAO:
         cursor.execute(query, (driver_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
@@ -85,7 +85,7 @@ class DriverDAO:
         cursor.execute(query, (driver_phone, driver_email, generate_password_hash(driver_password), driver_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Login                                                      #

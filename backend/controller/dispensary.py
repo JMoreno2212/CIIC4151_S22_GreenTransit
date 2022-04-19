@@ -95,7 +95,7 @@ class BaseDispensary:
             return None
         else:
             return jsonify("Dispensary logged in successfully", valid_dispensary[0],
-                           valid_dispensary[6]), 200  # Returns ID & Email
+                           valid_dispensary[6], "Dispensary"), 200  # Returns ID, Email & Type
 
     def updateDispensary(self, dispensary_id, json):
         dispensary_dao = DispensaryDAO()

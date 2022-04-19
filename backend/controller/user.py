@@ -112,4 +112,5 @@ class BaseUser:
         if not valid_user:
             return None
         else:
-            return jsonify("User logged in successfully", valid_user[0], valid_user[5]), 200  # Returns ID & Email
+            # Returns ID, Email & Type
+            return jsonify("User logged in successfully", valid_user[0], valid_user[5], "User"), 200

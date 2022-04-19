@@ -72,7 +72,7 @@ class ItemDAO:
         cursor.execute(query, (item_name, item_description, item_quantity, item_price, item_category, item_type, item_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Delete                                                      #
@@ -83,7 +83,7 @@ class ItemDAO:
         cursor.execute(query, (item_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     def getItemAtDispensary(self, dispensary_id, item_id):
         cursor = self.conn.cursor()

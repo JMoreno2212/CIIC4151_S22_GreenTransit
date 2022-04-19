@@ -48,11 +48,20 @@ class DeliveryDAO:
     #                                                     Update                                                     #
     # ----------------------------------------------------------------------------------------------------------------
     # REQUIRES ALL FIELDS TO BE FILLED
-    def updateDelivery(self, delivery_id, delivery_date, delivery_direction, delivery_municipality, delivery_zipcode):
+    def updateDeliveryInformation(self, delivery_id, delivery_date, delivery_direction, delivery_municipality,
+                                  delivery_zipcode):
         cursor = self.conn.cursor()
         query = 'update "Delivery" set delivery_date = %s, delivery_direction = %s, delivery_municipality = %s,' \
                 'delivery_zipcode = %s where delivery_id = %s'
         cursor.execute(query, (delivery_date, delivery_direction, delivery_municipality, delivery_zipcode, delivery_id))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
+
+    def updateDeliveryStatus(self, delivery_id, delivery_status):
+        cursor = self.conn.cursor()
+        query = 'update "Delivery" set delivery_status = %s where delivery_id = %s'
+        cursor.execute(query, (delivery_status, delivery_id))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0

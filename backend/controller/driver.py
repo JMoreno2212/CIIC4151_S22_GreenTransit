@@ -126,4 +126,5 @@ class BaseDriver:
         if not valid_driver:
             return None
         else:
-            return jsonify("Driver logged in successfully", valid_driver[0], valid_driver[4]), 200  # Returns ID & Email
+            # Returns ID, Email & Type
+            return jsonify("Driver logged in successfully", valid_driver[0], valid_driver[4], "Driver"), 200
