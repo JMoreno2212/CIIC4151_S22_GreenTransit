@@ -92,7 +92,7 @@ class BaseItem:
         item_price = json['item_price']
         item_category = json['item_category']
         item_type = json['item_type']
-        item_dao.updateItem(item_name, item_description, item_quantity, item_price, item_category, item_type)
+        item_dao.updateItem(item_id, item_name, item_description, item_quantity, item_price, item_category, item_type)
         updated_item = item_dao.getItemById(item_id)
         result = build_item_map_dict(updated_item)
         return jsonify(result), 200

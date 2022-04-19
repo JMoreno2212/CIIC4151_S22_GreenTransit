@@ -65,7 +65,6 @@ class BasePurchase:
 
     def updatePurchase(self, purchase_id, json):
         purchase_dao = PurchaseDAO()
-        purchase_id = json['purchase_id']
         purchase_type = json['purchase_type']
         purchase_total = json['purchase_total']
         purchase_dao.updatePurchase(purchase_id, purchase_type, purchase_total)
