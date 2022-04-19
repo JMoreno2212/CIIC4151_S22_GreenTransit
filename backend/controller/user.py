@@ -89,6 +89,28 @@ class BaseUser:
             result = build_user_map_dict(user_tuple)
             return jsonify(result), 200
 
+    # def getUserByEmail(self, json):
+    #     user_dao = UserDAO()
+    #     user_email = json['email']
+    #     user_tuple = user_dao.getUserByEmail(user_email)
+    #     if not user_tuple:  # User Not Found
+    #         return None
+    #     else:
+    #         result = build_user_map_dict(user_tuple)
+    #         return jsonify(result), 200
+
+    def resetPassword(self, json):
+        user_dao = UserDAO()
+        user_email = json['email']
+        new_password = json['password']
+        reset_password = user_dao.resetPassword(user_email, new_password)
+        if not reset_password:  # No user password was reset
+            return None
+        else:
+            updated_user = user_dao.getUserByEmail(user_email)
+            result = build_user_map_dict(updated_user)
+            return jsonify(result), 200
+
     def updateUser(self, user_id, json):
         user_dao = UserDAO()
         user_phone = json['user_phone']

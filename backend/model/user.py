@@ -84,6 +84,14 @@ class UserDAO:
         cursor.close()
         return cursor.rowcount != 0
 
+    def resetPassword(self, user_email, user_password):
+        cursor = self.conn.cursor()
+        query = 'update "User" set user_password = %s where user_email = %s'
+        cursor.execute(query, (generate_password_hash(user_password), user_email))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Login                                                      #
     # ----------------------------------------------------------------------------------------------------------------

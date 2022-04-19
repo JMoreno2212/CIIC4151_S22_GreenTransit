@@ -55,6 +55,22 @@ def verifyLogin():
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/resetpassword', methods=['PUT'])
+def resetPassword():
+    if request.method == 'PUT':
+        user = BaseUser().resetPassword(request.json)
+        if user is not None:
+            return user
+        driver = BaseDriver().resetPassword(request.json)
+        if driver is not None:
+            return driver
+        dispensary = BaseDispensary().resetPassword(request.json)
+        if dispensary is not None:
+            return dispensary
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # Delivery
 # --------------------------------------------------------------------------------------

@@ -103,6 +103,18 @@ class BaseDriver:
             result = build_driver_map_dict(driver_tuple)
         return jsonify(result), 200
 
+    def resetPassword(self, json):
+        driver_dao = DriverDAO()
+        driver_email = json['email']
+        new_password = json['password']
+        reset_password = driver_dao.resetPassword(driver_email, new_password)
+        if not reset_password:  # No driver password was reset
+            return None
+        else:
+            updated_driver = driver_dao.getDriverByEmail(driver_email)
+            result = build_driver_map_dict(updated_driver)
+            return jsonify(result), 200
+
     def updateDriver(self, driver_id, json):
         driver_dao = DriverDAO()
         driver_phone = json['driver_phone']

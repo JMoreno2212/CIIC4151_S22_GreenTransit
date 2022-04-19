@@ -89,6 +89,14 @@ class DispensaryDAO:
         cursor.close()
         return cursor.rowcount != 0
 
+    def resetPassword(self, dispensary_email, dispensary_password):
+        cursor = self.conn.cursor()
+        query = 'update "Dispensary" set dispensary_password = %s where dispensary_email = %s'
+        cursor.execute(query, (generate_password_hash(dispensary_password), dispensary_email))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Delete                                                      #
     # ----------------------------------------------------------------------------------------------------------------

@@ -87,6 +87,14 @@ class DriverDAO:
         cursor.close()
         return cursor.rowcount != 0
 
+    def resetPassword(self, driver_email, driver_password):
+        cursor = self.conn.cursor()
+        query = 'update "Driver" set driver_password = %s where driver_email = %s'
+        cursor.execute(query, (generate_password_hash(driver_password), driver_email))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Login                                                      #
     # ----------------------------------------------------------------------------------------------------------------
