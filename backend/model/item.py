@@ -62,6 +62,43 @@ class ItemDAO:
         cursor.close()
         return result
 
+    # def getItemByName(self, item_name):
+    #     cursor = self.conn.cursor()
+    #     args = ("%" + item_name + "%",)
+    #     query = 'select * from "Item" where item_name like;',
+    #     cursor.execute(query, (item_name, args,))
+    #     result = cursor.fetchone()
+    #     return result
+    #
+    # def getItemByCategory(self, item_category):
+    #     cursor = self.conn.cursor()
+    #     query = 'select * from "Item" where item_category = %s;'
+    #     cursor.execute(query, (item_category,))
+    #     result = cursor.fetchone()
+    #     return result
+    #
+    # def getItemByType(self, item_type):
+    #     cursor = self.conn.cursor()
+    #     query = 'select * from "Item" where item_type = %s;'
+    #     cursor.execute(query, (item_type,))
+    #     result = cursor.fetchone()
+    #     return result
+
+    def getItemByPriceRange(self, item_price_bottom, item_price_top):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where (item_price between %s and %s) and item_active = true; ;'
+        cursor.execute(query, (item_price_bottom, item_price_top))
+        result = cursor.fetchone()
+        return result
+
+    def getItemByFilter(self, item_filter_name, item_filter_description, item_filter_category, item_filter_type):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where (item_name like %s or item_description like %s or item_category like %s ' \
+                'or item_type like %s) and item_active = true;'
+        cursor.execute(query, ('%' + item_filter_name + '%', '%' + item_filter_description + '%', '%' + item_filter_category + '%', '%' + item_filter_type + '%',))
+        result = cursor.fetchone()
+        return result
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Update                                                      #
     # ----------------------------------------------------------------------------------------------------------------
