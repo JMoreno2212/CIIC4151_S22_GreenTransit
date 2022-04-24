@@ -54,10 +54,10 @@ class PurchaseDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Update                                                     #
     # ----------------------------------------------------------------------------------------------------------------
-    def updatePurchase(self, purchase_id, purchase_type, purchase_total):  # REQUIRES ALL FIELDS TO BE FILLED
+    def updatePurchase(self, purchase_id, purchase_type, purchase_total):
         cursor = self.conn.cursor()
         query = 'update "Purchase" set purchase_type = %s, purchase_total = %s where purchase_id = %s'
         cursor.execute(query, (purchase_type, purchase_total, purchase_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0

@@ -92,7 +92,7 @@ class BaseItem:
         item_price = json['item_price']
         item_category = json['item_category']
         item_type = json['item_type']
-        item_dao.updateItem(item_name, item_description, item_quantity, item_price, item_category, item_type)
+        item_dao.updateItem(item_id, item_name, item_description, item_quantity, item_price, item_category, item_type)
         updated_item = item_dao.getItemById(item_id)
         result = build_item_map_dict(updated_item)
         return jsonify(result), 200
@@ -116,3 +116,56 @@ class BaseItem:
         else:
             result = build_item_map_dict(item_tuple)
         return jsonify(result), 200
+
+    # def getItemByName(self, item_name):
+    #     item_dao = ItemDAO()
+    #     item_tuple = item_dao.getItemByName(item_name)
+    #     if not item_tuple:  # Item Not Found
+    #         return jsonify("Item Not Found"), 404
+    #     else:
+    #         result = build_item_map_dict(item_tuple)
+    #     return jsonify(result), 200
+    #
+    # def getItemByCategory(self, item_category):
+    #     item_dao = ItemDAO()
+    #     item_tuple = item_dao.getItemByCategory(item_category)
+    #     if not item_tuple:  # Item Not Found
+    #         return jsonify("Item Not Found"), 404
+    #     else:
+    #         result = build_item_map_dict(item_tuple)
+    #     return jsonify(result), 200
+    #
+    # def getItemByType(self, item_type):
+    #     item_dao = ItemDAO()
+    #     item_tuple = item_dao.getItemByType(item_type)
+    #     if not item_tuple:  # Item Not Found
+    #         return jsonify("Item Not Found"), 404
+    #     else:
+    #         result = build_item_map_dict(item_tuple)
+    #     return jsonify(result), 200
+
+    def getItemByFilter(self, item_filter):
+        item_dao = ItemDAO()
+        item_filter_name = item_filter
+        item_filter_description = item_filter
+        item_filter_category = item_filter
+        item_filter_type = item_filter
+
+        item_tuple = item_dao.getItemByFilter(item_filter_name, item_filter_description, item_filter_category, item_filter_type)
+        if not item_tuple:  # Item Not Found
+            return jsonify("Item Not Found"), 404
+        else:
+            result = build_item_map_dict(item_tuple)
+        return jsonify(result), 200
+
+    def getItemByPriceRange(self, json):
+        item_dao = ItemDAO()
+        item_price_top = json['item_price_top']
+        item_price_bottom = json['item_price_bottom']
+        item_tuple = item_dao.getItemByPriceRange(item_price_bottom, item_price_top)
+        if not item_tuple:  # Item Not Found
+            return jsonify("Item Not Found"), 404
+        else:
+            result = build_item_map_dict(item_tuple)
+        return jsonify(result), 200
+

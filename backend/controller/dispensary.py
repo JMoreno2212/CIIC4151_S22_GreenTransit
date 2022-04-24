@@ -95,7 +95,19 @@ class BaseDispensary:
             return None
         else:
             return jsonify("Dispensary logged in successfully", valid_dispensary[0],
-                           valid_dispensary[6]), 200  # Returns ID & Email
+                           valid_dispensary[6], "Dispensary"), 200  # Returns ID, Email & Type
+
+    def resetPassword(self, json):
+        dispensary_dao = DispensaryDAO()
+        dispensary_email = json['email']
+        new_password = json['password']
+        reset_password = dispensary_dao.resetPassword(dispensary_email, new_password)
+        if not reset_password:  # No dispensary password was reset
+            return None
+        else:
+            updated_dispensary = dispensary_dao.getDispensaryByEmail(dispensary_email)
+            result = build_dispensary_map_dict(updated_dispensary)
+            return jsonify(result), 200
 
     def updateDispensary(self, dispensary_id, json):
         dispensary_dao = DispensaryDAO()

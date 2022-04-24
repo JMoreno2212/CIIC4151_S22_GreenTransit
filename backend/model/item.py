@@ -62,19 +62,58 @@ class ItemDAO:
         cursor.close()
         return result
 
-    # ----------------------------------------------------------------------------------------------------------------
-    #                                                      Update                                                      #
-    # ----------------------------------------------------------------------------------------------------------------
-    def updateItem(self, item_id, item_name, item_description, item_quantity, item_price, item_category, item_type):  # REQUIRES ALL FIELDS TO BE FILLED
+    # def getItemByName(self, item_name):
+    #     cursor = self.conn.cursor()
+    #     args = ("%" + item_name + "%",)
+    #     query = 'select * from "Item" where item_name like;',
+    #     cursor.execute(query, (item_name, args,))
+    #     result = cursor.fetchone()
+    #     return result
+    #
+    # def getItemByCategory(self, item_category):
+    #     cursor = self.conn.cursor()
+    #     query = 'select * from "Item" where item_category = %s;'
+    #     cursor.execute(query, (item_category,))
+    #     result = cursor.fetchone()
+    #     return result
+    #
+    # def getItemByType(self, item_type):
+    #     cursor = self.conn.cursor()
+    #     query = 'select * from "Item" where item_type = %s;'
+    #     cursor.execute(query, (item_type,))
+    #     result = cursor.fetchone()
+    #     return result
+
+    def getItemByPriceRange(self, item_price_bottom, item_price_top):
         cursor = self.conn.cursor()
-        query = 'update "Item" set item_name = %s, item_description = %s, item_quantity = %s, item_price = %s, item_category = %s, item_type = %s  where item_id = %s'
-        cursor.execute(query, (item_name, item_description, item_quantity,item_price, item_category, item_type, item_id,))
-        self.conn.commit()
-        cursor.close()
-        return True
+        query = 'select * from "Item" where (item_price between %s and %s) and item_active = true; ;'
+        cursor.execute(query, (item_price_bottom, item_price_top))
+        result = cursor.fetchone()
+        return result
+
+    def getItemByFilter(self, item_filter_name, item_filter_description, item_filter_category, item_filter_type):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where (item_name like %s or item_description like %s or item_category like %s ' \
+                'or item_type like %s) and item_active = true;'
+        cursor.execute(query, ('%' + item_filter_name + '%', '%' + item_filter_description + '%', '%' + item_filter_category + '%', '%' + item_filter_type + '%',))
+        result = cursor.fetchone()
+        return result
 
     # ----------------------------------------------------------------------------------------------------------------
-    #                                                      Delete                                                      #
+    #                                                    Update                                                      #
+    # ----------------------------------------------------------------------------------------------------------------
+    def updateItem(self, item_id, item_name, item_description, item_quantity, item_price, item_category, item_type):
+        cursor = self.conn.cursor()
+        query = 'update "Item" set item_name = %s, item_description = %s, item_quantity = %s, item_price = %s, ' \
+                'item_category = %s, item_type = %s  where item_id = %s'
+        cursor.execute(query, (item_name, item_description, item_quantity, item_price, item_category, item_type,
+                               item_id,))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
+    # ----------------------------------------------------------------------------------------------------------------
+    #                                                    Delete                                                      #
     # ----------------------------------------------------------------------------------------------------------------
     def deleteItem(self, item_id):
         cursor = self.conn.cursor()
@@ -82,7 +121,7 @@ class ItemDAO:
         cursor.execute(query, (item_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
 
     def getItemAtDispensary(self, dispensary_id, item_id):
         cursor = self.conn.cursor()

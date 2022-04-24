@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from backend.controller.delivery import BaseDelivery
@@ -9,7 +9,6 @@ from backend.controller.license import BaseLicense
 from backend.controller.purchase import BasePurchase
 from backend.controller.user import BaseUser
 from backend.controller.vehicle import BaseVehicle
-from backend.model.license import LicenseDAO
 
 app = Flask(__name__)
 CORS(app)
@@ -56,6 +55,22 @@ def verifyLogin():
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/resetpassword', methods=['PUT'])
+def resetPassword():
+    if request.method == 'PUT':
+        user = BaseUser().resetPassword(request.json)
+        if user is not None:
+            return user
+        driver = BaseDriver().resetPassword(request.json)
+        if driver is not None:
+            return driver
+        dispensary = BaseDispensary().resetPassword(request.json)
+        if dispensary is not None:
+            return dispensary
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # Delivery
 # --------------------------------------------------------------------------------------
@@ -74,7 +89,15 @@ def handleDeliveryById(delivery_id):
     if request.method == 'GET':
         return BaseDelivery().getDeliveryById(delivery_id)
     elif request.method == 'PUT':
-        return BaseDelivery().updateDelivery(delivery_id, request.json)
+        return BaseDelivery().updateDeliveryInformation(delivery_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Delivery/deliveries/<int:delivery_id>/status', methods=['PUT'])
+def handleDeliveryByStatus(delivery_id):
+    if request.method == 'PUT':
+        return BaseDelivery().updateDeliveryStatus(delivery_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -98,7 +121,7 @@ def handleActiveDispensaries():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Dispensary/dispensaries/<int:dispensary_id>', methods=['GET'])
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>', methods=['GET', 'DELETE', 'PUT'])
 def handleDispensaryById(dispensary_id):
     if request.method == 'GET':
         return BaseDispensary().getDispensaryById(dispensary_id)
@@ -159,6 +182,16 @@ def handleDriverById(driver_id):
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/Driver/drivers/<int:driver_id>/deliveries', methods=['PUT', 'POST'])
+def handleDriverDeliveries(driver_id):
+    if request.method == 'PUT':
+        return BaseDriver().getAllDriverDeliveries(driver_id)
+    elif request.method == 'POST':
+        return BaseDelivery().updateDeliveryDriver(request.json, driver_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 @app.route('/Driver/drivers/<int:driver_id>/registervehicle', methods=['POST'])
 def handleDriverVehicleRegistration(driver_id):
     if request.method == 'POST':
@@ -170,28 +203,69 @@ def handleDriverVehicleRegistration(driver_id):
 # --------------------------------------------------------------------------------------
 # Item
 # --------------------------------------------------------------------------------------
-# @app.route('/Item/items/all', methods=['GET'])
-# def handleItems():
+@app.route('/Item/items/all', methods=['GET'])
+def handleItems():
+    if request.method == 'GET':
+        return BaseItem().getAllItems()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+@app.route('/Item/items/filter/<item_filter>', methods=['GET'])
+def handleItemsByName(item_filter):
+    if request.method == 'GET':
+        return BaseItem().getItemByFilter(item_filter)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+# @app.route('/Item/items/name/<item_name>', methods=['GET'])
+# def handleItemsByName(item_name):
 #     if request.method == 'GET':
-#         return BaseItem().getAllItems()
+#         return BaseItem().getItemByName(item_name)
+#     else:
+#         return jsonify("Method Not Allowed"), 405
+#
+# @app.route('/Item/items/category/<item_category>', methods=['GET'])
+# def handleItemsByCategory(item_category):
+#     if request.method == 'GET':
+#         return BaseItem().getItemByCategory(item_category)
 #     else:
 #         return jsonify("Method Not Allowed"), 405
 #
 #
-# @app.route('/Item/items/active', methods=['GET'])
-# def handleActiveItems():
+# @app.route('/Item/items/type/<item_type>', methods=['GET'])
+# def handleItemsByType(item_type):
 #     if request.method == 'GET':
-#         return BaseItem().getAllActiveItems()
+#         return BaseItem().getItemByType(item_type)
 #     else:
 #         return jsonify("Method Not Allowed"), 405
-#
-#
-# @app.route('/Item/items/<int:item_id>', methods=['GET'])
-# def handleItemById(item_id):
-#     if request.method == 'GET':
-#         return BaseItem().getItemById(item_id)
-#     else:
-#         return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Item/items/price/', methods=['GET'])
+def handleItemsByPriceRange():
+    if request.method == 'GET':
+        return BaseItem().getItemByPriceRange(request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Item/items/active', methods=['GET'])
+def handleActiveItems():
+    if request.method == 'GET':
+        return BaseItem().getAllActiveItems()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Item/items/<int:item_id>', methods=['GET', 'DELETE', 'PUT'])
+def handleItemById(item_id):
+    if request.method == 'GET':
+        return BaseItem().getItemById(item_id)
+    elif request.method == 'DELETE':
+        return BaseItem().deleteItem(item_id)
+    elif request.method == 'PUT':
+        return BaseItem().updateItem(item_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
 
 
 # --------------------------------------------------------------------------------------
@@ -232,10 +306,12 @@ def handlePurchases():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Purchase/purchases/<int:purchase_id>', methods=['GET'])
+@app.route('/Purchase/purchases/<int:purchase_id>', methods=['GET', 'PUT'])
 def handlePurchasesById(purchase_id):
     if request.method == 'GET':
         return BasePurchase().getPurchaseById(purchase_id)
+    elif request.method == 'PUT':
+        return BasePurchase().updatePurchase(purchase_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -279,6 +355,14 @@ def handleUserPurchasesById(user_id):
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/User/users/<int:user_id>/purchases/delivery', methods=['GET'])
+def handleUserPurchasesById(user_id):
+    if request.method == 'GET':
+        return BaseDelivery().getDeliveryByUser(user_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # Vehicle
 # --------------------------------------------------------------------------------------
@@ -298,10 +382,12 @@ def handleActiveVehicles():
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Vehicle/vehicles/<int:vehicle_id>', methods=['GET'])
+@app.route('/Vehicle/vehicles/<int:vehicle_id>', methods=['GET', 'DELETE'])
 def handleVehicleById(vehicle_id):
     if request.method == 'GET':
         return BaseVehicle().getVehicleById(vehicle_id)
+    elif request.method == 'DELETE':
+        return BaseVehicle().deleteVehicle(vehicle_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
