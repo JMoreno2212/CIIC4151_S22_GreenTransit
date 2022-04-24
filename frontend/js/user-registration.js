@@ -43,3 +43,34 @@ async function userRegistration() {
 // console.log(registration_password);
 
 //alert(registration_type + "   "+license_file+ "   "+license_expiration);
+
+
+async function vehicleRegistration() {
+    const driver_id = localStorage.getItem('user_id');
+    let vehicle_plate = $('#inputVehiclePlate').val();
+    let vehicle_brand = $('#inputVehicleBrand').val();
+    let vehicle_model = $('#inputVehicleModel').val();
+    let vehicle_year = $('#inputVehicleYear').val();
+    let registration_type = 'Testing';
+    let license_name = $('#inputLicenseName').val();
+    let license_expiration = $('#inputLicenseExpirationDate').val();
+    let license_file = $('#inputLicenseFile').val().replace(/C:\\fakepath\\/i, '');
+
+
+    let item = { vehicle_plate, vehicle_brand, vehicle_model,vehicle_year,registration_type, license_name, license_expiration,license_file}
+    await fetch(`http://127.0.0.1:5000/Driver/drivers/${driver_id}/registervehicle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+        },
+        body: JSON.stringify(item),
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            alert(JSON.stringify(response).toString())
+        })
+        .catch((error) => {
+            console.log('API failure' + error)
+        })
+}
