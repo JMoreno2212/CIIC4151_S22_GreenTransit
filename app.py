@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 from backend.controller.delivery import BaseDelivery
@@ -9,7 +9,6 @@ from backend.controller.license import BaseLicense
 from backend.controller.purchase import BasePurchase
 from backend.controller.user import BaseUser
 from backend.controller.vehicle import BaseVehicle
-from backend.model.license import LicenseDAO
 
 app = Flask(__name__)
 CORS(app)
@@ -56,6 +55,22 @@ def verifyLogin():
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/resetpassword', methods=['PUT'])
+def resetPassword():
+    if request.method == 'PUT':
+        user = BaseUser().resetPassword(request.json)
+        if user is not None:
+            return user
+        driver = BaseDriver().resetPassword(request.json)
+        if driver is not None:
+            return driver
+        dispensary = BaseDispensary().resetPassword(request.json)
+        if dispensary is not None:
+            return dispensary
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # Delivery
 # --------------------------------------------------------------------------------------
@@ -74,7 +89,15 @@ def handleDeliveryById(delivery_id):
     if request.method == 'GET':
         return BaseDelivery().getDeliveryById(delivery_id)
     elif request.method == 'PUT':
-        return BaseDelivery().updateDelivery(delivery_id, request.json)
+        return BaseDelivery().updateDeliveryInformation(delivery_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Delivery/deliveries/<int:delivery_id>/status', methods=['PUT'])
+def handleDeliveryByStatus(delivery_id):
+    if request.method == 'PUT':
+        return BaseDelivery().updateDeliveryStatus(delivery_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -155,6 +178,16 @@ def handleDriverById(driver_id):
         return BaseDriver().deleteDriver(driver_id)
     elif request.method == 'PUT':
         return BaseDriver().updateDriver(driver_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Driver/drivers/<int:driver_id>/deliveries', methods=['PUT', 'POST'])
+def handleDriverDeliveries(driver_id):
+    if request.method == 'PUT':
+        return BaseDriver().getAllDriverDeliveries(driver_id)
+    elif request.method == 'POST':
+        return BaseDelivery().updateDeliveryDriver(request.json, driver_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -318,6 +351,14 @@ def handleUsersById(user_id):
 def handleUserPurchasesById(user_id):
     if request.method == 'GET':
         return BasePurchase().getPurchasesByUser(user_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/User/users/<int:user_id>/purchases/delivery', methods=['GET'])
+def handleUserPurchasesById(user_id):
+    if request.method == 'GET':
+        return BaseDelivery().getDeliveryByUser(user_id)
     else:
         return jsonify("Method Not Allowed"), 405
 

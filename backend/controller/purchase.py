@@ -8,12 +8,14 @@ def build_purchase_map_dict(row):
               'purchase_type': row[4], 'purchase_date': row[5], 'purchase_total': row[6]}
     return result
 
+
 def build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
                              purchase_total):
     result = {'purchase_id': purchase_id, 'user_id': user_id, 'dispensary_id': dispensary_id,
               'purchase_number': purchase_number,
               'purchase_type': purchase_type, 'purchase_date': purchase_date, 'purchase_total': purchase_total}
     return result
+
 
 class BasePurchase:
 
@@ -26,8 +28,8 @@ class BasePurchase:
         purchase_dao = PurchaseDAO()
         purchase_id = purchase_dao.createPurchase(user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
                                                   purchase_total)
-        result = build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
-                                          purchase_total)
+        result = build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type,
+                                          purchase_date, purchase_total)
         return jsonify(result), 200
 
     def getAllPurchases(self):

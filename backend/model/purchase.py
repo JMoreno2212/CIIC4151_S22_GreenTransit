@@ -60,4 +60,4 @@ class PurchaseDAO:
         cursor.execute(query, (purchase_type, purchase_total, purchase_id,))
         self.conn.commit()
         cursor.close()
-        return True
+        return cursor.rowcount != 0
