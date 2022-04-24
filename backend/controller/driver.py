@@ -25,6 +25,17 @@ def build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, drive
     return result
 
 
+def build_driver_delivery_map_dict(row):
+    result = {'delivery_id': row[0], 'driver_id': row[1], 'purchase_id': row[2], 'purchase_number': row[3],
+              'purchase_date': row[4], 'user_id': row[5], 'user_first_name': row[6], 'user_last_name': row[7],
+              'user_phone': row[8], 'user_email': row[9], 'delivery_direction': row[10],
+              'delivery_municipality': row[11], 'dispensary_id': row[12], 'dispensary_name': row[13],
+              'dispensary_phone': row[14], 'dispensary_email': row[15], 'dispensary_direction': row[16],
+              'dispensary_municipality': row[17], 'driver_first_name': row[18],
+              'driver_last_name': row[19]}
+    return result
+
+
 class BaseDriver:
 
     def createDriver(self, json):
@@ -102,6 +113,18 @@ class BaseDriver:
         else:
             result = build_driver_map_dict(driver_tuple)
         return jsonify(result), 200
+
+    def getAllDriverDeliveries(self, driver_id):
+        driver_dao = DriverDAO()
+        driver_deliveries = driver_dao.getAllDriverDeliveries(driver_id)
+        if not driver_deliveries:  # Drivers List is empty
+            return jsonify("No Deliveries Found"), 404
+        else:
+            result_list = []
+            for row in driver_deliveries:
+                obj = build_driver_delivery_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
 
     def resetPassword(self, json):
         driver_dao = DriverDAO()
