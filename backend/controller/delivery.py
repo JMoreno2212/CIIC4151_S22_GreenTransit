@@ -75,7 +75,19 @@ class BaseDelivery:
         else:
             result_list = []
             for row in delivery_list:
-                obj = build_delivery_mega_map_dict(row)
+                obj = build_delivery_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
+    def getAllDeliveriesWithoutDriver(self):
+        delivery_dao = DeliveryDAO()
+        delivery_list = delivery_dao.getAllDeliveriesWithoutDriver()
+        if not delivery_list:  # Delivery List is empty
+            return jsonify("No Deliveries Found"), 404
+        else:
+            result_list = []
+            for row in delivery_list:
+                obj = build_delivery_map_dict(row)
                 result_list.append(obj)
             return jsonify(result_list), 200
 

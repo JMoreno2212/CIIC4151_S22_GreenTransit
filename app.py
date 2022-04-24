@@ -83,6 +83,13 @@ def handleDeliveries():
     else:
         return jsonify("Method Not Allowed"), 405
 
+@app.route('/Delivery/deliveries/no-driver', methods=['GET'])
+def handleDeliveriesWithoutDriver():
+    if request.method == 'GET':
+        return BaseDelivery().getAllDeliveriesWithoutDriver()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
 
 @app.route('/Delivery/deliveries/<int:delivery_id>', methods=['GET', 'PUT'])
 def handleDeliveryById(delivery_id):
@@ -356,7 +363,7 @@ def handleUserPurchasesById(user_id):
 
 
 @app.route('/User/users/<int:user_id>/purchases/delivery', methods=['GET'])
-def handleUserPurchasesById(user_id):
+def handleUserDeliveriesById(user_id):
     if request.method == 'GET':
         return BaseDelivery().getDeliveryByUser(user_id)
     else:
