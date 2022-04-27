@@ -26,26 +26,28 @@ class DeliveryDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
     # ----------------------------------------------------------------------------------------------------------------
-    #Todo: Brings empty always, suggest rename regarding mega map, and enpoint should bring only neccesary information rather than joining all tables.
-    # def getAllDeliveries(self):
-    #     cursor = self.conn.cursor()
-    #     query = 'select (delivery_id, purchase_id, purchase_number, purchase_date, user_id, user_first_name,' \
-    #             'user_last_name, user_phone, user_email, delivery_direction, delivery_municipality, dispensary_id,' \
-    #             'dispensary_name, dispensary_phone, dispensary_email, dispensary_direction, dispensary_municipality) ' \
-    #             'from "Purchase" natural inner join "Delivery" natural inner join "User" natural inner join ' \
-    #             '"Dispensary" order by purchase_date;'
-    #     cursor.execute(query)
-    #     result = []
-    #     for row in cursor:
-    #         result.append(row)
-    #     cursor.close()
-    #     return result
 
-    def getAllDeliveries(self):
+    def getAllDeliveriesBasicInfo(self):
         cursor = self.conn.cursor()
         query = 'select delivery_id, delivery_date, delivery_price, delivery_direction, delivery_municipality,' \
                 'delivery_zipcode, delivery_status, driver_id, vehicle_id, purchase_id ' \
                 'from "Delivery" '
+        cursor.execute(query)
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
+    def getAllDeliveriesFullInfo(self):
+        cursor = self.conn.cursor()
+        query = 'select delivery_id, driver_id, "Purchase".purchase_id, purchase_number, purchase_date,' \
+                '"User".user_id, user_first_name, user_last_name, user_phone, user_email, delivery_direction,' \
+                'delivery_municipality, "Dispensary".dispensary_id, dispensary_name, dispensary_phone,' \
+                'dispensary_email, dispensary_direction, dispensary_municipality from "User" inner join "Purchase" ' \
+                'on "User".user_id = "Purchase".user_id inner join "Delivery" on ' \
+                '"Purchase".purchase_id = "Delivery".purchase_id inner join "Dispensary" on ' \
+                '"Purchase".dispensary_id = "Dispensary".dispensary_id order by purchase_date;'
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -65,9 +67,23 @@ class DeliveryDAO:
         cursor.close()
         return result
 
-    def getDeliveryById(self, delivery_id):
+    def getDeliveryByIdBasicInfo(self, delivery_id):
         cursor = self.conn.cursor()
         query = 'select * from "Delivery" where delivery_id = %s'
+        cursor.execute(query, (delivery_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+
+    def getDeliveryByIdFullInfo(self, delivery_id):
+        cursor = self.conn.cursor()
+        query = 'select delivery_id, driver_id, "Purchase".purchase_id, purchase_number, purchase_date,' \
+                '"User".user_id, user_first_name, user_last_name, user_phone, user_email, delivery_direction,' \
+                'delivery_municipality, "Dispensary".dispensary_id, dispensary_name, dispensary_phone,' \
+                'dispensary_email, dispensary_direction, dispensary_municipality from "User" inner join "Purchase" ' \
+                'on "User".user_id = "Purchase".user_id inner join "Delivery" on ' \
+                '"Purchase".purchase_id = "Delivery".purchase_id inner join "Dispensary" on ' \
+                '"Purchase".dispensary_id = "Dispensary".dispensary_id where delivery_id = %s order by purchase_date;'
         cursor.execute(query, (delivery_id,))
         result = cursor.fetchone()
         cursor.close()

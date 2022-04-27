@@ -151,7 +151,8 @@ class BaseItem:
         item_filter_category = item_filter
         item_filter_type = item_filter
 
-        item_tuple = item_dao.getItemByFilter(item_filter_name, item_filter_description, item_filter_category, item_filter_type)
+        item_tuple = item_dao.getItemByFilter(item_filter_name, item_filter_description, item_filter_category,
+                                              item_filter_type)
         if not item_tuple:  # Item Not Found
             return jsonify("Item Not Found"), 404
         else:
