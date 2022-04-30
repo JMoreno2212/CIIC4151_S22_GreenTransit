@@ -78,18 +78,22 @@ class DriverDAO:
 
     def getAllDriverDeliveries(self, driver_id):
         cursor = self.conn.cursor()
-        query = 'select (delivery_id, purchase_id, purchase_number, purchase_date, user_id, user_first_name,' \
-                'user_last_name, user_phone, user_email, delivery_direction, delivery_municipality, dispensary_id,' \
-                'dispensary_name, dispensary_phone, dispensary_email, dispensary_direction, dispensary_municipality,' \
-                'driver_first_name, driver_last_name) from "Purchase" natural inner join "Delivery" natural inner ' \
-                'join "User" natural inner join "Dispensary" natural inner join "Driver" where driver_id = %s ' \
-                'order by purchase_date;'
+        query = 'select delivery_id, "Driver".driver_id, "Purchase".purchase_id, purchase_number, purchase_date,' \
+                '"User".user_id, user_first_name, user_last_name, user_phone, user_email, delivery_direction,' \
+                'delivery_municipality, "Dispensary".dispensary_id, dispensary_name, dispensary_phone,' \
+                'dispensary_email, dispensary_direction, dispensary_municipality, driver_first_name,' \
+                'driver_last_name from "User" inner join "Purchase" ' \
+                'on "User".user_id = "Purchase".user_id inner join "Delivery" on ' \
+                '"Purchase".purchase_id = "Delivery".purchase_id inner join "Dispensary" on ' \
+                '"Purchase".dispensary_id = "Dispensary".dispensary_id inner join "Driver" on ' \
+                '"Driver".driver_id = "Delivery".driver_id where "Driver".driver_id = %s order by purchase_date;'
         cursor.execute(query, (driver_id,))
         result = []
         for row in cursor:
             result.append(row)
         cursor.close()
         return result
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Update                                                     #
     # ----------------------------------------------------------------------------------------------------------------
