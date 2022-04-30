@@ -126,15 +126,15 @@ class BaseItem:
     #         result = build_item_map_dict(item_tuple)
     #     return jsonify(result), 200
     #
-    # def getItemByCategory(self, item_category):
-    #     item_dao = ItemDAO()
-    #     item_tuple = item_dao.getItemByCategory(item_category)
-    #     if not item_tuple:  # Item Not Found
-    #         return jsonify("Item Not Found"), 404
-    #     else:
-    #         result = build_item_map_dict(item_tuple)
-    #     return jsonify(result), 200
-    #
+    def getItemByCategory(self, item_category):
+        item_dao = ItemDAO()
+        item_tuple = item_dao.getItemByCategory(item_category)
+        if not item_tuple:  # Item Not Found
+            return jsonify("Item Not Found"), 404
+        else:
+            result = build_item_map_dict(item_tuple)
+        return jsonify(result), 200
+
     # def getItemByType(self, item_type):
     #     item_dao = ItemDAO()
     #     item_tuple = item_dao.getItemByType(item_type)
@@ -168,4 +168,3 @@ class BaseItem:
         else:
             result = build_item_map_dict(item_tuple)
         return jsonify(result), 200
-
