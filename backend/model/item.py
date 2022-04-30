@@ -95,7 +95,8 @@ class ItemDAO:
         cursor = self.conn.cursor()
         query = 'select * from "Item" where (item_name like %s or item_description like %s or item_category like %s ' \
                 'or item_type like %s) and item_active = true;'
-        cursor.execute(query, ('%' + item_filter_name + '%', '%' + item_filter_description + '%', '%' + item_filter_category + '%', '%' + item_filter_type + '%',))
+        cursor.execute(query, ('%' + item_filter_name + '%', '%' + item_filter_description + '%', '%' +
+                               item_filter_category + '%', '%' + item_filter_type + '%',))
         result = cursor.fetchone()
         return result
 

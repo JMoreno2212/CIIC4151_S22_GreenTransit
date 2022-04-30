@@ -77,11 +77,20 @@ def resetPassword():
 @app.route('/Delivery/deliveries/all', methods=['GET', 'POST'])
 def handleDeliveries():
     if request.method == 'GET':
-        return BaseDelivery().getAllDeliveries()
+        return BaseDelivery().getAllDeliveriesBasicInfo()
     elif request.method == 'POST':
         return BaseDelivery().createDelivery(request.json)
     else:
         return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Delivery/deliveries/full-information', methods=['GET'])
+def handleDeliveriesFullInfo():
+    if request.method == 'GET':
+        return BaseDelivery().getAllDeliveriesFullInfo()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
 
 @app.route('/Delivery/deliveries/no-driver', methods=['GET'])
 def handleDeliveriesWithoutDriver():
@@ -94,9 +103,17 @@ def handleDeliveriesWithoutDriver():
 @app.route('/Delivery/deliveries/<int:delivery_id>', methods=['GET', 'PUT'])
 def handleDeliveryById(delivery_id):
     if request.method == 'GET':
-        return BaseDelivery().getDeliveryById(delivery_id)
+        return BaseDelivery().getDeliveryByIdBasicInfo(delivery_id)
     elif request.method == 'PUT':
         return BaseDelivery().updateDeliveryInformation(delivery_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Delivery/deliveries/<int:delivery_id>/full-information', methods=['GET'])
+def handleDeliveryByIdFullInfo(delivery_id):
+    if request.method == 'GET':
+        return BaseDelivery().getDeliveryByIdFullInfo(delivery_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -189,9 +206,9 @@ def handleDriverById(driver_id):
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Driver/drivers/<int:driver_id>/deliveries', methods=['PUT', 'POST'])
+@app.route('/Driver/drivers/<int:driver_id>/deliveries', methods=['GET', 'POST'])
 def handleDriverDeliveries(driver_id):
-    if request.method == 'PUT':
+    if request.method == 'GET':
         return BaseDriver().getAllDriverDeliveries(driver_id)
     elif request.method == 'POST':
         return BaseDelivery().updateDeliveryDriver(request.json, driver_id)
@@ -199,7 +216,7 @@ def handleDriverDeliveries(driver_id):
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Driver/drivers/<int:driver_id>/registervehicle', methods=['POST'])
+@app.route('/Driver/drivers/<int:driver_id>/register-vehicle', methods=['POST'])
 def handleDriverVehicleRegistration(driver_id):
     if request.method == 'POST':
         return BaseVehicle().createVehicle(driver_id, request.json)
@@ -217,12 +234,14 @@ def handleItems():
     else:
         return jsonify("Method Not Allowed"), 405
 
+
 @app.route('/Item/items/filter/<item_filter>', methods=['GET'])
 def handleItemsByName(item_filter):
     if request.method == 'GET':
         return BaseItem().getItemByFilter(item_filter)
     else:
         return jsonify("Method Not Allowed"), 405
+
 
 # @app.route('/Item/items/name/<item_name>', methods=['GET'])
 # def handleItemsByName(item_name):
