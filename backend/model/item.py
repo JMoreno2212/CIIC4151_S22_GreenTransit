@@ -70,13 +70,13 @@ class ItemDAO:
     #     result = cursor.fetchone()
     #     return result
     #
-    # def getItemByCategory(self, item_category):
-    #     cursor = self.conn.cursor()
-    #     query = 'select * from "Item" where item_category = %s;'
-    #     cursor.execute(query, (item_category,))
-    #     result = cursor.fetchone()
-    #     return result
-    #
+    def getItemByCategory(self, item_category):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where item_category = %s;'
+        cursor.execute(query, (item_category,))
+        result = cursor.fetchone()
+        return result
+    
     # def getItemByType(self, item_type):
     #     cursor = self.conn.cursor()
     #     query = 'select * from "Item" where item_type = %s;'
