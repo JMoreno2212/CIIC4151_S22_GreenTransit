@@ -8,7 +8,9 @@ async function login() {
 
 
 
-    let test =$('#inputTest').val();
+
+
+
 
     // login_type,
 
@@ -24,13 +26,24 @@ async function login() {
     })
         .then((response) => response.json())
         .then((response) => {
-            console.log(response[1])
+            let user_type = response[3];
+                console.log(user_type)
             console.log(response.length)
             let user_id = response[1];
-            if (response.length === 3){
+            if (response.length === 4){
                 localStorage.setItem('user_id', user_id);
-                window.location.href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/deliveryTrackerSystemAssigned.html?_ijt=ipbf8bvtfv7ghif0f0jktibg9d&_ij_reload=RELOAD_ON_SAVE";
-               }
+                if(user_type==="Driver"){
+                    window.location.href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/deliveryTrackerSystemNotAssigned.html?_ijt=blbsjt00ldruvqb7m5ac8rc7jn&_ij_reload=RELOAD_ON_SAVE";
+                }
+                else if (user_type==="User"){
+                    window.location.href="";
+
+                }
+                else {
+                    window.location.href="";
+
+                }
+            }
             else{
                 alert("Wrong user/password");
             }
@@ -58,12 +71,83 @@ async function register() {
     console.log(registration_type);
 }
 
-function submitDeliveryInfo(d_id,o_id){
-    console.log("INFO IN THE DB" +"..."+ d_id +"..." + o_id);
+async function submitDeliveryInfo(delivery_id,driver_id){
+    console.log("INFO IN THE DB" +"..."+ delivery_id +"..." + driver_id);
+
+    let item = {delivery_id}
+    await fetch(`http://127.0.0.1:5000/Driver/drivers/${driver_id}/deliveries`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+        },
+        body: JSON.stringify(item),
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            location.reload();
+            console.log(response)
+            //alert(JSON.stringify(response).toString())
+        })
+        .catch((error) => {
+            console.log('API failure' + error)
+        })
+
 
 }
 
-// async function test() {
-//     window.location.href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/deliveryTrackerSystemAssigned.html?_ijt=ipbf8bvtfv7ghif0f0jktibg9d&_ij_reload=RELOAD_ON_SAVE";
-//
-// }
+async function updateDeliveryStatus(delivery_id,delivery_status) {
+    //window.location.href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/deliveryTrackerSystemAssigned.html?_ijt=ipbf8bvtfv7ghif0f0jktibg9d&_ij_reload=RELOAD_ON_SAVE";
+
+    console.log("INFO IN THE DB2" +"..."+ delivery_id +"..." + delivery_status);
+
+    let item = {delivery_status}
+    await fetch(`http://127.0.0.1:5000/Delivery/deliveries/${delivery_id}/status`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+        },
+        body: JSON.stringify(item),
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            location.reload();
+            console.log(response)
+            //alert(JSON.stringify(response).toString())
+        })
+        .catch((error) => {
+            console.log('API failure' + error)
+        })
+}
+
+async function resetPassword() {
+    let email = $('#inputEmail').val();
+    let passwordNotConfirmed = $('#inputPasswordNotConfirmed').val();
+    let password = $('#inputPassword').val();
+
+    if(passwordNotConfirmed !== password){
+        alert("Password and Confirm Password must be match!");
+    }
+    else{
+
+        let item = {email,password}
+        await fetch("http://127.0.0.1:5000/resetpassword", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+            },
+            body: JSON.stringify(item),
+        })
+            .then((response) => response.json())
+            .then((response) => {
+                console.log(response)
+                //alert(JSON.stringify(response).toString())
+            })
+            .catch((error) => {
+                console.log('API failure' + error)
+            })
+    }
+
+}
