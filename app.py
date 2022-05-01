@@ -250,12 +250,12 @@ def handleItemsByName(item_filter):
 #     else:
 #         return jsonify("Method Not Allowed"), 405
 #
-# @app.route('/Item/items/category/<item_category>', methods=['GET'])
-# def handleItemsByCategory(item_category):
-#     if request.method == 'GET':
-#         return BaseItem().getItemByCategory(item_category)
-#     else:
-#         return jsonify("Method Not Allowed"), 405
+@app.route('/Item/items/category/<item_category>', methods=['GET'])
+def handleItemsByCategory(item_category):
+    if request.method == 'GET':
+        return BaseItem().getItemByCategory(item_category)
+    else:
+        return jsonify("Method Not Allowed"), 405
 #
 #
 # @app.route('/Item/items/type/<item_type>', methods=['GET'])
@@ -324,6 +324,7 @@ def handleLicenseById(license_id):
 # --------------------------------------------------------------------------------------
 # Purchase
 # --------------------------------------------------------------------------------------
+
 @app.route('/Purchase/purchases', methods=['GET'])
 def handlePurchases():
     if request.method == 'GET':
