@@ -1,0 +1,181 @@
+
+
+
+:root{
+    --green-color: #99B898;
+    --grey-color: #594F4F;
+    --black: #13131a;
+    --dark-brown: #362706;
+    --border: .1rem solid rgba(255,255,255,.3);
+}
+
+html{
+    font-size: 75%;
+    overflow-x: hidden;
+    scroll-padding-top: 9rem;
+    scroll-behavior: smooth;
+}
+
+
+h1{
+    font-size: 65px;
+    color: var(--green-color);
+}
+
+h1 .h1color{
+    color: var(--grey-color);
+}
+
+html::-webkit-scrollbar{
+    width: .8rem;
+}
+
+html::-webkit-scrollbar-track{
+    background: transparent;
+}
+
+html::-webkit-scrollbar-thumb{
+    background: #fff;
+    border-radius: 5rem;
+}
+
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem 7%;
+    border-bottom: var(--border);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    border-bottom: groove;
+    border-bottom-width: 5px;
+
+}
+
+.header .logo img{
+    height: 6rem;
+}
+
+
+.header .navbar a{
+    margin:0 1rem;
+    font-size: 1.6rem;
+    color: var(--black);
+    text-decoration: none;
+}
+
+.header .navbar a:hover{
+    color: var(--green-color);
+    border-bottom: .1rem solid var(--green-color);
+    padding-bottom: .5rem;
+}
+
+.header .icons i{
+    cursor: pointer;
+    margin:0 1rem;
+    font-size: 18px;
+}
+
+.header .icons i:hover{
+    color: var(--green-color);
+}
+
+#menu-btn{
+    display: none;
+}
+
+.header .search-form{
+    position: absolute;
+    top: 115%;   right: 8%;
+    background: #e8e7e7;
+    width: 50rem;
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    transform: scaleY(0);
+    transform-origin: top;
+}
+
+
+.header .search-form input{
+    height: 100%;
+    width: 100%;
+    font-size: 1.6rem;
+    color:var(--black);
+    padding: 1rem;
+    text-transform: none;
+}
+
+.header .search-form label{
+    cursor: pointer;
+    font-size: 2.2rem;
+    margin-right: 1.5rem;
+    color: var(--black);
+}
+
+.header .search-form label:hover{
+    color:var(--green-color);
+}
+
+.jsgrid-grid-header td, .jsgrid-grid-header th  {
+    background-color: #DCDCDC !important;
+    font-weight: bold;
+}
+
+
+.jsgrid-grid-body td,  .jsgrid-grid-body th{
+    background-color: #F5F5F5 !important;
+
+}
+
+.card {
+    width: 36rem;
+    height:45rem;
+    background-color: #5a4f4e;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+
+}
+
+p{
+    color: lightgray;
+    margin-right: 10px;
+}
+
+a {
+    color: black;
+}
+
+.dropdown-labels{
+    color: lightgray;
+    margin-right: 10px;
+
+}
+
+.form-control{
+    background-color: transparent;
+}
+.input-group {
+    display: table;  /* Instead of display:block */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-label{
+    color: lightgray;
+
+}
+
+.btn-round-lg{
+    border-radius: 25px;
+    background-color: #9cbc9c;
+    width:200px;
+    height:50px;
+    color: white;
+    font-size: 24px;
+}

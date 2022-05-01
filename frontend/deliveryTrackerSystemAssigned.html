@@ -14,7 +14,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/login-style.css">
+    <link rel="stylesheet" href="css/driver-home.css">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <title>Green Transit!</title>
@@ -26,14 +26,38 @@
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-
-
 </head>
 <body>
 
 <div>&nbsp;</div>
 <div>&nbsp;</div>
-<div id="jsGrid"></div>
+
+<header class="header">
+    <a href="#" class="logo">
+        <img src="img/GT_Logo.png" alt="">
+    </a>
+    <h1>Green <span class="h1color"> Transit</span></h1>
+    <nav class="navbar">
+        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/deliveryTrackerSystemNotAssigned.html?_ijt=blbsjt00ldruvqb7m5ac8rc7jn&_ij_reload=RELOAD_ON_SAVE">Home</a>
+        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/deliveryTrackerSystemAssigned.html?_ijt=iq5b779eru1tgas9srmccs7mbg&_ij_reload=RELOAD_ON_SAVE">Assigned Orders </a>
+        <a href="">Past Orders</a>
+        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/vehicle-registration.html?_ijt=rctltnrqgfo3rbg1j9144gjavm&_ij_reload=RELOAD_ON_SAVE">Register Car</a>
+        <a href="">About Us</a>
+        <a href="">Contact Us</a>
+        <a href="">Account</a>
+    </nav>
+
+</header>
+
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+
+
+<div id="jsGrid" class="jsgrid-style"></div>
 
 <script>
 
@@ -96,7 +120,7 @@
                 console.log(filter);
                 return $.ajax({
                     type: "GET",
-                    url: "http://127.0.0.1:5000/Purchase/purchases",
+                    url: `http://127.0.0.1:5000/Driver/drivers/${driver_id}/deliveries`,
                     data: '{}',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -119,21 +143,34 @@
         },
         onItemUpdated: function(args) {
             let order_status_selected = args['item']['order_status'];
-            console.log(order_status_selected);
+            let delivery_id = args['item']['delivery_id'];
+            console.log(delivery_id );
             sendEmail(order_status_selected);
+            updateDeliveryStatus(delivery_id,order_status_selected);
+
             //args.grid.data[selectedRow] = args.item;
         },
 
         fields: [
-            { name: "dispensary_id", type: "text", width: 150, title:"dispensary ID", editing: false},
-            { name: "item_id", type: "text", width: 50, title:"Item ID",editing: false },
+            { name: "delivery_id", type: "text", width: 150, title:"Delivery ID", editing: false, visible: false},
+            { name: "purchase_id", type: "text", width: 50, title:"Purchase ID",editing: false,visible: false },
+            { name: "purchase_number", type: "text", width: 200, title: "Purchase Number",editing: false},
             { name: "purchase_date", type: "text", width: 200, title: "Purchase Date",editing: false},
-            { name: "dispensary_id", type: "text", width: 150,  title: "Dispensary ID",editing: false},
-            { name: "purchase_item_quantity", type: "text", width: 150, title: "Item Quantity",editing: false },
-            { name: "purchase_total", type: "text", width: 150, title: "Purchase Total",editing: false },
-            { name: "user_id", type: "text",width: 150, title: "User ID",editing: false,visible: true, },
-            { name: "Assigned driver", type: "text", editing: false,textField: "Assigned driver"},
-            { name: "order_status", type: "select", items: order_status, valueField: "Name", textField: "Name", title:"Order Status"},
+            { name: "user_id", type: "text",width: 150, title: "User ID",editing: false,visible: false, },
+            { name: "user_first_name", type: "text", width: 150, title:"User Name", editing: false},
+            { name: "user_last_name", type: "text", width: 150, title:"User Last name", editing: false},
+            { name: "user_phone", type: "text", width: 150,  title: "User Phone",editing: false},
+            { name: "user_email", type: "text", width: 150,  title: "User Email",editing: false,visible: false},
+            { name: "delivery_direction", type: "text", width: 150, title: "Delivery Direction",editing: false },
+            { name: "delivery_municipality", type: "text", width: 150, title: "Delivery Municipality",editing: false },
+            { name: "dispensary_id", type: "text", editing: false,title: "Dispensary ID",visible: false },
+            { name: "dispensary_name", type: "text", editing: false,title: "Dispensary Name"},
+            { name: "dispensary_phone", type: "text", editing: false,title: "Dispensary Phone"},
+            { name: "dispensary_email", type: "text", editing: false,title: "Dispensary Email",visible: false},
+            { name: "dispensary_direction", type: "text", editing: false,title: "Dispensary Direction"},
+            { name: "delivery_status", type: "text", editing: false,title: "Order Status"},
+            //{ name: "delivery_status", type: "text", editing: false,textField: "Order Status"},
+            { name: "order_status", type: "select", items: order_status, valueField: "Name", textField: "Name", title:"Edit Order Status"},
             { name: "Edit", type: "control",deleteButton: false,textField: "Edit"}
 
 
