@@ -13,6 +13,14 @@ def build_delivery_map_dict(row):
     return result
 
 
+def build_delivery_no_driver_map_dict(row):
+    result = {'delivery_id': row[0], 'delivery_date': row[1], 'delivery_price': row[2], 'delivery_direction': row[3],
+              'delivery_municipality': row[4], 'delivery_zipcode': row[5], 'delivery_status': row[6],
+              'driver_id': row[7], 'vehicle_id': row[8], 'purchase_id': row[9], 'purchase_number': row[10],
+              'dispensary_name': row[11]}
+    return result
+
+
 def build_delivery_all_info_map_dict(row):
     result = {'delivery_id': row[0], 'driver_id': row[1], 'purchase_id': row[2], 'purchase_number': row[3],
               'purchase_date': row[4], 'user_id': row[5], 'user_first_name': row[6], 'user_last_name': row[7],
@@ -99,7 +107,7 @@ class BaseDelivery:
         else:
             result_list = []
             for row in delivery_list:
-                obj = build_delivery_map_dict(row)
+                obj = build_delivery_no_driver_map_dict(row)
                 result_list.append(obj)
             return jsonify(result_list), 200
 

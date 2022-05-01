@@ -9,19 +9,21 @@ def build_driver_map_dict(row):
     result = {'driver_id': row[0], 'driver_first_name': row[1], 'driver_last_name': row[2], 'driver_birth_date': row[3],
               'driver_phone': row[4], 'driver_email': row[5], 'driver_password': row[6],
               'driver_driving_license': row[7], 'driver_gmp_certificate': row[8],
-              'driver_dispensary_technician': row[9], 'occupational_license_id': row[10], 'driver_active': row[11]}
+              'driver_dispensary_technician': row[9], 'occupational_license_id': row[10], 'driver_active': row[11],
+              'driver_picture': row[12]}
     return result
 
 
 def build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_birth_date, driver_phone,
                            driver_email, driver_password, driver_driving_license, driver_gmp_certificate,
-                           driver_dispensary_technician, occupational_license_id, driver_active):
+                           driver_dispensary_technician, occupational_license_id, driver_active, driver_picture):
     result = {'driver_id': driver_id, 'driver_first_name': driver_first_name, 'driver_last_name': driver_last_name,
               'driver_birth_date': driver_birth_date, 'driver_phone': driver_phone, 'driver_email': driver_email,
               'driver_password': driver_password, 'driver_driving_license': driver_driving_license,
               'driver_gmp_certificate': driver_gmp_certificate,
               'driver_dispensary_technician': driver_dispensary_technician,
-              'occupational_license_id': occupational_license_id, 'driver_active': driver_active}
+              'occupational_license_id': occupational_license_id, 'driver_active': driver_active,
+              'driver_picture': driver_picture}
     return result
 
 
@@ -32,7 +34,7 @@ def build_driver_delivery_map_dict(row):
               'delivery_municipality': row[11], 'dispensary_id': row[12], 'dispensary_name': row[13],
               'dispensary_phone': row[14], 'dispensary_email': row[15], 'dispensary_direction': row[16],
               'dispensary_municipality': row[17], 'driver_first_name': row[18],
-              'driver_last_name': row[19]}
+              'driver_last_name': row[19], 'delivery_status': row[20]}
     return result
 
 
@@ -52,6 +54,7 @@ class BaseDriver:
         license_name = json['license_name']
         license_expiration = json['license_expiration']
         license_file = json['license_file']
+        driver_picture = json['registration_picture']
         driver_dao = DriverDAO()
         existing_driver = driver_dao.getDriverByEmail(driver_email)
         license_dao = LicenseDAO()
@@ -60,10 +63,12 @@ class BaseDriver:
             license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
             driver_id = driver_dao.createDriver(driver_first_name, driver_last_name, driver_birth_date, driver_phone,
                                                 driver_email, driver_password, driver_driving_license,
-                                                driver_gmp_certificate, driver_dispensary_technician, license_id)
+                                                driver_gmp_certificate, driver_dispensary_technician, license_id,
+                                                driver_picture)
             result = build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_birth_date,
                                             driver_phone, driver_email, driver_password, driver_driving_license,
-                                            driver_gmp_certificate, driver_dispensary_technician, license_id, True)
+                                            driver_gmp_certificate, driver_dispensary_technician, license_id, True,
+                                            driver_picture)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -138,7 +143,7 @@ class BaseDriver:
             result = build_driver_map_dict(updated_driver)
             return jsonify(result), 200
 
-    def updateDriver(self, driver_id, json):
+    def updateDriverData(self, driver_id, json):
         driver_dao = DriverDAO()
         driver_phone = json['driver_phone']
         driver_email = json['driver_email']
@@ -146,12 +151,20 @@ class BaseDriver:
         new_email = driver_dao.getDriverByEmail(driver_email)
         # New email doesn't exist or is the same as current
         if (not new_email) or (driver_email == driver_dao.getDriverById(driver_id)[5]):
-            driver_dao.updateDriver(driver_id, driver_phone, driver_email, driver_password)
+            driver_dao.updateDriverData(driver_id, driver_phone, driver_email, driver_password)
             updated_driver = driver_dao.getDriverById(driver_id)
             result = build_driver_map_dict(updated_driver)
             return jsonify(result), 200
         else:
             return jsonify("Email address is already in use"), 409
+
+    def updateDriverPicture(self, driver_id, json):
+        driver_dao = DriverDAO()
+        driver_picture = json['driver_picture']
+        driver_dao.updateDriverPicture(driver_id, driver_picture)
+        updated_driver = driver_dao.getDriverById(driver_id)
+        result = build_driver_map_dict(updated_driver)
+        return jsonify(result), 200
 
     def verifyDriverLogin(self, json):
         driver_email = json['login_email']

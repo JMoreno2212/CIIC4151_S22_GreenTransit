@@ -12,12 +12,12 @@ class UserDAO:
     #                                                     Create                                                     #
     # ----------------------------------------------------------------------------------------------------------------
     def createUser(self, user_first_name, user_last_name, user_birth_date, user_phone, user_email, user_password,
-                   license_id):
+                   license_id, user_picture):
         cursor = self.conn.cursor()
         query = 'insert into "User" (user_first_name, user_last_name, user_birth_date, user_phone, user_email, ' \
-                'user_password, license_id) values (%s, %s, %s, %s, %s, %s, %s) returning user_id'
+                'user_password, license_id, user_picture) values (%s, %s, %s, %s, %s, %s, %s, %s) returning user_id'
         cursor.execute(query, (user_first_name, user_last_name, user_birth_date, user_phone, user_email,
-                               generate_password_hash(user_password), license_id))
+                               generate_password_hash(user_password), license_id, user_picture))
         user_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
@@ -76,10 +76,18 @@ class UserDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Update                                                     #
     # ----------------------------------------------------------------------------------------------------------------
-    def updateUser(self, user_id, user_phone, user_email, user_password):  # REQUIRES ALL FIELDS TO BE FILLED
+    def updateUserData(self, user_id, user_phone, user_email, user_password):
         cursor = self.conn.cursor()
         query = 'update "User" set user_phone = %s, user_email = %s, user_password = %s where user_id = %s'
         cursor.execute(query, (user_phone, user_email, generate_password_hash(user_password), user_id,))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
+    def updateUserPicture(self, user_id, user_picture):
+        cursor = self.conn.cursor()
+        query = 'update "User" set user_picture = %s where user_id = %s'
+        cursor.execute(query, (user_picture, user_id,))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0

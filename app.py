@@ -152,7 +152,7 @@ def handleDispensaryById(dispensary_id):
     elif request.method == 'DELETE':
         return BaseDispensary().deleteDispensary(dispensary_id)
     elif request.method == 'PUT':
-        return BaseDispensary().updateDispensary(dispensary_id, request.json)
+        return BaseDispensary().updateDispensaryData(dispensary_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -174,6 +174,36 @@ def handleDispensaryItems(dispensary_id):
     else:
         return jsonify("Method Not Allowed"), 405
 
+
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/purchases', methods=['GET', 'POST'])
+def handleDispensaryPurchases(dispensary_id):
+    if request.method == 'GET':
+        return BasePurchase().getAllPurchasesAtDispensary(dispensary_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/purchase/<int:purchase_id>', methods=['GET'])
+def handleDispensaryItemsById(dispensary_id, purchase_id):
+    if request.method == 'GET':
+        return BasePurchase().getPurchaseByIdAtDispensary(dispensary_id, purchase_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/<int:item_id>', methods=['GET', 'DELETE', 'PUT'])
+def handleItemById(dispensary_id, item_id):
+    if request.method == 'GET':
+        return BaseItem().getItemAtDispensary(dispensary_id, item_id)
+    elif request.method == 'DELETE':
+        return BaseItem().deleteItemAtDispensary(dispensary_id, item_id)
+    elif request.method == 'PUT':
+        return BaseItem().updateItemData(dispensary_id, item_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+# TODO: Endpoint to update picture for both item and dispensary
 
 # --------------------------------------------------------------------------------------
 # Driver
@@ -201,7 +231,7 @@ def handleDriverById(driver_id):
     elif request.method == 'DELETE':
         return BaseDriver().deleteDriver(driver_id)
     elif request.method == 'PUT':
-        return BaseDriver().updateDriver(driver_id, request.json)
+        return BaseDriver().updateDriverData(driver_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -243,27 +273,12 @@ def handleItemsByName(item_filter):
         return jsonify("Method Not Allowed"), 405
 
 
-# @app.route('/Item/items/name/<item_name>', methods=['GET'])
-# def handleItemsByName(item_name):
-#     if request.method == 'GET':
-#         return BaseItem().getItemByName(item_name)
-#     else:
-#         return jsonify("Method Not Allowed"), 405
-#
 @app.route('/Item/items/category/<item_category>', methods=['GET'])
 def handleItemsByCategory(item_category):
     if request.method == 'GET':
         return BaseItem().getItemByCategory(item_category)
     else:
         return jsonify("Method Not Allowed"), 405
-#
-#
-# @app.route('/Item/items/type/<item_type>', methods=['GET'])
-# def handleItemsByType(item_type):
-#     if request.method == 'GET':
-#         return BaseItem().getItemByType(item_type)
-#     else:
-#         return jsonify("Method Not Allowed"), 405
 
 
 @app.route('/Item/items/price/', methods=['GET'])
@@ -278,18 +293,6 @@ def handleItemsByPriceRange():
 def handleActiveItems():
     if request.method == 'GET':
         return BaseItem().getAllActiveItems()
-    else:
-        return jsonify("Method Not Allowed"), 405
-
-
-@app.route('/Item/items/<int:item_id>', methods=['GET', 'DELETE', 'PUT'])
-def handleItemById(item_id):
-    if request.method == 'GET':
-        return BaseItem().getItemById(item_id)
-    elif request.method == 'DELETE':
-        return BaseItem().deleteItem(item_id)
-    elif request.method == 'PUT':
-        return BaseItem().updateItem(item_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -369,7 +372,7 @@ def handleUsersById(user_id):
     elif request.method == 'DELETE':
         return BaseUser().deleteUser(user_id)
     elif request.method == 'PUT':
-        return BaseUser().updateUser(user_id, request.json)
+        return BaseUser().updateUserData(user_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 

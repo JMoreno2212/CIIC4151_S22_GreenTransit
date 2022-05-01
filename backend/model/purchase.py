@@ -20,6 +20,15 @@ class PurchaseDAO:
         cursor.close()
         return purchase_id
 
+    def createPurchasedItem(self, purchase_id, item_id, purchased_quantity, item_subtotal):
+        cursor = self.conn.cursor()
+        query = 'insert into "PurchasedItems" (purchase_id, item_id, purchased_quantity, item_subtotal) ' \
+                'values (%s, %s, %s, %s)'
+        cursor.execute(query, (purchase_id, item_id, purchased_quantity, item_subtotal))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Read                                                      #
     # ----------------------------------------------------------------------------------------------------------------
@@ -33,10 +42,28 @@ class PurchaseDAO:
         cursor.close()
         return result
 
+    def getAllPurchasesAtDispensary(self, dispensary_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Purchase" where dispensary_id = %s;'
+        cursor.execute(query, (dispensary_id,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
     def getPurchaseById(self, purchase_id):
         cursor = self.conn.cursor()
         query = 'select * from "Purchase" where purchase_id = %s'
         cursor.execute(query, (purchase_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+
+    def getPurchaseByIdAtDispensary(self, dispensary_id, purchase_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Purchase" where dispensary_id = %s and purchase_id = %s'
+        cursor.execute(query, (dispensary_id, purchase_id,))
         result = cursor.fetchone()
         cursor.close()
         return result

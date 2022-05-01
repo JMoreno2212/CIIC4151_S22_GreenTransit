@@ -1,5 +1,6 @@
 from flask import jsonify
 
+from backend.model.item import ItemDAO
 from backend.model.purchase import PurchaseDAO
 
 
@@ -25,9 +26,23 @@ class BasePurchase:
         purchase_type = json['purchase_type']
         purchase_date = json['purchase_date']
         purchase_total = json['purchase_total']
+        purchased_items = json['purchased_items']
         purchase_dao = PurchaseDAO()
         purchase_id = purchase_dao.createPurchase(user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
                                                   purchase_total)
+        item_dao = ItemDAO()
+        for item in purchased_items:
+            item_id = item[0]
+            purchased_quantity = item[1]
+            old_quantity = item_dao.getItemQuantityById(item_id)
+            new_quantity = old_quantity - purchased_quantity
+            if new_quantity < 0:
+                return jsonify("Not enough items available"), 409
+            item_price = item_dao.getItemPriceById(item_id)
+            item_subtotal = item_price * purchased_quantity
+            purchase_dao.createPurchasedItem(purchase_id, item_id, purchased_quantity, item_subtotal)
+            item_dao.lowerItemQuantity(item_id, new_quantity)
+
         result = build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type,
                                           purchase_date, purchase_total)
         return jsonify(result), 200
@@ -44,9 +59,30 @@ class BasePurchase:
                 result_list.append(obj)
             return jsonify(result_list), 200
 
+    def getAllPurchasesAtDispensary(self, dispensary_id):
+        purchase_dao = PurchaseDAO()
+        purchases_list = purchase_dao.getAllPurchasesAtDispensary(dispensary_id)
+        if not purchases_list:  # Purchase List is empty
+            return jsonify("No Purchases Found"), 404
+        else:
+            result_list = []
+            for row in purchases_list:
+                obj = build_purchase_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
     def getPurchaseById(self, purchase_id):
         purchase_dao = PurchaseDAO()
         purchase_tuple = purchase_dao.getPurchaseById(purchase_id)
+        if not purchase_tuple:  # Purchase Not Found
+            return jsonify("Purchase Not Found"), 404
+        else:
+            result = build_purchase_map_dict(purchase_tuple)
+            return jsonify(result), 200
+
+    def getPurchaseByIdAtDispensary(self, dispensary_id, purchase_id):
+        purchase_dao = PurchaseDAO()
+        purchase_tuple = purchase_dao.getPurchaseByIdAtDispensary(dispensary_id, purchase_id)
         if not purchase_tuple:  # Purchase Not Found
             return jsonify("Purchase Not Found"), 404
         else:

@@ -12,14 +12,14 @@ class DispensaryDAO:
     #                                                     Create                                                     #
     # ----------------------------------------------------------------------------------------------------------------
     def createDispensary(self, dispensary_name, dispensary_phone, dispensary_direction, dispensary_municipality,
-                         dispensary_zipcode, dispensary_email, dispensary_password, license_id):
+                         dispensary_zipcode, dispensary_email, dispensary_password, license_id, dispensary_picture):
         cursor = self.conn.cursor()
         query = 'insert into "Dispensary" (dispensary_name, dispensary_phone, dispensary_direction,' \
-                'dispensary_municipality, dispensary_zipcode, dispensary_email, dispensary_password, license_id)' \
-                'values (%s, %s, %s, %s, %s, %s, %s, %s) returning dispensary_id'
+                'dispensary_municipality, dispensary_zipcode, dispensary_email, dispensary_password, license_id,' \
+                'dispensary_picture) values (%s, %s, %s, %s, %s, %s, %s, %s, %s) returning dispensary_id'
         cursor.execute(query, (dispensary_name, dispensary_phone, dispensary_direction, dispensary_municipality,
                                dispensary_zipcode, dispensary_email, generate_password_hash(dispensary_password),
-                               license_id), )
+                               license_id, dispensary_picture),)
         dispensary_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
@@ -75,9 +75,9 @@ class DispensaryDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                      Update                                                      #
     # ----------------------------------------------------------------------------------------------------------------
-    def updateDispensary(self, dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
-                         dispensary_municipality, dispensary_zipcode,
-                         dispensary_email, dispensary_password):  # REQUIRES ALL FIELDS TO BE FILLED
+    def updateDispensaryData(self, dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
+                             dispensary_municipality, dispensary_zipcode,
+                             dispensary_email, dispensary_password):  # REQUIRES ALL FIELDS TO BE FILLED
         cursor = self.conn.cursor()
         query = 'update "Dispensary" set dispensary_name = %s, dispensary_phone = %s, dispensary_direction = %s,' \
                 'dispensary_municipality = %s, dispensary_zipcode = %s, dispensary_email = %s,' \
@@ -85,6 +85,14 @@ class DispensaryDAO:
         cursor.execute(query, (dispensary_name, dispensary_phone, dispensary_direction, dispensary_municipality,
                                dispensary_zipcode, dispensary_email, generate_password_hash(dispensary_password),
                                dispensary_id,))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
+    def updateDispensaryPicture(self, dispensary_id, dispensary_picture):
+        cursor = self.conn.cursor()
+        query = 'update "Dispensary" set dispensary_picture = %s where dispensary_id = %s'
+        cursor.execute(query, (dispensary_picture, dispensary_id,))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0

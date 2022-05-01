@@ -13,15 +13,15 @@ class DriverDAO:
     # ----------------------------------------------------------------------------------------------------------------
     def createDriver(self, driver_first_name, driver_last_name, driver_birth_date, driver_phone, driver_email,
                      driver_password, driver_driving_license, driver_gmp_certificate, driver_dispensary_technician,
-                     occupational_license_id):
+                     occupational_license_id, driver_picture):
         cursor = self.conn.cursor()
         query = 'insert into "Driver" (driver_first_name, driver_last_name, driver_birth_date, driver_phone,' \
                 'driver_email, driver_password, driver_driving_license, driver_gmp_certificate,' \
-                'driver_dispensary_technician, occupational_license_id) ' \
-                'values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning driver_id'
+                'driver_dispensary_technician, occupational_license_id, driver_picture) ' \
+                'values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) returning driver_id'
         cursor.execute(query, (driver_first_name, driver_last_name, driver_birth_date, driver_phone, driver_email,
                                generate_password_hash(driver_password), driver_driving_license, driver_gmp_certificate,
-                               driver_dispensary_technician, occupational_license_id,))
+                               driver_dispensary_technician, occupational_license_id, driver_picture))
         driver_id = cursor.fetchone()[0]
         self.conn.commit()
         cursor.close()
@@ -82,7 +82,7 @@ class DriverDAO:
                 '"User".user_id, user_first_name, user_last_name, user_phone, user_email, delivery_direction,' \
                 'delivery_municipality, "Dispensary".dispensary_id, dispensary_name, dispensary_phone,' \
                 'dispensary_email, dispensary_direction, dispensary_municipality, driver_first_name,' \
-                'driver_last_name from "User" inner join "Purchase" ' \
+                'driver_last_name, delivery_status from "User" inner join "Purchase" ' \
                 'on "User".user_id = "Purchase".user_id inner join "Delivery" on ' \
                 '"Purchase".purchase_id = "Delivery".purchase_id inner join "Dispensary" on ' \
                 '"Purchase".dispensary_id = "Dispensary".dispensary_id inner join "Driver" on ' \
@@ -97,10 +97,18 @@ class DriverDAO:
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Update                                                     #
     # ----------------------------------------------------------------------------------------------------------------
-    def updateDriver(self, driver_id, driver_phone, driver_email, driver_password):  # REQUIRES ALL FIELDS TO BE FILLED
+    def updateDriverData(self, driver_id, driver_phone, driver_email, driver_password):
         cursor = self.conn.cursor()
         query = 'update "Driver" set driver_phone = %s, driver_email = %s, driver_password = %s where driver_id = %s'
         cursor.execute(query, (driver_phone, driver_email, generate_password_hash(driver_password), driver_id,))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
+    def updateDriverPicture(self, driver_id, driver_picture):
+        cursor = self.conn.cursor()
+        query = 'update "Driver" set driver_picture = %s where driver_id = %s'
+        cursor.execute(query, (driver_picture, driver_id,))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0

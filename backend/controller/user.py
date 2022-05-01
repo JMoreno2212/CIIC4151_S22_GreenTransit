@@ -7,15 +7,16 @@ from backend.model.user import UserDAO
 def build_user_map_dict(row):
     result = {'user_id': row[0], 'user_first_name': row[1], 'user_last_name': row[2], 'user_birth_date': row[3],
               'user_phone': row[4], 'user_email': row[5], 'user_password': row[6], 'license_id': row[7],
-              'user_active': row[8]}
+              'user_active': row[8], 'user_picture': row[9]}
     return result
 
 
 def build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_date, user_phone, user_email,
-                         user_password, license_id, user_active):
+                         user_password, license_id, user_active, user_picture):
     result = {'user_id': user_id, 'user_first_name': user_first_name, 'user_last_name': user_last_name,
               'user_birth_date': user_birth_date, 'user_phone': user_phone, 'user_email': user_email,
-              'user_password': user_password, 'license_id': license_id, 'user_active': user_active}
+              'user_password': user_password, 'license_id': license_id, 'user_active': user_active,
+              'user_picture': user_picture}
     return result
 
 
@@ -32,6 +33,7 @@ class BaseUser:
         license_name = json['license_name']
         license_expiration = json['license_expiration']
         license_file = json['license_file']
+        user_picture = json['registration_picture']
         user_dao = UserDAO()
         existing_user = user_dao.getUserByEmail(user_email)
         license_dao = LicenseDAO()
@@ -39,9 +41,9 @@ class BaseUser:
         if not existing_user and not existing_license:  # User with that email and license number does not exist
             license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
             user_id = user_dao.createUser(user_first_name, user_last_name, user_birth_date, user_phone, user_email,
-                                          user_password, license_id)
+                                          user_password, license_id, user_picture)
             result = build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_date, user_phone,
-                                          user_email, user_password, license_id, True)
+                                          user_email, user_password, license_id, True, user_picture)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -111,7 +113,7 @@ class BaseUser:
             result = build_user_map_dict(updated_user)
             return jsonify(result), 200
 
-    def updateUser(self, user_id, json):
+    def updateUserData(self, user_id, json):
         user_dao = UserDAO()
         user_phone = json['user_phone']
         user_email = json['user_email']
@@ -119,12 +121,20 @@ class BaseUser:
         new_email = user_dao.getUserByEmail(user_email)
         # New email doesn't exist or is the same as current
         if (not new_email) or (user_email == user_dao.getUserById(user_id)[5]):
-            user_dao.updateUser(user_id, user_phone, user_email, user_password)
+            user_dao.updateUserData(user_id, user_phone, user_email, user_password)
             updated_user = user_dao.getUserById(user_id)
             result = build_user_map_dict(updated_user)
             return jsonify(result), 200
         else:
             return jsonify("Email address is already in use"), 409
+
+    def updateUserPicture(self, user_id, json):
+        user_dao = UserDAO()
+        user_picture = json['user_picture']
+        user_dao.updateUserPicture(user_id, user_picture)
+        updated_user = user_dao.getUserById(user_id)
+        result = build_user_map_dict(updated_user)
+        return jsonify(result), 200
 
     def verifyUserLogin(self, json):
         user_email = json['login_email']

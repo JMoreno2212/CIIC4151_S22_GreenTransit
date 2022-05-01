@@ -8,18 +8,18 @@ def build_dispensary_map_dict(row):
     result = {'dispensary_id': row[0], 'dispensary_name': row[1], 'dispensary_phone': row[2],
               'dispensary_direction': row[3], 'dispensary_municipality': row[4], 'dispensary_zipcode': row[5],
               'dispensary_email': row[6], 'dispensary_password': row[7], 'license_id': row[8],
-              'dispensary_active': row[9]}
+              'dispensary_active': row[9], 'dispensary_picture': row[10]}
     return result
 
 
 def build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
                                dispensary_municipality, dispensary_zipcode, dispensary_email,
-                               dispensary_password, license_id, dispensary_active):
+                               dispensary_password, license_id, dispensary_active, dispensary_picture):
     result = {'dispensary_id': dispensary_id, 'dispensary_name': dispensary_name, 'dispensary_phone': dispensary_phone,
               'dispensary_direction': dispensary_direction, 'dispensary_municipality': dispensary_municipality,
               'dispensary_zipcode': dispensary_zipcode, 'dispensary_email': dispensary_email,
               'dispensary_password': dispensary_password, 'license_id': license_id,
-              'dispensary_active': dispensary_active}
+              'dispensary_active': dispensary_active, 'dispensary_picture': dispensary_picture}
     return result
 
 
@@ -33,6 +33,7 @@ class BaseDispensary:
         dispensary_zipcode = json['dispensary_zipcode']
         dispensary_email = json['registration_email']
         dispensary_password = json['registration_password']
+        dispensary_picture = json['registration_picture']
         license_type = json['registration_type']
         license_name = json['license_name']
         license_expiration = json['license_expiration']
@@ -45,10 +46,11 @@ class BaseDispensary:
             license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
             dispensary_id = dispensary_dao.createDispensary(dispensary_name, dispensary_phone, dispensary_direction,
                                                             dispensary_municipality, dispensary_zipcode,
-                                                            dispensary_email, dispensary_password, license_id)
+                                                            dispensary_email, dispensary_password, license_id,
+                                                            dispensary_picture)
             result = build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
                                                 dispensary_municipality, dispensary_zipcode, dispensary_email,
-                                                dispensary_password, license_id, True)
+                                                dispensary_password, license_id, True, dispensary_picture)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -109,7 +111,7 @@ class BaseDispensary:
             result = build_dispensary_map_dict(updated_dispensary)
             return jsonify(result), 200
 
-    def updateDispensary(self, dispensary_id, json):
+    def updateDispensaryData(self, dispensary_id, json):
         dispensary_dao = DispensaryDAO()
         dispensary_name = json['dispensary_name']
         dispensary_phone = json['dispensary_phone']
@@ -121,14 +123,22 @@ class BaseDispensary:
         new_email = dispensary_dao.getDispensaryByEmail(dispensary_email)
         # New email doesn't exist or is the same as current
         if (not new_email) or (dispensary_email == dispensary_dao.getDispensaryById(dispensary_id)[6]):
-            dispensary_dao.updateDispensary(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
-                                            dispensary_municipality, dispensary_zipcode, dispensary_email,
-                                            dispensary_password)
+            dispensary_dao.updateDispensaryData(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
+                                                dispensary_municipality, dispensary_zipcode, dispensary_email,
+                                                dispensary_password)
             updated_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
             result = build_dispensary_map_dict(updated_dispensary)
             return jsonify(result), 200
         else:
             return jsonify("Email address is already in use"), 409
+
+    def updateDispensaryPicture(self, dispensary_id, json):
+        dispensary_dao = DispensaryDAO()
+        dispensary_picture = json['dispensary_picture']
+        dispensary_dao.updateDispensaryPicture(dispensary_id, dispensary_picture)
+        updated_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        result = build_dispensary_map_dict(updated_dispensary)
+        return jsonify(result), 200
 
     def deleteDispensary(self, dispensary_id):
         dispensary_dao = DispensaryDAO()

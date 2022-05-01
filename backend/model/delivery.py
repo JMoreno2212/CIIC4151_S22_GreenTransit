@@ -58,8 +58,11 @@ class DeliveryDAO:
     def getAllDeliveriesWithoutDriver(self):
         cursor = self.conn.cursor()
         query = 'select delivery_id, delivery_date, delivery_price, delivery_direction, delivery_municipality,' \
-                'delivery_zipcode, delivery_status, driver_id, vehicle_id, purchase_id ' \
-                'from "Delivery" where driver_id is null;'
+                'delivery_zipcode, delivery_status, driver_id, vehicle_id, "Purchase".purchase_id, purchase_number,' \
+                'dispensary_name from "Delivery" inner join "Purchase" ' \
+                'on "Delivery".purchase_id = "Purchase".purchase_id inner join "Dispensary" ' \
+                'on "Purchase".dispensary_id = "Dispensary"."dispensary_id"' \
+                'where driver_id is null;'
         cursor.execute(query)
         result = []
         for row in cursor:
