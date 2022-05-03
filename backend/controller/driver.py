@@ -131,6 +131,18 @@ class BaseDriver:
                 result_list.append(obj)
             return jsonify(result_list), 200
 
+    def getAllPastDriverDeliveries(self, driver_id):
+        driver_dao = DriverDAO()
+        driver_deliveries = driver_dao.getAllPastDriverDeliveries(driver_id)
+        if not driver_deliveries:  # Drivers List is empty
+            return jsonify("No Deliveries Found"), 404
+        else:
+            result_list = []
+            for row in driver_deliveries:
+                obj = build_driver_delivery_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
     def resetPassword(self, json):
         driver_dao = DriverDAO()
         driver_email = json['email']

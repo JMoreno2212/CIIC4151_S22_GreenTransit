@@ -6,12 +6,12 @@ from backend.model.purchase import PurchaseDAO
 
 def build_purchase_map_dict(row):
     result = {'purchase_id': row[0], 'user_id': row[1], 'dispensary_id': row[2], 'purchase_number': row[3],
-              'purchase_type': row[4], 'purchase_date': row[5], 'purchase_total': row[6]}
+              'purchase_type': row[4], 'purchase_date': row[5], 'purchase_total': row[6], 'purchase_completed': row[7]}
     return result
 
 
 def build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
-                             purchase_total):
+                             purchase_total, purchase_completed):
     result = {'purchase_id': purchase_id, 'user_id': user_id, 'dispensary_id': dispensary_id,
               'purchase_number': purchase_number,
               'purchase_type': purchase_type, 'purchase_date': purchase_date, 'purchase_total': purchase_total}
@@ -44,7 +44,7 @@ class BasePurchase:
             item_dao.lowerItemQuantity(item_id, new_quantity)
 
         result = build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type,
-                                          purchase_date, purchase_total)
+                                          purchase_date, purchase_total, False)
         return jsonify(result), 200
 
     def getAllPurchases(self):
@@ -101,11 +101,30 @@ class BasePurchase:
                 result_list.append(obj)
             return jsonify(result_list), 200
 
+    def getPastPurchasesByUser(self, user_id):
+        purchase_dao = PurchaseDAO()
+        purchases_list = purchase_dao.getPastPurchasesByUser(user_id)
+        if not purchases_list:
+            return jsonify("No Purchases Found"), 404
+        else:
+            result_list = []
+            for row in purchases_list:
+                obj = build_purchase_map_dict(row)
+                result_list.append(obj)
+            return jsonify(result_list), 200
+
     def updatePurchase(self, purchase_id, json):
         purchase_dao = PurchaseDAO()
         purchase_type = json['purchase_type']
         purchase_total = json['purchase_total']
         purchase_dao.updatePurchase(purchase_id, purchase_type, purchase_total)
+        updated_purchase = purchase_dao.getPurchaseById(purchase_id)
+        result = build_purchase_map_dict(updated_purchase)
+        return jsonify(result), 200
+
+    def markPurchaseAsCompleted(self, purchase_id):
+        purchase_dao = PurchaseDAO()
+        purchase_dao.markPurchaseAsCompleted(purchase_id)
         updated_purchase = purchase_dao.getPurchaseById(purchase_id)
         result = build_purchase_map_dict(updated_purchase)
         return jsonify(result), 200

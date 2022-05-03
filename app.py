@@ -246,6 +246,14 @@ def handleDriverDeliveries(driver_id):
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/Driver/drivers/<int:driver_id>/deliveries/past', methods=['GET'])
+def handlePastDriverDeliveries(driver_id):
+    if request.method == 'GET':
+        return BaseDriver().getAllPastDriverDeliveries(driver_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 @app.route('/Driver/drivers/<int:driver_id>/register-vehicle', methods=['POST'])
 def handleDriverVehicleRegistration(driver_id):
     if request.method == 'POST':
@@ -346,6 +354,14 @@ def handlePurchasesById(purchase_id):
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/Purchase/purchases/<int:purchase_id>/completed', methods=['PUT'])
+def handleCompletedPurchasesById(purchase_id):
+    if request.method == 'PUT':
+        return BasePurchase().markPurchaseAsCompleted(purchase_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # User
 # --------------------------------------------------------------------------------------
@@ -381,6 +397,14 @@ def handleUsersById(user_id):
 def handleUserPurchasesById(user_id):
     if request.method == 'GET':
         return BasePurchase().getPurchasesByUser(user_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/User/users/<int:user_id>/purchases/past', methods=['GET'])
+def handlePastUserPurchasesById(user_id):
+    if request.method == 'GET':
+        return BasePurchase().getPastPurchasesByUser(user_id)
     else:
         return jsonify("Method Not Allowed"), 405
 

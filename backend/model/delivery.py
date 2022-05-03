@@ -100,6 +100,14 @@ class DeliveryDAO:
         cursor.close()
         return result
 
+    def getDeliveryPurchaseId(self, delivery_id):
+        cursor = self.conn.cursor()
+        query = 'select (purchase_id) from "Delivery" where delivery_id = %s'
+        cursor.execute(query, (delivery_id,))
+        result = cursor.fetchone()[0]
+        cursor.close()
+        return result
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Update                                                     #
     # ----------------------------------------------------------------------------------------------------------------

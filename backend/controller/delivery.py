@@ -154,6 +154,10 @@ class BaseDelivery:
         delivery_dao = DeliveryDAO()
         delivery_status = json['delivery_status']
         delivery_dao.updateDeliveryStatus(delivery_id, delivery_status)
+        if delivery_status == "Delivered":
+            purchase_dao = PurchaseDAO()
+            purchase_id = delivery_dao.getDeliveryPurchaseId(delivery_id)
+            purchase_dao.markPurchaseAsCompleted(purchase_id)
         updated_delivery = delivery_dao.getDeliveryByIdBasicInfo(delivery_id)
         result = build_delivery_map_dict(updated_delivery)
         return jsonify(result), 200

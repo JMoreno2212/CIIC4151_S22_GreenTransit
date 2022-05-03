@@ -78,6 +78,16 @@ class PurchaseDAO:
         cursor.close()
         return result
 
+    def getPastPurchasesByUser(self, user_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Purchase" where user_id = %s and purchase_completed = True'
+        cursor.execute(query, (user_id,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
     # ----------------------------------------------------------------------------------------------------------------
     #                                                     Update                                                     #
     # ----------------------------------------------------------------------------------------------------------------
@@ -85,6 +95,14 @@ class PurchaseDAO:
         cursor = self.conn.cursor()
         query = 'update "Purchase" set purchase_type = %s, purchase_total = %s where purchase_id = %s'
         cursor.execute(query, (purchase_type, purchase_total, purchase_id,))
+        self.conn.commit()
+        cursor.close()
+        return cursor.rowcount != 0
+
+    def markPurchaseAsCompleted(self, purchase_id):
+        cursor = self.conn.cursor()
+        query = 'update "Purchase" set purchase_completed = True where purchase_id = %s'
+        cursor.execute(query, (purchase_id,))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0
