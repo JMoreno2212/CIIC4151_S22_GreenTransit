@@ -6,12 +6,6 @@ async function login() {
     let login_password = $('#inputPassword').val();
     //let login_type=$('#inputSelectLoginType').val();
 
-
-
-
-
-
-
     // login_type,
 
     //console.log(login_password)
@@ -150,4 +144,37 @@ async function resetPassword() {
             })
     }
 
+}
+
+
+async function addNewProduct() {
+
+    let dispensary_id= localStorage.getItem('user_id');
+    let item_name = $('#inputItemName').val();
+    let item_description = $('#inputItemDescription').val();
+    let item_quantity = $('#inputItemQuantity').val();
+    let item_price = $('#inputItemPrice').val();
+    let item_category = $('#inputItemCategory').val();
+    let item_type = $('#inputItemType').val();
+    let item_picture = $('#inputItemPicture').val().replace(/C:\\fakepath\\/i, '');
+
+
+    let item = { item_name,item_description,item_quantity, item_price, item_category,item_type,item_picture}
+
+    await fetch(`http://127.0.0.1:5000/Dispensary/dispensaries/${dispensary_id}/items`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+        },
+        body: JSON.stringify(item),
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            console.log(response)
+            //alert(JSON.stringify(response).toString())
+        })
+        .catch((error) => {
+            console.log('API failure' + error)
+        })
 }
