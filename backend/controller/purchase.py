@@ -10,6 +10,14 @@ def build_purchase_map_dict(row):
     return result
 
 
+def build_purchase_map_dict_full_info(row):
+    result = {'purchase_id': row[0], 'purchase_number': row[1], 'purchase_type': row[2], 'purchase_date': row[3],
+              'purchase_total': row[4], 'purchase_completed': row[5], 'purchased_quantity': row[6], 'item_id': row[7],
+              'item_name': row[8], 'item_subtotal': row[9], 'item_description': row[10], 'user_id': row[11],
+              'user_first_name': row[12], 'user_last_name': row[13], 'user_phone': row[14], 'user_email': row[15]}
+    return result
+
+
 def build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
                              purchase_total, purchase_completed):
     result = {'purchase_id': purchase_id, 'user_id': user_id, 'dispensary_id': dispensary_id,
@@ -67,7 +75,7 @@ class BasePurchase:
         else:
             result_list = []
             for row in purchases_list:
-                obj = build_purchase_map_dict(row)
+                obj = build_purchase_map_dict_full_info(row)
                 result_list.append(obj)
             return jsonify(result_list), 200
 

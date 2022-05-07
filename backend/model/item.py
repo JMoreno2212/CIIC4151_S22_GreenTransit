@@ -37,7 +37,7 @@ class ItemDAO:
 
     def getAllActiveItems(self):
         cursor = self.conn.cursor()
-        query = 'select * from "Item" where item_active = True;'
+        query = 'select * from "Item" where item_quantity > 0 and item_active = True;'
         cursor.execute(query)
         result = []
         for row in cursor:

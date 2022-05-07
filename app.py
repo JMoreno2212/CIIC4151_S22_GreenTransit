@@ -175,7 +175,7 @@ def handleDispensaryItems(dispensary_id):
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/Dispensary/dispensaries/<int:dispensary_id>/purchases', methods=['GET', 'POST'])
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/purchases', methods=['GET'])
 def handleDispensaryPurchases(dispensary_id):
     if request.method == 'GET':
         return BasePurchase().getAllPurchasesAtDispensary(dispensary_id)
@@ -393,10 +393,12 @@ def handleUsersById(user_id):
         return jsonify("Method Not Allowed"), 405
 
 
-@app.route('/User/users/<int:user_id>/purchases', methods=['GET'])
+@app.route('/User/users/<int:user_id>/purchases', methods=['GET', 'POST'])
 def handleUserPurchasesById(user_id):
     if request.method == 'GET':
         return BasePurchase().getPurchasesByUser(user_id)
+    elif request.method == 'POST':
+        return BasePurchase().createPurchase(user_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
