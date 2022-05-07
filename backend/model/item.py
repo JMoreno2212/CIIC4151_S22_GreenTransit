@@ -37,7 +37,7 @@ class ItemDAO:
 
     def getAllActiveItems(self):
         cursor = self.conn.cursor()
-        query = 'select * from "Item" where item_active = True;'
+        query = 'select * from "Item" where item_quantity > 0 and item_active = True;'
         cursor.execute(query)
         result = []
         for row in cursor:
@@ -73,6 +73,14 @@ class ItemDAO:
     def getItemById(self, item_id):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where item_id = %s and item_active = True;'
+        cursor.execute(query, (item_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+
+    def getDeletedItemById(self, item_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where item_id = %s and item_active = False;'
         cursor.execute(query, (item_id,))
         result = cursor.fetchone()
         cursor.close()

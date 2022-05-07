@@ -44,7 +44,13 @@ class PurchaseDAO:
 
     def getAllPurchasesAtDispensary(self, dispensary_id):
         cursor = self.conn.cursor()
-        query = 'select * from "Purchase" where dispensary_id = %s;'
+        query = 'select "Purchase".purchase_id, purchase_number, purchase_type, purchase_date, purchase_total,' \
+                'purchase_completed, purchased_quantity, "Item".item_id, item_name, item_subtotal, item_description,' \
+                '"User".user_id, user_first_name, user_last_name, user_phone, user_email from "Purchase" inner join ' \
+                '"PurchasedItems" on "Purchase".purchase_id = "PurchasedItems".purchase_id inner join "Item" on ' \
+                '"PurchasedItems".item_id = "Item".item_id inner join "User" on "Purchase".user_id = "User".user_id ' \
+                'where "Purchase".dispensary_id = %s group by "Purchase".purchase_id, purchase_date ' \
+                'order by purchase_date ;'
         cursor.execute(query, (dispensary_id,))
         result = []
         for row in cursor:
