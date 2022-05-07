@@ -49,7 +49,7 @@ class BasePurchase:
             item_price = item_dao.getItemPriceById(item_id)
             item_subtotal = item_price * purchased_quantity
             purchase_dao.createPurchasedItem(purchase_id, item_id, purchased_quantity, item_subtotal)
-            item_dao.lowerItemQuantity(item_id, new_quantity)
+            item_dao.updateItemQuantity(item_id, new_quantity)
 
         result = build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_number, purchase_type,
                                           purchase_date, purchase_total, False)

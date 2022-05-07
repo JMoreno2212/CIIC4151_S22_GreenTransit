@@ -103,6 +103,14 @@ class BaseItem:
         result = build_item_map_dict(updated_item)
         return jsonify(result), 200
 
+    def updateItemQuantity(self, item_id, json):
+        item_dao = ItemDAO()
+        item_quantity = json['item_quantity']
+        item_dao.updateItemQuantity(item_id, item_quantity)
+        updated_item = item_dao.getItemById(item_id)
+        result = build_item_map_dict(updated_item)
+        return jsonify(result), 200
+
     def updateItemPicture(self, item_id, json):
         item_dao = ItemDAO()
         item_picture = json['item_picture']

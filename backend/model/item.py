@@ -141,10 +141,10 @@ class ItemDAO:
         cursor.close()
         return cursor.rowcount != 0
 
-    def lowerItemQuantity(self, item_id, new_amount):
+    def updateItemQuantity(self, item_id, item_quantity):
         cursor = self.conn.cursor()
         query = 'update "Item" set item_quantity = %s where item_id = %s'
-        cursor.execute(query, (new_amount, item_id,))
+        cursor.execute(query, (item_quantity, item_id,))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0
