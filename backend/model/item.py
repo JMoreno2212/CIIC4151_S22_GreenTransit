@@ -78,6 +78,14 @@ class ItemDAO:
         cursor.close()
         return result
 
+    def getDeletedItemById(self, item_id):
+        cursor = self.conn.cursor()
+        query = 'select * from "Item" where item_id = %s and item_active = False;'
+        cursor.execute(query, (item_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+
     def getItemByPriceRange(self, item_price_bottom, item_price_top):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where (item_price between %s and %s) and item_active = true;'

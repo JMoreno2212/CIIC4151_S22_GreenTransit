@@ -114,7 +114,7 @@ class BaseItem:
     def deleteItemAtDispensary(self, dispensary_id, item_id):
         item_dao = ItemDAO()
         item_dao.deleteItemAtDispensary(dispensary_id, item_id)
-        deleted_item = item_dao.getItemById(item_id)
+        deleted_item = item_dao.getDeletedItemById(item_id)
         result = build_item_map_dict(deleted_item)
         return jsonify(result), 200
 
