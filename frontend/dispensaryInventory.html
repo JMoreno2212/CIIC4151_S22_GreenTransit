@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- JS: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="js/login.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/driver-home.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <title>Green Transit!</title>
+
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css" />
+    <link type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css" />
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        .bg-red td {
+            background-color: #f08080 !important;
+        }
+        .bg-green td{
+            background-color: #90ee90 !important;
+        }
+    </style>
+
+
+
+</head>
+<body>
+
+<header class="header">
+    <a href="#" class="logo">
+        <img src="img/GT_Logo.png" alt="">
+    </a>
+    <h1>Green <span class="h1color"> Transit</span></h1>
+    <nav class="navbar">
+        <a href="">Home</a>
+        <a href="">Inventory</a>
+        <a href="">Add Product</a>
+        <a href="">Report</a>
+        <a href="">Account</a>
+    </nav>
+
+</header>
+
+
+
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div id="jsGrid"></div>
+
+
+
+<script>
+    let dispensary_id= localStorage.getItem('user_id');
+
+
+
+    $("#jsGrid").jsGrid({
+        width: "100%",
+        height: "auto",
+
+        filtering: false,
+        sorting: false,
+        paging: false,
+        autoload: true,
+        editing: false,
+        selecting: false,
+        noDataContent: "Not items found",
+
+        pageSize: 15,
+
+
+        controller: {
+            loadData: function (filter) {
+                console.log(filter);
+                return $.ajax({
+                    type: "GET",
+                    url: `http://127.0.0.1:5000/Dispensary/dispensaries/${dispensary_id}/items`,
+                    data: '{}',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response){
+                        //console.log("JSON");
+                        //console.log(response);
+                        return response
+                    }
+                });
+            },
+
+
+        },
+        rowClass: function(item, itemIndex) {
+            let item_quantity = item['item_quantity'];
+            return item_quantity===0 ? 'bg-red' : '';
+        },
+
+        fields: [
+            { name: "item_category", type: "text", width: 150, title:"Product Category",editing: false },
+            { name: "item_type", type: "text", width: 200, title: "Product Type",editing: false },
+            { name: "item_description", type: "text", width: 150, title:"Product Description", editing: false},
+            { name: "item_name", type: "text", width: 150, title: "Product Name",editing: false},
+            { name: "item_price", type: "text", width: 150,  title: "Product Price",editing: false},
+            { name: "item_quantity", type: "text", width: 150,  title: "Product Quantity",editing: false}
+        ]
+    });
+</script>
+</body>
+</html>
