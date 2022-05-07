@@ -70,7 +70,7 @@
 
 
 <script>
-    let dispensary_id= localStorage.getItem('user_id');
+    let dispensary_id = localStorage.getItem('user_id');
 
 
 
@@ -78,16 +78,18 @@
         width: "100%",
         height: "auto",
 
-        filtering: false,
-        sorting: false,
-        paging: false,
+        filtering: true,
+        sorting: true,
+        paging: true,
         autoload: true,
-        editing: false,
-        selecting: false,
+        editing: true,
+
         noDataContent: "Not items found",
 
         pageSize: 15,
-
+        deleteConfirm: function(item) {
+            return "The product \"" + item['item_name'] + "\" will be removed. Are you sure?";
+        },
 
         controller: {
             loadData: function (filter) {
@@ -105,21 +107,42 @@
                     }
                 });
             },
-
-
+            deleteItem: function(item) {
+                console.log(item['item_id']);
+                let item_id = item['item_id'];
+                return $.ajax({
+                    url: `http://127.0.0.1:5000/Dispensary/dispensaries/${dispensary_id}/${item_id}`,
+                    type: 'DELETE',
+                    success: function(result) {
+                        // Do something with the result
+                        console.log(result);
+                    }
+                })
+            }
         },
         rowClass: function(item, itemIndex) {
+            //console.log(item);
             let item_quantity = item['item_quantity'];
             return item_quantity===0 ? 'bg-red' : '';
         },
 
         fields: [
-            { name: "item_category", type: "text", width: 150, title:"Product Category",editing: false },
-            { name: "item_type", type: "text", width: 200, title: "Product Type",editing: false },
-            { name: "item_description", type: "text", width: 150, title:"Product Description", editing: false},
-            { name: "item_name", type: "text", width: 150, title: "Product Name",editing: false},
-            { name: "item_price", type: "text", width: 150,  title: "Product Price",editing: false},
-            { name: "item_quantity", type: "text", width: 150,  title: "Product Quantity",editing: false}
+            { name: "item_category", type: "text", width: 150, title:"Product Category" },
+            { name: "item_type", type: "text", width: 200, title: "Product Type" },
+            { name: "item_description", type: "text", width: 150, title:"Product Description"},
+            { name: "item_name", type: "text", width: 150, title: "Product Name"},
+            { name: "item_price", type: "text", width: 150,  title: "Product Price"},
+            { name: "item_quantity", type: "text", width: 150,  title: "Product Quantity"},
+            {   type: "control",
+                modeSwitchButton: false,
+                editButton: false,
+                headerTemplate: function() {
+                    return $("<button class='btn btn-dark btn-lg'>").attr("type", "button").text("+")
+                        .on("click", function () {
+                            window.location.href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/addNewProductPage.html?_ijt=mhickhr6bhdktj50084bom0sv3&_ij_reload=RELOAD_ON_SAVE";
+                        });
+                }
+            }
         ]
     });
 </script>
