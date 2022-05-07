@@ -184,7 +184,7 @@ def handleDispensaryPurchases(dispensary_id):
 
 
 @app.route('/Dispensary/dispensaries/<int:dispensary_id>/purchase/<int:purchase_id>', methods=['GET'])
-def handleDispensaryItemsById(dispensary_id, purchase_id):
+def handleDispensaryItemsByDispensaryId(dispensary_id, purchase_id):
     if request.method == 'GET':
         return BasePurchase().getPurchaseByIdAtDispensary(dispensary_id, purchase_id)
     else:
