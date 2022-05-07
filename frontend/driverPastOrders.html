@@ -63,7 +63,8 @@
 
 
 <script>
-    let user_id= localStorage.getItem('user_id');
+    let driver_id= localStorage.getItem('user_id');
+
 
 
     $("#jsGrid").jsGrid({
@@ -86,7 +87,7 @@
                 console.log(filter);
                 return $.ajax({
                     type: "GET",
-                    url: `http://127.0.0.1:5000/User/users/${user_id}/purchases/past`,
+                    url: `http://127.0.0.1:5000/Driver/drivers/${driver_id}/deliveries/past`,
                     data: '{}',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -101,11 +102,17 @@
 
         },
 
+
         fields: [
             { name: "purchase_date", type: "text", width: 150, title:"Purchase Date",editing: false },
             { name: "purchase_number", type: "text", width: 150, title:"Purchase Number", editing: false},
-            { name: "purchase_total", type: "text", width: 150, title: "Purchase Total",editing: false},
-            { name: "purchase_type", type: "text", width: 150,  title: "Purchase Type",editing: false}
+            { name: "user_first_name", type: "text", width: 150, title: "User Name",editing: false},
+            { name: "user_last_name", type: "text", width: 150,  title: "User Last name",editing: false},
+            { name: "user_email", type: "text", width: 150,  title: "User Email",editing: false},
+            { name: "delivery_direction", type: "text", width: 200, title: "Delivery Direction",editing: false },
+            { name: "dispensary_name", type: "text", width: 150, title: "Dispensary Name",editing: false },
+            { name: "dispensary_direction", type: "text",width: 200, title: "Dispensary Direction",editing: false},
+            { name: "delivery_status", type: "text",title:"Delivery Status", editing: false}
         ]
     });
 </script>
