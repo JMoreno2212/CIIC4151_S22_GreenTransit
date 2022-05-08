@@ -307,7 +307,7 @@ def handleActiveItems():
 
 @app.route('/Item/items/<int:item_id>/quantity', methods=['PUT'])
 def handleItemQuantity(item_id):
-    if request.method == 'GET':
+    if request.method == 'PUT':
         return BaseItem().updateItemQuantity(item_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405

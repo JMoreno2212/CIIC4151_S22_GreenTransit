@@ -78,8 +78,8 @@
         width: "100%",
         height: "auto",
 
-        filtering: true,
-        sorting: true,
+        filtering: false,
+        sorting: false,
         paging: true,
         autoload: true,
         editing: true,
@@ -114,10 +114,33 @@
                     url: `http://127.0.0.1:5000/Dispensary/dispensaries/${dispensary_id}/${item_id}`,
                     type: 'DELETE',
                     success: function(result) {
-                        // Do something with the result
+                        //console.log(result);
+                    }
+                })
+            },
+            updateItem: function (item) {
+                let item_id = item['item_id'];
+                let item_name = item['item_name'];
+                let item_description = item['item_description'];
+                let item_price = item['item_price'];
+                let item_category = item['item_category'];
+                let item_type = item['item_type'];
+                let item_quantity = item['item_quantity'];
+                let data = {item_name,item_description,item_price,item_category,item_type};
+                console.log("BELOW JSON");
+                console.log(data);
+                updateProductQuantity(item_id, item_quantity);
+                return $.ajax({
+                    url: `http://127.0.0.1:5000/Dispensary/dispensaries/${dispensary_id}/${item_id}`,
+                    type: 'PUT',
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(result) {
                         console.log(result);
                     }
                 })
+
             }
         },
         rowClass: function(item, itemIndex) {
@@ -125,8 +148,13 @@
             let item_quantity = item['item_quantity'];
             return item_quantity===0 ? 'bg-red' : '';
         },
+        onItemUpdated: function(args) {
+            let item_category = args['item']['item_category'];
+            console.log(item_category + "..new item_category..");
+        },
 
         fields: [
+            { name: "item_id", type: "text", width: 150, title:"Product ID", editing: false, visible: true},
             { name: "item_category", type: "text", width: 150, title:"Product Category" },
             { name: "item_type", type: "text", width: 200, title: "Product Type" },
             { name: "item_description", type: "text", width: 150, title:"Product Description"},
@@ -135,7 +163,7 @@
             { name: "item_quantity", type: "text", width: 150,  title: "Product Quantity"},
             {   type: "control",
                 modeSwitchButton: false,
-                editButton: false,
+                editButton: true,
                 headerTemplate: function() {
                     return $("<button class='btn btn-dark btn-lg'>").attr("type", "button").text("+")
                         .on("click", function () {
