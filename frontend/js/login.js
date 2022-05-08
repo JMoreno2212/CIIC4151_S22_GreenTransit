@@ -29,8 +29,8 @@ async function login() {
                 if(user_type==="Driver"){
                     window.location.href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/deliveryTrackerSystemNotAssigned.html?_ijt=blbsjt00ldruvqb7m5ac8rc7jn&_ij_reload=RELOAD_ON_SAVE";
                 }
-                else if (user_type==="User"){
-                    window.location.href="";
+                else if (user_type==="Dispensary"){
+                    window.location.href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/dispensaryPurchasesTrackerSystem.html?_ijt=5hljvgd0gvuf59jbejnhj46j4h&_ij_reload=RELOAD_ON_SAVE";
 
                 }
                 else {
@@ -194,6 +194,28 @@ async function updateProductQuantity(item_id, item_quantity) {
         .then((response) => response.json())
         .then((response) => {
             //location.reload();
+            //console.log(response)
+            //alert(JSON.stringify(response).toString())
+        })
+        .catch((error) => {
+            console.log('API failure' + error)
+        })
+}
+
+
+async function markOrderAsCompleted(purchase_id) {
+   // let item = {purchase_id}
+
+    await fetch(`http://127.0.0.1:5000/Purchase/purchases/${purchase_id}/completed`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+        },
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            location.reload();
             //console.log(response)
             //alert(JSON.stringify(response).toString())
         })
