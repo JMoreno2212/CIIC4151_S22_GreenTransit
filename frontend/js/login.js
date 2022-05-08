@@ -178,3 +178,26 @@ async function addNewProduct() {
             console.log('API failure' + error)
         })
 }
+
+
+async function updateProductQuantity(item_id, item_quantity) {
+    let item = {item_quantity}
+
+    await fetch(`http://127.0.0.1:5000/Item/items/${item_id}/quantity`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+        },
+        body: JSON.stringify(item),
+    })
+        .then((response) => response.json())
+        .then((response) => {
+            //location.reload();
+            //console.log(response)
+            //alert(JSON.stringify(response).toString())
+        })
+        .catch((error) => {
+            console.log('API failure' + error)
+        })
+}
