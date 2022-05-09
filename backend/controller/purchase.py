@@ -36,11 +36,11 @@ class BasePurchase:
         purchase_type = json['purchase_type']
         purchase_date = json['purchase_date']
         purchase_total = json['purchase_total']
-        purchased_items = json['purchased_items']
+        purchased_items = json['purchased_items']  # Tuple with (item_id, purchased_quantity)
         purchase_dao = PurchaseDAO()
-        purchase_id = purchase_dao.createPurchase(user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
-                                                  purchase_total)
         item_dao = ItemDAO()
+
+        # Verify all items have enough quantity
         for item in purchased_items:
             item_id = item[0]
             purchased_quantity = item[1]
@@ -48,6 +48,17 @@ class BasePurchase:
             new_quantity = old_quantity - purchased_quantity
             if new_quantity < 0:
                 return jsonify("Not enough items available"), 409
+
+        # After all items have enough available
+        purchase_id = purchase_dao.createPurchase(user_id, dispensary_id, purchase_number, purchase_type, purchase_date,
+                                                  purchase_total)
+
+        # Purchase the items and reduce quantities
+        for item in purchased_items:
+            item_id = item[0]
+            purchased_quantity = item[1]
+            old_quantity = item_dao.getItemQuantityById(item_id)
+            new_quantity = old_quantity - purchased_quantity
             item_price = item_dao.getItemPriceById(item_id)
             item_subtotal = item_price * purchased_quantity
             purchase_dao.createPurchasedItem(purchase_id, item_id, purchased_quantity, item_subtotal)
@@ -93,7 +104,6 @@ class BasePurchase:
         else:
             result = most_sold_item[0]
         return jsonify(result), 200
-
 
     def getLeastSoldItemAtDispensary(self, dispensary_id):
         dispensary_dao = DispensaryDAO()

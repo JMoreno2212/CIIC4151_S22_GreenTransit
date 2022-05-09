@@ -460,11 +460,12 @@ def handleVehicleById(vehicle_id):
 # Statistics
 # --------------------------------------------------------------------------------------
 @app.route('/Statistics/Dispensary/<int:dispensary_id>/total-purchases', methods=['GET'])
-def handleTotalofPurchases(dispensary_id):
+def handleTotalOfPurchases(dispensary_id):
     if request.method == 'GET':
         return BasePurchase().getTotalOfPurchasesByDispensary(dispensary_id)
     else:
         return jsonify("Method Not Allowed"), 405
+
 
 @app.route('/Statistics/Dispensary/<int:dispensary_id>/items-in-stock', methods=['GET'])
 def handleTotalOfItemsInStock(dispensary_id):
@@ -473,12 +474,14 @@ def handleTotalOfItemsInStock(dispensary_id):
     else:
         return jsonify("Method Not Allowed"), 405
 
+
 @app.route('/Statistics/Dispensary/<int:dispensary_id>/items-out-of-stock', methods=['GET'])
 def handleTotalOfItemsOutOfStock(dispensary_id):
     if request.method == 'GET':
         return BaseItem().getTotalOfItemsOutOfStockAtDispensary(dispensary_id)
     else:
         return jsonify("Method Not Allowed"), 405
+
 
 @app.route('/Statistics/Dispensary/<int:dispensary_id>/most-sold-item', methods=['GET'])
 def HandleMostSoldItemByDispensary(dispensary_id):
@@ -487,13 +490,13 @@ def HandleMostSoldItemByDispensary(dispensary_id):
     else:
         return jsonify("Method Not Allowed"), 405
 
+
 @app.route('/Statistics/Dispensary/<int:dispensary_id>/least-sold-item', methods=['GET'])
 def HandleLeastSoldItemByDispensary(dispensary_id):
     if request.method == 'GET':
         return BasePurchase().getLeastSoldItemAtDispensary(dispensary_id)
     else:
         return jsonify("Method Not Allowed"), 405
-
 
 
 # --------------------------------------------------------------------------------------
