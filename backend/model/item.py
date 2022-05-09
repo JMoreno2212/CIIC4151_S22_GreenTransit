@@ -35,6 +35,22 @@ class ItemDAO:
         cursor.close()
         return result
 
+    def getTotalOfItemsInStockAtDispensary(self, dispensary_id):
+        cursor = self.conn.cursor()
+        query = 'select count(item_id) from "Item" where dispensary_id = %s and item_quantity > 0 and item_active = True;'
+        cursor.execute(query, (dispensary_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+
+    def getTotalOfItemsOutOfStockAtDispensary(self, dispensary_id):
+        cursor = self.conn.cursor()
+        query = 'select count(item_id) from "Item" where dispensary_id = %s and item_quantity = 0 and item_active = True;'
+        cursor.execute(query, (dispensary_id,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+
     def getAllActiveItems(self):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where item_quantity > 0 and item_active = True;'

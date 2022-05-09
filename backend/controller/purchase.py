@@ -1,5 +1,6 @@
 from flask import jsonify
 
+from backend.model.dispensary import DispensaryDAO
 from backend.model.item import ItemDAO
 from backend.model.purchase import PurchaseDAO
 
@@ -22,7 +23,8 @@ def build_purchase_attr_dict(purchase_id, user_id, dispensary_id, purchase_numbe
                              purchase_total, purchase_completed):
     result = {'purchase_id': purchase_id, 'user_id': user_id, 'dispensary_id': dispensary_id,
               'purchase_number': purchase_number,
-              'purchase_type': purchase_type, 'purchase_date': purchase_date, 'purchase_total': purchase_total}
+              'purchase_type': purchase_type, 'purchase_date': purchase_date, 'purchase_total': purchase_total,
+              'purchase_completed': purchase_completed}
     return result
 
 
@@ -78,6 +80,41 @@ class BasePurchase:
                 obj = build_purchase_map_dict_full_info(row)
                 result_list.append(obj)
             return jsonify(result_list), 200
+
+    def getMostSoldItemAtDispensary(self, dispensary_id):
+        dispensary_dao = DispensaryDAO()
+        valid_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        if not valid_dispensary:
+            return jsonify("Dispensary Not Found"), 404
+        purchase_dao = PurchaseDAO()
+        most_sold_item = purchase_dao.getMostSoldItemAtDispensary(dispensary_id)
+        if not most_sold_item:  # Item Not Found
+            return jsonify("Item Not Found"), 404
+        else:
+            result = most_sold_item[0]
+        return jsonify(result), 200
+
+
+    def getLeastSoldItemAtDispensary(self, dispensary_id):
+        dispensary_dao = DispensaryDAO()
+        valid_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        if not valid_dispensary:
+            return jsonify("Dispensary Not Found"), 404
+        purchase_dao = PurchaseDAO()
+        most_sold_item = purchase_dao.getLeastSoldItemAtDispensary(dispensary_id)
+        if not most_sold_item:  # Item Not Found
+            return jsonify("Item Not Found"), 404
+        else:
+            result = most_sold_item[0]
+        return jsonify(result), 200
+
+    def getTotalOfPurchasesByDispensary(self, dispensary_id):
+        purchase_dao = PurchaseDAO()
+        purchases_list = purchase_dao.getAllPurchasesAtDispensary(dispensary_id)
+        if not purchases_list:  # Purchase List is empty
+            return jsonify("No Purchases Found"), 404
+        else:
+            return jsonify(len(purchases_list)), 200
 
     def getPurchaseById(self, purchase_id):
         purchase_dao = PurchaseDAO()

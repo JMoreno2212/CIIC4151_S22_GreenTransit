@@ -83,6 +83,28 @@ class PurchaseDAO:
         cursor.close()
         return result
 
+    def getMostSoldItemAtDispensary(self, dispensary_id):
+        cursor = self.conn.cursor()
+        query = 'select  item_id, sum(purchased_quantity) as sum from "PurchasedItems" natural inner join "Purchase" ' \
+                'where dispensary_id = %s group by item_id order by sum desc'
+        cursor.execute(query, (dispensary_id,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
+    def getLeastSoldItemAtDispensary(self, dispensary_id):
+        cursor = self.conn.cursor()
+        query = 'select  item_id, sum(purchased_quantity) as sum from "PurchasedItems" natural inner join "Purchase" ' \
+                'where dispensary_id = %s group by item_id order by sum asc'
+        cursor.execute(query, (dispensary_id,))
+        result = []
+        for row in cursor:
+            result.append(row)
+        cursor.close()
+        return result
+
     def getPastPurchasesByUser(self, user_id):
         cursor = self.conn.cursor()
         query = 'select * from "Purchase" where user_id = %s and purchase_completed = True'
