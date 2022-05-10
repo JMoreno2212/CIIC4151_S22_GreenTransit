@@ -25,13 +25,15 @@ class BaseVehicle:
         vehicle_brand = json['vehicle_brand']
         vehicle_model = json['vehicle_model']
         vehicle_year = json['vehicle_year']
-        driver_id = driver_id
         license_type = json['registration_type']
         license_name = json['license_name']
         license_expiration = json['license_expiration']
         license_file = json['license_file']
         vehicle_dao = VehicleDAO()
         license_dao = LicenseDAO()
+        driver_has_vehicle = vehicle_dao.getVehicleByDriver(driver_id)
+        if driver_has_vehicle is not None:
+            return jsonify("Driver already has a vehicle registered"), 409
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_license:  # Vehicle License is not registered
             license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)

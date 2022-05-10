@@ -203,7 +203,21 @@ def handleItemById(dispensary_id, item_id):
         return jsonify("Method Not Allowed"), 405
 
 
-# TODO: Endpoint to update picture for both item and dispensary
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(dispensary_id):
+    if request.method == 'PUT':
+        return BaseDispensary().updateDispensaryPicture(dispensary_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/<int:item_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(dispensary_id, item_id):
+    if request.method == 'PUT':
+        return BaseItem().updateItemPicture(item_id, dispensary_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
 
 # --------------------------------------------------------------------------------------
 # Driver
@@ -258,6 +272,14 @@ def handlePastDriverDeliveries(driver_id):
 def handleDriverVehicleRegistration(driver_id):
     if request.method == 'POST':
         return BaseVehicle().createVehicle(driver_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Driver/drivers/<int:driver_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(driver_id):
+    if request.method == 'PUT':
+        return BaseDriver().updateDriverPicture(driver_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -423,6 +445,14 @@ def handlePastUserPurchasesById(user_id):
 def handleUserDeliveriesById(user_id):
     if request.method == 'GET':
         return BaseDelivery().getDeliveryByUser(user_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/User/users/<int:user_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(user_id):
+    if request.method == 'PUT':
+        return BaseUser().updateUserPicture(user_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 

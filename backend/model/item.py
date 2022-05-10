@@ -144,24 +144,24 @@ class ItemDAO:
     def updateItemData(self, dispensary_id, item_id, item_name, item_description, item_price, item_category, item_type):
         cursor = self.conn.cursor()
         query = 'update "Item" set item_name = %s, item_description = %s, item_price = %s, ' \
-                'item_category = %s, item_type = %s where dispensary_id = %s and item_id = %s'
+                'item_category = %s, item_type = %s where dispensary_id = %s and item_id = %s;'
         cursor.execute(query, (item_name, item_description, item_price, item_category, item_type, dispensary_id,
                                item_id,))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0
 
-    def updateItemPicture(self, item_id, item_picture):
+    def updateItemPicture(self, item_id, dispensary_id, item_picture):
         cursor = self.conn.cursor()
-        query = 'update "Item" set item_picture = %s where item_id = %s'
-        cursor.execute(query, (item_picture, item_id,))
+        query = 'update "Item" set item_picture = %s where item_id = %s and dispensary_id = %s;'
+        cursor.execute(query, (item_picture, item_id, dispensary_id))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0
 
     def updateItemQuantity(self, item_id, item_quantity):
         cursor = self.conn.cursor()
-        query = 'update "Item" set item_quantity = %s where item_id = %s'
+        query = 'update "Item" set item_quantity = %s where item_id = %s;'
         cursor.execute(query, (item_quantity, item_id,))
         self.conn.commit()
         cursor.close()
@@ -172,7 +172,7 @@ class ItemDAO:
     # ----------------------------------------------------------------------------------------------------------------
     def deleteItemAtDispensary(self, dispensary_id, item_id):
         cursor = self.conn.cursor()
-        query = 'update "Item" set item_active = False where dispensary_id = %s and item_id = %s'
+        query = 'update "Item" set item_active = False where dispensary_id = %s and item_id = %s;'
         cursor.execute(query, (dispensary_id, item_id,))
         self.conn.commit()
         cursor.close()
