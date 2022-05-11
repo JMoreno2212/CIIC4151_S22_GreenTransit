@@ -131,7 +131,7 @@ html::-webkit-scrollbar-thumb{
 
 .card {
     width: 75rem;
-    height:50rem;
+    height:45rem;
     background-color: #5a4f4e;
     display: block;
     position: absolute;

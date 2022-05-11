@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- JS: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="js/login.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/learn-style.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <title>Green Transit!</title>
+</head>
+<body>
+<header class="header">
+    <a href="#" class="logo">
+        <img src="img/GT_Logo.png" alt="">
+    </a>
+    <h1>Green <span class="h1color"> Transit</span></h1>
+    <nav class="navbar">
+        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/dispensaryPurchasesTrackerSystem.html?_ijt=f6ogatcklkm2nmle5k4sv6ivth&_ij_reload=RELOAD_ON_SAVE">Home</a>
+        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/dispensaryInventory.html?_ijt=mlhqebhdrj72jqamuouehmrfft&_ij_reload=RELOAD_ON_SAVE">Inventory</a>
+        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/addNewProductPage.html?_ijt=mhickhr6bhdktj50084bom0sv3&_ij_reload=RELOAD_ON_SAVE">Add Product</a>
+        <a href="">Report</a>
+        <a href="">Account</a>
+    </nav>
+
+</header>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card text-center" style="background-color: #f2f2f2; border-color: #13131a">
+            <div class="card-header">
+                <h2> Number of sales</h2>
+            </div>
+            <div>&nbsp;</div>
+            <label id="NumberOfSalesID" style="font-size: 24px"> </label>
+            <div>&nbsp;</div>
+        </div>
+        <div>&nbsp;</div>
+    </div>
+ </div>
+
+
+<div class="row">
+    <div class="col">
+        <div class="card text-center" style="background-color: #e6ffe6">
+            <div class="card-header">
+                <h2>In stock inventory quantity </h2>
+            </div>
+            <div>&nbsp;</div>
+            <label id="InStockInventoryID"  style="font-size: 24px"> </label>
+            <div>&nbsp;</div>
+        </div>
+        <div>&nbsp;</div>
+    </div>
+    <div class="col">
+        <div class="card text-center" style="background-color: #f2f2f2">
+            <div class="card-header">
+                <h2> Out of stock inventory quantity </h2>
+            </div>
+            <div>&nbsp;</div>
+            <label id="OutOfInventoryID"  style="font-size: 24px"> </label>
+            <div>&nbsp;</div>
+        </div>
+        <div>&nbsp;</div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col">
+        <div class="card text-center" style="background-color: #f2f2f2">
+            <div class="card-header">
+                <h2> Best selling product </h2>
+            </div>
+            <div>&nbsp;</div>
+            <label id="BestSellingProductID"  style="font-size: 24px"> </label>
+            <div>&nbsp;</div>
+        </div>
+        <div>&nbsp;</div>
+    </div>
+    <div class="col">
+        <div class="card text-center" style="background-color: #e6ffe6">
+            <div class="card-header">
+                <h2> Least selling product</h2>
+            </div>
+            <div>&nbsp;</div>
+            <label id="LeastSellingProductID"  style="font-size: 24px"> </label>
+            <div>&nbsp;</div>
+        </div>
+        <div>&nbsp;</div>
+    </div>
+
+</div>
+
+<script>
+        window.onload = async function(){
+            let dispensary_id = localStorage.getItem('user_id');
+
+
+            await fetch(`http://127.0.0.1:5000/Statistics/Dispensary/${dispensary_id}/total-purchases`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((response) => {
+                   console.log(response)
+                   document.getElementById("NumberOfSalesID").innerHTML = response;
+                    //alert(JSON.stringify(response).toString())
+                })
+                .catch((error) => {
+                    console.log('API failure' + error)
+                });
+
+            await fetch(`http://127.0.0.1:5000/Statistics/Dispensary/${dispensary_id}/items-in-stock`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((response) => {
+                    console.log(response)
+                    document.getElementById("InStockInventoryID").innerHTML = response[0];
+                })
+                .catch((error) => {
+                    console.log('API failure' + error)
+                });
+
+            await fetch(`http://127.0.0.1:5000/Statistics/Dispensary/${dispensary_id}/items-out-of-stock`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((response) => {
+                    console.log(response)
+                    document.getElementById("OutOfInventoryID").innerHTML = response[0];
+                })
+                .catch((error) => {
+                    console.log('API failure' + error)
+                });
+
+            await fetch(`http://127.0.0.1:5000/Statistics/Dispensary/${dispensary_id}/most-sold-item`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((response) => {
+                    console.log(response)
+                    document.getElementById("BestSellingProductID").innerHTML = response;
+                })
+                .catch((error) => {
+                    console.log('API failure' + error)
+                });
+
+            await fetch(`http://127.0.0.1:5000/Statistics/Dispensary/${dispensary_id}/least-sold-item`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Accept: 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((response) => {
+                    console.log(response)
+                    document.getElementById("LeastSellingProductID").innerHTML = response;
+                })
+                .catch((error) => {
+                    console.log('API failure' + error)
+                });
+
+
+
+
+
+
+
+
+        };
+</script>
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
