@@ -212,7 +212,7 @@ def handleDispensaryPicture(dispensary_id):
 
 
 @app.route('/Dispensary/dispensaries/<int:dispensary_id>/<int:item_id>/picture', methods=['PUT'])
-def handleDispensaryPicture(dispensary_id, item_id):
+def handleItemPicture(dispensary_id, item_id):
     if request.method == 'PUT':
         return BaseItem().updateItemPicture(item_id, dispensary_id, request.json)
     else:
@@ -277,7 +277,7 @@ def handleDriverVehicleRegistration(driver_id):
 
 
 @app.route('/Driver/drivers/<int:driver_id>/picture', methods=['PUT'])
-def handleDispensaryPicture(driver_id):
+def handleDriverPicture(driver_id):
     if request.method == 'PUT':
         return BaseDriver().updateDriverPicture(driver_id, request.json)
     else:
@@ -450,7 +450,7 @@ def handleUserDeliveriesById(user_id):
 
 
 @app.route('/User/users/<int:user_id>/picture', methods=['PUT'])
-def handleDispensaryPicture(user_id):
+def handleUserPicture(user_id):
     if request.method == 'PUT':
         return BaseUser().updateUserPicture(user_id, request.json)
     else:
