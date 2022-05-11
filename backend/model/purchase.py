@@ -13,7 +13,7 @@ class PurchaseDAO:
     def createPurchase(self, user_id, dispensary_id, purchase_number, purchase_type, purchase_date, purchase_total):
         cursor = self.conn.cursor()
         query = 'insert into "Purchase" (user_id, dispensary_id, purchase_number, purchase_type, purchase_date, ' \
-                'purchase_total) values (%s, %s, %s, %s, %s, %s) returning purchase_id'
+                'purchase_total) values (%s, %s, %s, %s, %s, %s) returning purchase_id;'
         cursor.execute(query, (user_id, dispensary_id, purchase_number, purchase_type, purchase_date, purchase_total))
         purchase_id = cursor.fetchone()[0]
         self.conn.commit()
@@ -23,7 +23,7 @@ class PurchaseDAO:
     def createPurchasedItem(self, purchase_id, item_id, purchased_quantity, item_subtotal):
         cursor = self.conn.cursor()
         query = 'insert into "PurchasedItems" (purchase_id, item_id, purchased_quantity, item_subtotal) ' \
-                'values (%s, %s, %s, %s)'
+                'values (%s, %s, %s, %s);'
         cursor.execute(query, (purchase_id, item_id, purchased_quantity, item_subtotal))
         self.conn.commit()
         cursor.close()
@@ -59,7 +59,7 @@ class PurchaseDAO:
 
     def getPurchaseById(self, purchase_id):
         cursor = self.conn.cursor()
-        query = 'select * from "Purchase" where purchase_id = %s'
+        query = 'select * from "Purchase" where purchase_id = %s;'
         cursor.execute(query, (purchase_id,))
         result = cursor.fetchone()
         cursor.close()
@@ -67,7 +67,7 @@ class PurchaseDAO:
 
     def getPurchaseByIdAtDispensary(self, dispensary_id, purchase_id):
         cursor = self.conn.cursor()
-        query = 'select * from "Purchase" where dispensary_id = %s and purchase_id = %s'
+        query = 'select * from "Purchase" where dispensary_id = %s and purchase_id = %s;'
         cursor.execute(query, (dispensary_id, purchase_id,))
         result = cursor.fetchone()
         cursor.close()
@@ -75,7 +75,7 @@ class PurchaseDAO:
 
     def getPurchasesByUser(self, user_id):
         cursor = self.conn.cursor()
-        query = 'select * from "Purchase" where user_id = %s'
+        query = 'select * from "Purchase" where user_id = %s;'
         cursor.execute(query, (user_id,))
         result = []
         for row in cursor:
@@ -115,7 +115,7 @@ class PurchaseDAO:
 
     def getPastPurchasesByUser(self, user_id):
         cursor = self.conn.cursor()
-        query = 'select * from "Purchase" where user_id = %s and purchase_completed = True'
+        query = 'select * from "Purchase" where user_id = %s and purchase_completed = True;'
         cursor.execute(query, (user_id,))
         result = []
         for row in cursor:
