@@ -90,6 +90,30 @@ class BaseItem:
                 result_list.append(obj)
             return jsonify(result_list), 200
 
+    def getTotalOfItemsInStockAtDispensary(self, dispensary_id):
+        dispensary_dao = DispensaryDAO()
+        valid_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        if not valid_dispensary:
+            return jsonify("Dispensary Not Found"), 404
+        item_dao = ItemDAO()
+        items_list = item_dao.getTotalOfItemsInStockAtDispensary(dispensary_id)
+        if not items_list:
+            return jsonify("No Items Found"), 404
+        else:
+            return jsonify(items_list), 200
+
+    def getTotalOfItemsOutOfStockAtDispensary(self, dispensary_id):
+        dispensary_dao = DispensaryDAO()
+        valid_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
+        if not valid_dispensary:
+            return jsonify("Dispensary Not Found"), 404
+        item_dao = ItemDAO()
+        items_list = item_dao.getTotalOfItemsOutOfStockAtDispensary(dispensary_id)
+        if not items_list:
+            return jsonify("No Items Found"), 404
+        else:
+            return jsonify(items_list), 200
+
     def updateItemData(self, dispensary_id, item_id, json):
         item_dao = ItemDAO()
         item_name = json['item_name']
@@ -111,10 +135,10 @@ class BaseItem:
         result = build_item_map_dict(updated_item)
         return jsonify(result), 200
 
-    def updateItemPicture(self, item_id, json):
+    def updateItemPicture(self, item_id, dispensary_id, json):
         item_dao = ItemDAO()
         item_picture = json['item_picture']
-        item_dao.updateItemPicture(item_id, item_picture)
+        item_dao.updateItemPicture(item_id, dispensary_id, item_picture)
         updated_item = item_dao.getItemById(item_id)
         result = build_item_map_dict(updated_item)
         return jsonify(result), 200

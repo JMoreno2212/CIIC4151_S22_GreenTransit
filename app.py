@@ -203,7 +203,21 @@ def handleItemById(dispensary_id, item_id):
         return jsonify("Method Not Allowed"), 405
 
 
-# TODO: Endpoint to update picture for both item and dispensary
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(dispensary_id):
+    if request.method == 'PUT':
+        return BaseDispensary().updateDispensaryPicture(dispensary_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Dispensary/dispensaries/<int:dispensary_id>/<int:item_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(dispensary_id, item_id):
+    if request.method == 'PUT':
+        return BaseItem().updateItemPicture(item_id, dispensary_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
 
 # --------------------------------------------------------------------------------------
 # Driver
@@ -258,6 +272,14 @@ def handlePastDriverDeliveries(driver_id):
 def handleDriverVehicleRegistration(driver_id):
     if request.method == 'POST':
         return BaseVehicle().createVehicle(driver_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Driver/drivers/<int:driver_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(driver_id):
+    if request.method == 'PUT':
+        return BaseDriver().updateDriverPicture(driver_id, request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -427,6 +449,14 @@ def handleUserDeliveriesById(user_id):
         return jsonify("Method Not Allowed"), 405
 
 
+@app.route('/User/users/<int:user_id>/picture', methods=['PUT'])
+def handleDispensaryPicture(user_id):
+    if request.method == 'PUT':
+        return BaseUser().updateUserPicture(user_id, request.json)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
 # --------------------------------------------------------------------------------------
 # Vehicle
 # --------------------------------------------------------------------------------------
@@ -452,6 +482,49 @@ def handleVehicleById(vehicle_id):
         return BaseVehicle().getVehicleById(vehicle_id)
     elif request.method == 'DELETE':
         return BaseVehicle().deleteVehicle(vehicle_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+# --------------------------------------------------------------------------------------
+# Statistics
+# --------------------------------------------------------------------------------------
+@app.route('/Statistics/Dispensary/<int:dispensary_id>/total-purchases', methods=['GET'])
+def handleTotalOfPurchases(dispensary_id):
+    if request.method == 'GET':
+        return BasePurchase().getTotalOfPurchasesByDispensary(dispensary_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Statistics/Dispensary/<int:dispensary_id>/items-in-stock', methods=['GET'])
+def handleTotalOfItemsInStock(dispensary_id):
+    if request.method == 'GET':
+        return BaseItem().getTotalOfItemsInStockAtDispensary(dispensary_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Statistics/Dispensary/<int:dispensary_id>/items-out-of-stock', methods=['GET'])
+def handleTotalOfItemsOutOfStock(dispensary_id):
+    if request.method == 'GET':
+        return BaseItem().getTotalOfItemsOutOfStockAtDispensary(dispensary_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Statistics/Dispensary/<int:dispensary_id>/most-sold-item', methods=['GET'])
+def HandleMostSoldItemByDispensary(dispensary_id):
+    if request.method == 'GET':
+        return BasePurchase().getMostSoldItemAtDispensary(dispensary_id)
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Statistics/Dispensary/<int:dispensary_id>/least-sold-item', methods=['GET'])
+def HandleLeastSoldItemByDispensary(dispensary_id):
+    if request.method == 'GET':
+        return BasePurchase().getLeastSoldItemAtDispensary(dispensary_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
