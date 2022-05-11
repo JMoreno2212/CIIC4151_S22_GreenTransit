@@ -85,8 +85,12 @@ class PurchaseDAO:
 
     def getMostSoldItemAtDispensary(self, dispensary_id):
         cursor = self.conn.cursor()
-        query = 'select  item_id, sum(purchased_quantity) as sum from "PurchasedItems" natural inner join "Purchase" ' \
-                'where dispensary_id = %s group by item_id order by sum desc'
+        query = 'select I.item_id, I.item_name, I.item_description, sum(purchased_quantity) as sum ' \
+                'from "PurchasedItems" ' \
+                'inner join "Purchase" on "PurchasedItems".purchase_id = "Purchase".purchase_id ' \
+                'inner join "Item" I on I.item_id = "PurchasedItems".item_id ' \
+                'where "Purchase".dispensary_id =11 group by I.item_id, I.item_name, I.item_description ' \
+                'order by sum desc'
         cursor.execute(query, (dispensary_id,))
         result = []
         for row in cursor:
@@ -96,8 +100,12 @@ class PurchaseDAO:
 
     def getLeastSoldItemAtDispensary(self, dispensary_id):
         cursor = self.conn.cursor()
-        query = 'select  item_id, sum(purchased_quantity) as sum from "PurchasedItems" natural inner join "Purchase" ' \
-                'where dispensary_id = %s group by item_id order by sum asc'
+        query = 'select I.item_id, I.item_name, I.item_description, sum(purchased_quantity) as sum ' \
+                'from "PurchasedItems" ' \
+                'inner join "Purchase" on "PurchasedItems".purchase_id = "Purchase".purchase_id ' \
+                'inner join "Item" I on I.item_id = "PurchasedItems".item_id ' \
+                'where "Purchase".dispensary_id =11 group by I.item_id, I.item_name, I.item_description ' \
+                'order by sum asc'
         cursor.execute(query, (dispensary_id,))
         result = []
         for row in cursor:

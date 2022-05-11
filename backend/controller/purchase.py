@@ -101,11 +101,11 @@ class BasePurchase:
         if not valid_dispensary:
             return jsonify("Dispensary Not Found"), 404
         purchase_dao = PurchaseDAO()
-        most_sold_item = purchase_dao.getLeastSoldItemAtDispensary(dispensary_id)
-        if not most_sold_item:  # Item Not Found
+        least_sold_item = purchase_dao.getLeastSoldItemAtDispensary(dispensary_id)
+        if not least_sold_item:  # Item Not Found
             return jsonify("Item Not Found"), 404
         else:
-            result = most_sold_item[0]
+            result = least_sold_item[0]
         return jsonify(result), 200
 
     def getTotalOfPurchasesByDispensary(self, dispensary_id):
