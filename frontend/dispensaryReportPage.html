@@ -26,10 +26,10 @@
     </a>
     <h1>Green <span class="h1color"> Transit</span></h1>
     <nav class="navbar">
-        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/dispensaryPurchasesTrackerSystem.html?_ijt=f6ogatcklkm2nmle5k4sv6ivth&_ij_reload=RELOAD_ON_SAVE">Home</a>
-        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/dispensaryInventory.html?_ijt=mlhqebhdrj72jqamuouehmrfft&_ij_reload=RELOAD_ON_SAVE">Inventory</a>
-        <a href="http://localhost:63342/CIIC4151_S22_GreenTransit/frontend/addNewProductPage.html?_ijt=mhickhr6bhdktj50084bom0sv3&_ij_reload=RELOAD_ON_SAVE">Add Product</a>
-        <a href="">Report</a>
+        <a href="http://localhost:63343/CIIC4151_S22_GreenTransit/frontend/dispensaryPurchasesTrackerSystem.html?_ijt=f6ogatcklkm2nmle5k4sv6ivth&_ij_reload=RELOAD_ON_SAVE">Home</a>
+        <a href="http://localhost:63343/CIIC4151_S22_GreenTransit/frontend/dispensaryInventory.html?_ijt=mlhqebhdrj72jqamuouehmrfft&_ij_reload=RELOAD_ON_SAVE">Inventory</a>
+        <a href="http://localhost:63343/CIIC4151_S22_GreenTransit/frontend/addNewProductPage.html?_ijt=mhickhr6bhdktj50084bom0sv3&_ij_reload=RELOAD_ON_SAVE">Add Product</a>
+        <a href="http://localhost:63343/CIIC4151_S22_GreenTransit/frontend/dispensaryReportPage.html?_ijt=s3uusfkm7lv0uqakof0odt9t3f&_ij_reload=RELOAD_ON_SAVE">Report</a>
         <a href="">Account</a>
     </nav>
 
@@ -90,8 +90,28 @@
             <div class="card-header">
                 <h2> Best selling product </h2>
             </div>
-            <div>&nbsp;</div>
-            <label id="BestSellingProductID"  style="font-size: 24px"> </label>
+            <div class="row">
+                <div class="col">
+                    <label style="font-size: 24px">Name:  </label>
+                    <label id="BestSellingProductNameID"  style="font-size: 24px"></label>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label style="font-size: 24px">Description:  </label>
+                    <label id="BestSellingProductDescriptionID" style="font-size: 24px"> </label>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label style="font-size: 24px">Purchased Quantity:  </label>
+                    <label id="BestSellingProductPurchasedQuantityID"  style="font-size: 24px"> </label>
+
+                </div>
+            </div>
+
             <div>&nbsp;</div>
         </div>
         <div>&nbsp;</div>
@@ -101,11 +121,28 @@
             <div class="card-header">
                 <h2> Least selling product</h2>
             </div>
-            <div>&nbsp;</div>
-            <label id="LeastSellingProductID"  style="font-size: 24px"> </label>
+            <div class="row">
+                <div class="col">
+                    <label style="font-size: 24px">Name:  </label>
+                    <label id="LeastSellingProductNameID"  style="font-size: 24px"> </label>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label style="font-size: 24px">Description:  </label>
+                    <label id="LeastSellingProductDescriptionID" style="font-size: 24px"> </label>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label style="font-size: 24px">Purchased Quantity:  </label>
+                    <label id="LeastSellingProductPurchasedQuantityID"  style="font-size: 24px"> </label>
+
+                </div>
             <div>&nbsp;</div>
         </div>
-        <div>&nbsp;</div>
     </div>
 
 </div>
@@ -174,7 +211,9 @@
                 .then((response) => response.json())
                 .then((response) => {
                     console.log(response)
-                    document.getElementById("BestSellingProductID").innerHTML = response;
+                    document.getElementById("BestSellingProductNameID").innerHTML = response[1];
+                    document.getElementById("BestSellingProductDescriptionID").innerHTML = response[2];
+                    document.getElementById("BestSellingProductPurchasedQuantityID").innerHTML = response[3];
                 })
                 .catch((error) => {
                     console.log('API failure' + error)
@@ -190,7 +229,9 @@
                 .then((response) => response.json())
                 .then((response) => {
                     console.log(response)
-                    document.getElementById("LeastSellingProductID").innerHTML = response;
+                    document.getElementById("LeastSellingProductNameID").innerHTML = response[1];
+                    document.getElementById("LeastSellingProductDescriptionID").innerHTML = response[2];
+                    document.getElementById("LeastSellingProductPurchasedQuantityID").innerHTML = response[3];
                 })
                 .catch((error) => {
                     console.log('API failure' + error)
