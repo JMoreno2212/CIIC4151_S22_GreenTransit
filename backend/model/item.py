@@ -80,11 +80,13 @@ class ItemDAO:
         cursor.close()
         return result
 
-    def getItemByCategory(self, item_category):
+    def getItemsByCategory(self, item_category):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where item_category = %s and item_active = True;'
         cursor.execute(query, (item_category,))
-        result = cursor.fetchone()
+        result = []
+        for row in cursor:
+            result.append(row)
         cursor.close()
         return result
 
@@ -104,21 +106,25 @@ class ItemDAO:
         cursor.close()
         return result
 
-    def getItemByPriceRange(self, item_price_bottom, item_price_top):
+    def getItemsByPriceRange(self, item_price_bottom, item_price_top):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where (item_price between %s and %s) and item_active = true;'
         cursor.execute(query, (item_price_bottom, item_price_top))
-        result = cursor.fetchone()
+        result = []
+        for row in cursor:
+            result.append(row)
         cursor.close()
         return result
 
-    def getItemByFilter(self, item_filter_name, item_filter_description, item_filter_category, item_filter_type):
+    def getItemsByFilter(self, item_filter_name, item_filter_description, item_filter_category, item_filter_type):
         cursor = self.conn.cursor()
         query = 'select * from "Item" where (item_name like %s or item_description like %s or item_category like %s ' \
                 'or item_type like %s) and item_active = true;'
         cursor.execute(query, ('%' + item_filter_name + '%', '%' + item_filter_description + '%', '%' +
                                item_filter_category + '%', '%' + item_filter_type + '%',))
-        result = cursor.fetchone()
+        result = []
+        for row in cursor:
+            result.append(row)
         cursor.close()
         return result
 

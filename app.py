@@ -296,9 +296,9 @@ def handleItems():
 
 
 @app.route('/Item/items/filter/<item_filter>', methods=['GET'])
-def handleItemsByName(item_filter):
+def handleItemsByFilter(item_filter):
     if request.method == 'GET':
-        return BaseItem().getItemByFilter(item_filter)
+        return BaseItem().getItemsByFilter(item_filter)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -306,7 +306,7 @@ def handleItemsByName(item_filter):
 @app.route('/Item/items/category/<item_category>', methods=['GET'])
 def handleItemsByCategory(item_category):
     if request.method == 'GET':
-        return BaseItem().getItemByCategory(item_category)
+        return BaseItem().getItemsByCategory(item_category)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -314,7 +314,7 @@ def handleItemsByCategory(item_category):
 @app.route('/Item/items/price/', methods=['GET'])
 def handleItemsByPriceRange():
     if request.method == 'GET':
-        return BaseItem().getItemByPriceRange(request.json)
+        return BaseItem().getItemsByPriceRange(request.json)
     else:
         return jsonify("Method Not Allowed"), 405
 
