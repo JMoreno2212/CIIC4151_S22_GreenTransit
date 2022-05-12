@@ -27,11 +27,11 @@ def hello_world():
 def verifyRegistration():
     if request.method == 'POST':
         if request.json['registration_type'] == "User":
-            return BaseUser().createUser(request.json)
+            return BaseUser().createUser(request.json, request.files)
         elif request.json['registration_type'] == "Driver":
-            return BaseDriver().createDriver(request.json)
+            return BaseDriver().createDriver(request.json, request.files)
         elif request.json['registration_type'] == "Dispensary":
-            return BaseDispensary().createDispensary(request.json)
+            return BaseDispensary().createDispensary(request.json, request.files)
         else:
             return jsonify("No registration type found"), 404
     else:
@@ -170,7 +170,7 @@ def handleDispensaryItems(dispensary_id):
     if request.method == 'GET':
         return BaseItem().getAllItemsAtDispensary(dispensary_id)
     elif request.method == 'POST':
-        return BaseItem().createItem(dispensary_id, request.json)
+        return BaseItem().createItem(dispensary_id, request.json, request.files)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -206,7 +206,7 @@ def handleItemById(dispensary_id, item_id):
 @app.route('/Dispensary/dispensaries/<int:dispensary_id>/picture', methods=['PUT'])
 def handleDispensaryPicture(dispensary_id):
     if request.method == 'PUT':
-        return BaseDispensary().updateDispensaryPicture(dispensary_id, request.json)
+        return BaseDispensary().updateDispensaryPicture(dispensary_id, request.files)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -214,7 +214,7 @@ def handleDispensaryPicture(dispensary_id):
 @app.route('/Dispensary/dispensaries/<int:dispensary_id>/<int:item_id>/picture', methods=['PUT'])
 def handleItemPicture(dispensary_id, item_id):
     if request.method == 'PUT':
-        return BaseItem().updateItemPicture(item_id, dispensary_id, request.json)
+        return BaseItem().updateItemPicture(item_id, dispensary_id, request.files)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -279,7 +279,7 @@ def handleDriverVehicleRegistration(driver_id):
 @app.route('/Driver/drivers/<int:driver_id>/picture', methods=['PUT'])
 def handleDriverPicture(driver_id):
     if request.method == 'PUT':
-        return BaseDriver().updateDriverPicture(driver_id, request.json)
+        return BaseDriver().updateDriverPicture(driver_id, request.files)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -323,6 +323,14 @@ def handleItemsByPriceRange():
 def handleActiveItems():
     if request.method == 'GET':
         return BaseItem().getAllActiveItems()
+    else:
+        return jsonify("Method Not Allowed"), 405
+
+
+@app.route('/Item/items/<int:item_id>', methods=['GET'])
+def handleItemsById(item_id):
+    if request.method == 'GET':
+        return BaseItem().getItemById(item_id)
     else:
         return jsonify("Method Not Allowed"), 405
 
@@ -452,7 +460,7 @@ def handleUserDeliveriesById(user_id):
 @app.route('/User/users/<int:user_id>/picture', methods=['PUT'])
 def handleUserPicture(user_id):
     if request.method == 'PUT':
-        return BaseUser().updateUserPicture(user_id, request.json)
+        return BaseUser().updateUserPicture(user_id, request.files)
     else:
         return jsonify("Method Not Allowed"), 405
 

@@ -1,8 +1,11 @@
+import os
+
 from flask import jsonify
 
 from backend.model.driver import DriverDAO
 from backend.model.license import LicenseDAO
 from backend.model.vehicle import VehicleDAO
+from backend.aws_management import AWSHandler
 
 
 def build_driver_map_dict(row):
@@ -40,35 +43,49 @@ def build_driver_delivery_map_dict(row):
 
 class BaseDriver:
 
-    def createDriver(self, json):
+    def createDriver(self, json, files):
         driver_first_name = json['registration_first_name']
         driver_last_name = json['registration_last_name']
         driver_birth_date = json['registration_birth_date']
         driver_phone = json['registration_phone']
         driver_email = json['registration_email']
         driver_password = json['registration_password']
-        driver_driving_license = json['driver_driving_license']
-        driver_gmp_certificate = json['driver_gmp_certificate']
-        driver_dispensary_technician = json['driver_dispensary_technician']
+        driver_driving_license = files.get('driver_driving_license')
+        driver_gmp_certificate = files.get('driver_gmp_certificate')
+        driver_dispensary_technician = files.get('driver_dispensary_technician')
         license_type = "Occupational"  # This occurs since Driver's License is asked on a separate field
         license_name = json['license_name']
         license_expiration = json['license_expiration']
-        license_file = json['license_file']
-        driver_picture = json['registration_picture']
+        license_file = files.get('license_file')
+        driver_picture = files.get('registration_picture')
         driver_dao = DriverDAO()
         existing_driver = driver_dao.getDriverByEmail(driver_email)
         license_dao = LicenseDAO()
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_driver and not existing_license:  # Driver with that email and license does not exist
-            license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
+            aws_handler = AWSHandler()
+            uploaded_license = aws_handler.upload_file(license_name, os.getenv('BUCKET_NAME'))
+            uploaded_picture = aws_handler.upload_file(driver_picture, os.getenv('BUCKET_NAME'))
+            uploaded_certificate = aws_handler.upload_file(driver_gmp_certificate, os.getenv('BUCKET_NAME'))
+            uploaded_driver_license = aws_handler.upload_file(driver_driving_license, os.getenv('BUCKET_NAME'))
+            # Upload failed
+            if not uploaded_license or not uploaded_picture or not uploaded_certificate or not uploaded_driver_license:
+                aws_handler.delete_file(license_name, os.getenv('BUCKET_NAME'))
+                aws_handler.delete_file(driver_picture, os.getenv('BUCKET_NAME'))
+                aws_handler.delete_file(driver_gmp_certificate, os.getenv('BUCKET_NAME'))
+                aws_handler.delete_file(driver_driving_license, os.getenv('BUCKET_NAME'))
+                return jsonify("Error reading input files"), 409
+            license_id = license_dao.createLicense(license_type, license_name, license_expiration,
+                                                   license_file.filename)
             driver_id = driver_dao.createDriver(driver_first_name, driver_last_name, driver_birth_date, driver_phone,
-                                                driver_email, driver_password, driver_driving_license,
-                                                driver_gmp_certificate, driver_dispensary_technician, license_id,
-                                                driver_picture)
+                                                driver_email, driver_password, driver_driving_license.filename,
+                                                driver_gmp_certificate.filename, driver_dispensary_technician.filename,
+                                                license_id, driver_picture.filename)
             result = build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_birth_date,
-                                            driver_phone, driver_email, driver_password, driver_driving_license,
-                                            driver_gmp_certificate, driver_dispensary_technician, license_id, True,
-                                            driver_picture)
+                                            driver_phone, driver_email, driver_password,
+                                            driver_driving_license.filename, driver_gmp_certificate.filename,
+                                            driver_dispensary_technician.filename, license_id, True,
+                                            driver_picture.filename)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -170,10 +187,15 @@ class BaseDriver:
         else:
             return jsonify("Email address is already in use"), 409
 
-    def updateDriverPicture(self, driver_id, json):
+    def updateDriverPicture(self, driver_id, files):
         driver_dao = DriverDAO()
-        driver_picture = json['driver_picture']
-        driver_dao.updateDriverPicture(driver_id, driver_picture)
+        driver_picture = files.get('driver_picture')
+        aws_handler = AWSHandler()
+        uploaded_picture = aws_handler.upload_file(driver_picture, os.getenv('BUCKET_NAME'))
+        if not uploaded_picture:  # Upload failed
+            aws_handler.delete_file(driver_picture, os.getenv('BUCKET_NAME'))
+            return jsonify("Error reading input files"), 409
+        driver_dao.updateDriverPicture(driver_id, driver_picture.filename)
         updated_driver = driver_dao.getDriverById(driver_id)
         result = build_driver_map_dict(updated_driver)
         return jsonify(result), 200

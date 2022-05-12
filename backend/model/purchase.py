@@ -105,7 +105,7 @@ class PurchaseDAO:
                 'inner join "Purchase" on "PurchasedItems".purchase_id = "Purchase".purchase_id ' \
                 'inner join "Item" I on I.item_id = "PurchasedItems".item_id ' \
                 'where "Purchase".dispensary_id =11 group by I.item_id, I.item_name, I.item_description ' \
-                'order by sum asc'
+                'order by sum'
         cursor.execute(query, (dispensary_id,))
         result = []
         for row in cursor:

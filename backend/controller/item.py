@@ -1,7 +1,10 @@
+import os
+
 from flask import jsonify
 
 from backend.model.dispensary import DispensaryDAO
 from backend.model.item import ItemDAO
+from backend.aws_management import AWSHandler
 
 
 def build_item_map_dict(row):
@@ -22,19 +25,23 @@ def build_item_attr_dict(item_id, item_name, item_description, item_quantity, it
 
 class BaseItem:
 
-    def createItem(self, dispensary_id, json):
+    def createItem(self, dispensary_id, json, files):
         item_name = json['item_name']
         item_description = json['item_description']
         item_quantity = json['item_quantity']
         item_price = json['item_price']
         item_category = json['item_category']
         item_type = json['item_type']
-        item_picture = json['item_picture']
+        item_picture = files.get('item_picture')
         item_dao = ItemDAO()
+        aws_handler = AWSHandler()
+        uploaded_picture = aws_handler.upload_file(item_picture, os.getenv('BUCKET_NAME'))
+        if not uploaded_picture:  # Upload failed
+            return jsonify("Error reading input files"), 409
         item_id = item_dao.createItem(item_name, item_description, item_quantity, item_price, item_category, item_type,
-                                      dispensary_id, item_picture)
+                                      dispensary_id, item_picture.filename)
         result = build_item_attr_dict(item_id, item_name, item_description, item_quantity, item_price, item_category,
-                                      item_type, dispensary_id, True, item_picture)
+                                      item_type, dispensary_id, True, item_picture.filename)
         return jsonify(result), 200
 
     def getAllItems(self):
@@ -68,6 +75,15 @@ class BaseItem:
             return jsonify("Dispensary Not Found"), 404
         item_dao = ItemDAO()
         item_tuple = item_dao.getItemAtDispensary(dispensary_id, item_id)
+        if not item_tuple:  # Item Not Found
+            return jsonify("Item Not Found"), 404
+        else:
+            result = build_item_map_dict(item_tuple)
+        return jsonify(result), 200
+
+    def getItemById(self, item_id):
+        item_dao = ItemDAO()
+        item_tuple = item_dao.getItemById(item_id)
         if not item_tuple:  # Item Not Found
             return jsonify("Item Not Found"), 404
         else:
@@ -135,10 +151,14 @@ class BaseItem:
         result = build_item_map_dict(updated_item)
         return jsonify(result), 200
 
-    def updateItemPicture(self, item_id, dispensary_id, json):
+    def updateItemPicture(self, item_id, dispensary_id, files):
         item_dao = ItemDAO()
-        item_picture = json['item_picture']
-        item_dao.updateItemPicture(item_id, dispensary_id, item_picture)
+        item_picture = files.get('item_picture')
+        aws_handler = AWSHandler()
+        uploaded_picture = aws_handler.upload_file(item_picture, os.getenv('BUCKET_NAME'))
+        if not uploaded_picture:  # Upload failed
+            return jsonify("Error reading input files"), 409
+        item_dao.updateItemPicture(item_id, dispensary_id, item_picture.filename)
         updated_item = item_dao.getItemById(item_id)
         result = build_item_map_dict(updated_item)
         return jsonify(result), 200
@@ -169,7 +189,7 @@ class BaseItem:
         item_filter_category = item_filter
         item_filter_type = item_filter
         item_tuple = item_dao.getItemsByFilter(item_filter_name, item_filter_description, item_filter_category,
-                                              item_filter_type)
+                                               item_filter_type)
         if not item_tuple:  # Item Not Found
             return jsonify("Item Not Found"), 404
         else:

@@ -1,3 +1,5 @@
+botocore==1.25.12
+boto3==1.22.11
 click==8.0.4
 cryptography==36.0.1
 Flask==2.0.3

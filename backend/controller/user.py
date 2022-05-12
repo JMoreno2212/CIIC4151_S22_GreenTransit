@@ -1,7 +1,9 @@
-from flask import jsonify
+import os
 
+from flask import jsonify
 from backend.controller.license import LicenseDAO
 from backend.model.user import UserDAO
+from backend.aws_management import AWSHandler
 
 
 def build_user_map_dict(row):
@@ -22,7 +24,7 @@ def build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_da
 
 class BaseUser:
 
-    def createUser(self, json):
+    def createUser(self, json, files):
         user_first_name = json['registration_first_name']
         user_last_name = json['registration_last_name']
         user_birth_date = json['registration_birth_date']
@@ -32,18 +34,26 @@ class BaseUser:
         license_type = json['registration_type']
         license_name = json['license_name']
         license_expiration = json['license_expiration']
-        license_file = json['license_file']
-        user_picture = json['registration_picture']
+        license_file = files.get('license_file')
+        user_picture = files.get('registration_picture')
         user_dao = UserDAO()
         existing_user = user_dao.getUserByEmail(user_email)
         license_dao = LicenseDAO()
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_user and not existing_license:  # User with that email and license number does not exist
-            license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
+            aws_handler = AWSHandler()
+            uploaded_license = aws_handler.upload_file(license_file, os.getenv('BUCKET_NAME'))
+            uploaded_picture = aws_handler.upload_file(user_picture, os.getenv('BUCKET_NAME'))
+            if not uploaded_license or not uploaded_picture:  # Upload failed
+                aws_handler.delete_file(license_file, os.getenv('BUCKET_NAME'))
+                aws_handler.delete_file(user_picture, os.getenv('BUCKET_NAME'))
+                return jsonify("Error reading input files"), 409
+            license_id = license_dao.createLicense(license_type, license_name, license_expiration,
+                                                   license_file.filename)
             user_id = user_dao.createUser(user_first_name, user_last_name, user_birth_date, user_phone, user_email,
-                                          user_password, license_id, user_picture)
+                                          user_password, license_id, user_picture.filename)
             result = build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_date, user_phone,
-                                          user_email, user_password, license_id, True, user_picture)
+                                          user_email, user_password, license_id.filename, True, user_picture.filename)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -91,16 +101,6 @@ class BaseUser:
             result = build_user_map_dict(user_tuple)
             return jsonify(result), 200
 
-    # def getUserByEmail(self, json):
-    #     user_dao = UserDAO()
-    #     user_email = json['email']
-    #     user_tuple = user_dao.getUserByEmail(user_email)
-    #     if not user_tuple:  # User Not Found
-    #         return None
-    #     else:
-    #         result = build_user_map_dict(user_tuple)
-    #         return jsonify(result), 200
-
     def resetPassword(self, json):
         user_dao = UserDAO()
         user_email = json['email']
@@ -128,10 +128,15 @@ class BaseUser:
         else:
             return jsonify("Email address is already in use"), 409
 
-    def updateUserPicture(self, user_id, json):
+    def updateUserPicture(self, user_id, files):
         user_dao = UserDAO()
-        user_picture = json['user_picture']
-        user_dao.updateUserPicture(user_id, user_picture)
+        user_picture = files.get('user_picture')
+        aws_handler = AWSHandler()
+        uploaded_picture = aws_handler.upload_file(user_picture, os.getenv('BUCKET_NAME'))
+        if not uploaded_picture:  # Upload failed
+            aws_handler.delete_file(user_picture, os.getenv('BUCKET_NAME'))
+            return jsonify("Error reading input files"), 409
+        user_dao.updateUserPicture(user_id, user_picture.filename)
         updated_user = user_dao.getUserById(user_id)
         result = build_user_map_dict(updated_user)
         return jsonify(result), 200

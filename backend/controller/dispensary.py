@@ -1,7 +1,10 @@
+import os
+
 from flask import jsonify
 
 from backend.model.dispensary import DispensaryDAO
 from backend.model.license import LicenseDAO
+from backend.aws_management import AWSHandler
 
 
 def build_dispensary_map_dict(row):
@@ -25,7 +28,7 @@ def build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone,
 
 class BaseDispensary:
 
-    def createDispensary(self, json):
+    def createDispensary(self, json, files):
         dispensary_name = json['dispensary_name']
         dispensary_phone = json['registration_phone']
         dispensary_direction = json['dispensary_direction']
@@ -33,24 +36,32 @@ class BaseDispensary:
         dispensary_zipcode = json['dispensary_zipcode']
         dispensary_email = json['registration_email']
         dispensary_password = json['registration_password']
-        dispensary_picture = json['registration_picture']
+        dispensary_picture = files.get('registration_picture')
         license_type = json['registration_type']
         license_name = json['license_name']
         license_expiration = json['license_expiration']
-        license_file = json['license_file']
+        license_file = files.get('license_file')
         dispensary_dao = DispensaryDAO()
         existing_dispensary = dispensary_dao.getDispensaryByEmail(dispensary_email)
         license_dao = LicenseDAO()
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_dispensary and not existing_license:  # Dispensary with that email and license does not exist
-            license_id = license_dao.createLicense(license_type, license_name, license_expiration, license_file)
+            aws_handler = AWSHandler()
+            uploaded_license = aws_handler.upload_file(license_name, os.getenv('BUCKET_NAME'))
+            uploaded_picture = aws_handler.upload_file(dispensary_picture, os.getenv('BUCKET_NAME'))
+            if not uploaded_license or not uploaded_picture:  # Upload failed
+                aws_handler.delete_file(license_name, os.getenv('BUCKET_NAME'))
+                aws_handler.delete_file(dispensary_picture, os.getenv('BUCKET_NAME'))
+                return jsonify("Error reading input files"), 409
+            license_id = license_dao.createLicense(license_type, license_name, license_expiration,
+                                                   license_file.filename)
             dispensary_id = dispensary_dao.createDispensary(dispensary_name, dispensary_phone, dispensary_direction,
                                                             dispensary_municipality, dispensary_zipcode,
                                                             dispensary_email, dispensary_password, license_id,
-                                                            dispensary_picture)
+                                                            dispensary_picture.filename)
             result = build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
                                                 dispensary_municipality, dispensary_zipcode, dispensary_email,
-                                                dispensary_password, license_id, True, dispensary_picture)
+                                                dispensary_password, license_id, True, dispensary_picture.filename)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -132,10 +143,15 @@ class BaseDispensary:
         else:
             return jsonify("Email address is already in use"), 409
 
-    def updateDispensaryPicture(self, dispensary_id, json):
+    def updateDispensaryPicture(self, dispensary_id, files):
         dispensary_dao = DispensaryDAO()
-        dispensary_picture = json['dispensary_picture']
-        dispensary_dao.updateDispensaryPicture(dispensary_id, dispensary_picture)
+        dispensary_picture = files.get('dispensary_picture')
+        aws_handler = AWSHandler()
+        uploaded_picture = aws_handler.upload_file(dispensary_picture, os.getenv('BUCKET_NAME'))
+        if not uploaded_picture:  # Upload failed
+            aws_handler.delete_file(dispensary_picture, os.getenv('BUCKET_NAME'))
+            return jsonify("Error reading input files"), 409
+        dispensary_dao.updateDispensaryPicture(dispensary_id, dispensary_picture.filename)
         updated_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
         result = build_dispensary_map_dict(updated_dispensary)
         return jsonify(result), 200
