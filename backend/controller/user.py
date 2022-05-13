@@ -143,7 +143,7 @@ class BaseUser:
         aws_handler = AWSHandler()
         user_picture.save("uploads/" + user_picture.filename)
         object_name = 'user_picture' + os.getenv('FILE_COUNTER') + '.pdf'
-        uploaded_picture = aws_handler.upload_file(user_picture.filename, os.getenv('BUCKET_NAME'), object_name)
+        uploaded_picture = aws_handler.upload_file(user_picture, os.getenv('BUCKET_NAME'), object_name)
         if not uploaded_picture:  # Upload failed
             return jsonify("Error reading input files"), 409
         os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
