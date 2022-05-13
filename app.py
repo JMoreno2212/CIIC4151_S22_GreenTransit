@@ -27,11 +27,11 @@ def hello_world():
 def verifyRegistration():
     if request.method == 'POST':
         if request.json['registration_type'] == "User":
-            return BaseUser().createUser(request.json, request.files)
+            return BaseUser().createUser(request.files)
         elif request.json['registration_type'] == "Driver":
-            return BaseDriver().createDriver(request.json, request.files)
+            return BaseDriver().createDriver(request.files)
         elif request.json['registration_type'] == "Dispensary":
-            return BaseDispensary().createDispensary(request.json, request.files)
+            return BaseDispensary().createDispensary(request.files)
         else:
             return jsonify("No registration type found"), 404
     else:
@@ -170,7 +170,7 @@ def handleDispensaryItems(dispensary_id):
     if request.method == 'GET':
         return BaseItem().getAllItemsAtDispensary(dispensary_id)
     elif request.method == 'POST':
-        return BaseItem().createItem(dispensary_id, request.json, request.files)
+        return BaseItem().createItem(dispensary_id, request.files)
     else:
         return jsonify("Method Not Allowed"), 405
 

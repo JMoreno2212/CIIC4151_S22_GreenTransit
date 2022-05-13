@@ -130,10 +130,10 @@ class DeliveryDAO:
         cursor.close()
         return cursor.rowcount != 0
 
-    def updateDeliveryDriver(self, delivery_id, driver_id, vehicle_id):
+    def updateDeliveryDriver(self, delivery_id, driver_id):
         cursor = self.conn.cursor()
-        query = 'update "Delivery" set driver_id = %s, vehicle_id = %s where delivery_id = %s'
-        cursor.execute(query, (driver_id, vehicle_id, delivery_id))
+        query = 'update "Delivery" set driver_id = %s where delivery_id = %s'
+        cursor.execute(query, (driver_id, delivery_id))
         self.conn.commit()
         cursor.close()
         return cursor.rowcount != 0

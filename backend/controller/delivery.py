@@ -165,9 +165,7 @@ class BaseDelivery:
     def updateDeliveryDriver(self, json, driver_id):
         delivery_dao = DeliveryDAO()
         delivery_id = json['delivery_id']
-        vehicle_dao = VehicleDAO()
-        vehicle_id = vehicle_dao.getVehicleByDriver(driver_id)
-        delivery_dao.updateDeliveryDriver(delivery_id, driver_id, vehicle_id)
+        delivery_dao.updateDeliveryDriver(delivery_id, driver_id)
         updated_delivery = delivery_dao.getDeliveryByIdBasicInfo(delivery_id)
         result = build_delivery_map_dict(updated_delivery)
         return jsonify(result), 200
