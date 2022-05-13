@@ -1,5 +1,6 @@
 import os
 import logging
+import mimetypes
 import boto3
 from botocore.exceptions import ClientError
 
@@ -10,15 +11,16 @@ class AWSHandler:
                                       aws_secret_access_key=os.getenv('ACCESS_KEY'))
 
     # Function obtained from: https://boto3.amazonaws.com/v1/documentation/api/latest/guide/s3-uploading-files.html
-    def upload_file(self, file_name, bucket):
+    def upload_file(self, file_name, bucket, object_name):
         """Upload a file to an S3 bucket
 
         :param file_name: File to upload
         :param bucket: Bucket to upload to
+        :param object_name: S3 object name. If not specified then file_name is used
         :return: True if file was uploaded, else False
         """
         try:
-            response = self.s3_client.upload_file(file_name, bucket)
+            response = self.s3_client.upload_file(file_name, bucket, object_name)
         except ClientError as e:
             logging.error(e)
             return False

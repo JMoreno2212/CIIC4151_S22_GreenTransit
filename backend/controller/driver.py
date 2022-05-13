@@ -43,49 +43,76 @@ def build_driver_delivery_map_dict(row):
 
 class BaseDriver:
 
-    def createDriver(self, json, files):
-        driver_first_name = json['registration_first_name']
-        driver_last_name = json['registration_last_name']
-        driver_birth_date = json['registration_birth_date']
-        driver_phone = json['registration_phone']
-        driver_email = json['registration_email']
-        driver_password = json['registration_password']
-        driver_driving_license = files.get('driver_driving_license')
-        driver_gmp_certificate = files.get('driver_gmp_certificate')
-        driver_dispensary_technician = files.get('driver_dispensary_technician')
+    def createDriver(self, files):
+        driver_first_name = files['registration_first_name']
+        driver_last_name = files['registration_last_name']
+        driver_birth_date = files['registration_birth_date']
+        driver_phone = files['registration_phone']
+        driver_email = files['registration_email']
+        driver_password = files['registration_password']
+        driver_driving_license = files['driver_driving_license']
+        driver_driving_license.save("uploads/" + driver_driving_license.filename)
+        driver_gmp_certificate = files['driver_gmp_certificate']
+        driver_gmp_certificate.save("uploads/" + driver_gmp_certificate.filename)
+        driver_dispensary_technician = files['driver_dispensary_technician']
+        driver_dispensary_technician.save("uploads/" + driver_dispensary_technician.filename)
         license_type = "Occupational"  # This occurs since Driver's License is asked on a separate field
-        license_name = json['license_name']
-        license_expiration = json['license_expiration']
-        license_file = files.get('license_file')
-        driver_picture = files.get('registration_picture')
+        license_name = files['license_name']
+        license_expiration = files['license_expiration']
+        license_file = files['license_file']
+        license_file.save("uploads/" + license_file.filename)
+        driver_picture = files['registration_picture']
+        driver_picture.save("uploads/" + driver_picture.filename)
         driver_dao = DriverDAO()
         existing_driver = driver_dao.getDriverByEmail(driver_email)
         license_dao = LicenseDAO()
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_driver and not existing_license:  # Driver with that email and license does not exist
             aws_handler = AWSHandler()
-            uploaded_license = aws_handler.upload_file(license_name, os.getenv('BUCKET_NAME'))
-            uploaded_picture = aws_handler.upload_file(driver_picture, os.getenv('BUCKET_NAME'))
-            uploaded_certificate = aws_handler.upload_file(driver_gmp_certificate, os.getenv('BUCKET_NAME'))
-            uploaded_driver_license = aws_handler.upload_file(driver_driving_license, os.getenv('BUCKET_NAME'))
+
+            license_file_name = 'license_file' + os.getenv('FILE_COUNTER') + '.pdf'
+            uploaded_license = aws_handler.upload_file(license_file, os.getenv('BUCKET_NAME'), license_file_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
+            driver_picture_name = 'driver_picture' + os.getenv('FILE_COUNTER') + '.png'
+            uploaded_picture = aws_handler.upload_file(driver_picture, os.getenv('BUCKET_NAME'), driver_picture_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
+            driver_gmp_certificate_name = 'driver_gmp_certificate' + os.getenv('FILE_COUNTER') + '.pdf'
+            uploaded_certificate = aws_handler.upload_file(driver_gmp_certificate, os.getenv('BUCKET_NAME'),
+                                                           driver_gmp_certificate_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
+            driver_dispensary_technician_name = 'driver_dispensary_technician' + os.getenv('FILE_COUNTER') + '.pdf'
+            uploaded_technician = aws_handler.upload_file(driver_dispensary_technician, os.getenv('BUCKET_NAME'),
+                                                          driver_dispensary_technician_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
+            driver_driving_license_name = 'driver_driving_license.' + os.getenv('FILE_COUNTER') + 'pdf'
+            uploaded_driver_license = aws_handler.upload_file(driver_driving_license, os.getenv('BUCKET_NAME'),
+                                                              driver_driving_license_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
             # Upload failed
-            if not uploaded_license or not uploaded_picture or not uploaded_certificate or not uploaded_driver_license:
+            if not uploaded_license or not uploaded_picture or not uploaded_certificate or not uploaded_technician \
+                    or not uploaded_driver_license:
                 aws_handler.delete_file(license_name, os.getenv('BUCKET_NAME'))
                 aws_handler.delete_file(driver_picture, os.getenv('BUCKET_NAME'))
                 aws_handler.delete_file(driver_gmp_certificate, os.getenv('BUCKET_NAME'))
                 aws_handler.delete_file(driver_driving_license, os.getenv('BUCKET_NAME'))
+                os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) - 5)  # Decrease File Counter by 5
                 return jsonify("Error reading input files"), 409
             license_id = license_dao.createLicense(license_type, license_name, license_expiration,
-                                                   license_file.filename)
+                                                   license_file_name)
             driver_id = driver_dao.createDriver(driver_first_name, driver_last_name, driver_birth_date, driver_phone,
-                                                driver_email, driver_password, driver_driving_license.filename,
-                                                driver_gmp_certificate.filename, driver_dispensary_technician.filename,
-                                                license_id, driver_picture.filename)
+                                                driver_email, driver_password, driver_driving_license_name,
+                                                driver_gmp_certificate_name, driver_dispensary_technician_name,
+                                                license_id, driver_picture_name)
             result = build_driver_attr_dict(driver_id, driver_first_name, driver_last_name, driver_birth_date,
                                             driver_phone, driver_email, driver_password,
-                                            driver_driving_license.filename, driver_gmp_certificate.filename,
-                                            driver_dispensary_technician.filename, license_id, True,
-                                            driver_picture.filename)
+                                            driver_driving_license_name, driver_gmp_certificate_name,
+                                            driver_dispensary_technician_name, license_id, True,
+                                            driver_picture_name)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -189,12 +216,14 @@ class BaseDriver:
 
     def updateDriverPicture(self, driver_id, files):
         driver_dao = DriverDAO()
-        driver_picture = files.get('driver_picture')
+        driver_picture = files['driver_picture']
         aws_handler = AWSHandler()
-        uploaded_picture = aws_handler.upload_file(driver_picture, os.getenv('BUCKET_NAME'))
+        driver_picture.save("uploads/" + driver_picture.filename)
+        driver_picture_name = 'driver_picture' + os.getenv('FILE_COUNTER') + '.png'
+        uploaded_picture = aws_handler.upload_file(driver_picture, os.getenv('BUCKET_NAME'), driver_picture_name)
         if not uploaded_picture:  # Upload failed
-            aws_handler.delete_file(driver_picture, os.getenv('BUCKET_NAME'))
             return jsonify("Error reading input files"), 409
+        os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
         driver_dao.updateDriverPicture(driver_id, driver_picture.filename)
         updated_driver = driver_dao.getDriverById(driver_id)
         result = build_driver_map_dict(updated_driver)

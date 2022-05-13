@@ -28,40 +28,51 @@ def build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone,
 
 class BaseDispensary:
 
-    def createDispensary(self, json, files):
-        dispensary_name = json['dispensary_name']
-        dispensary_phone = json['registration_phone']
-        dispensary_direction = json['dispensary_direction']
-        dispensary_municipality = json['dispensary_municipality']
-        dispensary_zipcode = json['dispensary_zipcode']
-        dispensary_email = json['registration_email']
-        dispensary_password = json['registration_password']
-        dispensary_picture = files.get('registration_picture')
-        license_type = json['registration_type']
-        license_name = json['license_name']
-        license_expiration = json['license_expiration']
-        license_file = files.get('license_file')
+    def createDispensary(self, files):
+        dispensary_name = files['dispensary_name']
+        dispensary_phone = files['registration_phone']
+        dispensary_direction = files['dispensary_direction']
+        dispensary_municipality = files['dispensary_municipality']
+        dispensary_zipcode = files['dispensary_zipcode']
+        dispensary_email = files['registration_email']
+        dispensary_password = files['registration_password']
+        dispensary_picture = files['registration_picture']
+        dispensary_picture.save("uploads/" + dispensary_picture.filename)
+        license_type = files['registration_type']
+        license_name = files['license_name']
+        license_expiration = files['license_expiration']
+        license_file = files['license_file']
+        license_file.save("uploads/" + license_file.filename)
         dispensary_dao = DispensaryDAO()
         existing_dispensary = dispensary_dao.getDispensaryByEmail(dispensary_email)
         license_dao = LicenseDAO()
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_dispensary and not existing_license:  # Dispensary with that email and license does not exist
             aws_handler = AWSHandler()
-            uploaded_license = aws_handler.upload_file(license_name, os.getenv('BUCKET_NAME'))
-            uploaded_picture = aws_handler.upload_file(dispensary_picture, os.getenv('BUCKET_NAME'))
+
+            license_file_name = 'license_file' + os.getenv('FILE_COUNTER') + '.pdf'
+            uploaded_license = aws_handler.upload_file(license_file, os.getenv('BUCKET_NAME'), license_file_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
+            dispensary_picture_name = 'dispensary_picture' + os.getenv('FILE_COUNTER') + '.png'
+            uploaded_picture = aws_handler.upload_file(dispensary_picture, os.getenv('BUCKET_NAME'),
+                                                       dispensary_picture_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
             if not uploaded_license or not uploaded_picture:  # Upload failed
-                aws_handler.delete_file(license_name, os.getenv('BUCKET_NAME'))
+                aws_handler.delete_file(license_file, os.getenv('BUCKET_NAME'))
                 aws_handler.delete_file(dispensary_picture, os.getenv('BUCKET_NAME'))
+                os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) - 2)  # Decrease File Counter by 2
                 return jsonify("Error reading input files"), 409
             license_id = license_dao.createLicense(license_type, license_name, license_expiration,
-                                                   license_file.filename)
+                                                   license_file_name)
             dispensary_id = dispensary_dao.createDispensary(dispensary_name, dispensary_phone, dispensary_direction,
                                                             dispensary_municipality, dispensary_zipcode,
                                                             dispensary_email, dispensary_password, license_id,
-                                                            dispensary_picture.filename)
+                                                            dispensary_picture_name)
             result = build_dispensary_attr_dict(dispensary_id, dispensary_name, dispensary_phone, dispensary_direction,
                                                 dispensary_municipality, dispensary_zipcode, dispensary_email,
-                                                dispensary_password, license_id, True, dispensary_picture.filename)
+                                                dispensary_password, license_id, True, dispensary_picture_name)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -145,12 +156,15 @@ class BaseDispensary:
 
     def updateDispensaryPicture(self, dispensary_id, files):
         dispensary_dao = DispensaryDAO()
-        dispensary_picture = files.get('dispensary_picture')
+        dispensary_picture = files['dispensary_picture']
+        dispensary_picture.save("uploads/" + dispensary_picture.filename)
         aws_handler = AWSHandler()
-        uploaded_picture = aws_handler.upload_file(dispensary_picture, os.getenv('BUCKET_NAME'))
+        dispensary_picture_name = 'dispensary_picture' + os.getenv('FILE_COUNTER') + '.png'
+        uploaded_picture = aws_handler.upload_file(dispensary_picture, os.getenv('BUCKET_NAME'),
+                                                   dispensary_picture_name)
         if not uploaded_picture:  # Upload failed
-            aws_handler.delete_file(dispensary_picture, os.getenv('BUCKET_NAME'))
             return jsonify("Error reading input files"), 409
+        os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
         dispensary_dao.updateDispensaryPicture(dispensary_id, dispensary_picture.filename)
         updated_dispensary = dispensary_dao.getDispensaryById(dispensary_id)
         result = build_dispensary_map_dict(updated_dispensary)

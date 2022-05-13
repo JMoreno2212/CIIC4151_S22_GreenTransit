@@ -26,7 +26,7 @@
     <div class="card-body">
         <h2 class="card-subtitle mb-2" style="color:#9cbc9c">We will need...</h2>
         <div>&nbsp;</div>
-        <form method="post" class="row g-3">
+        <form method="post" class="row g-3" enctype="multipart/form-data">
             <div class="col-md-6">
                 <label for="nameDispensary" class="form-label">Commercial Name</label>
                 <input type="text" class="form-control" id="nameDispensary">
@@ -57,7 +57,7 @@
             </div>
             <div class="col-md-6">
                 <label for="dispensaryLicenseFile" class="form-label">License Documentation (pdf)</label>
-                <input class="form-control" type="file" id="dispensaryLicenseFile">
+                <input class="form-control" type="file" id="dispensaryLicenseFile" name="user_picture">
             </div>
 
             <div>&nbsp;</div>
@@ -67,6 +67,7 @@
             <div>&nbsp;</div>
 
         </form>
+        <button type="button" class="btn-round-lg" onclick="userImage()">Register</button>
 
     </div>
 </div>

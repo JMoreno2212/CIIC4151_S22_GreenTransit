@@ -24,36 +24,45 @@ def build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_da
 
 class BaseUser:
 
-    def createUser(self, json, files):
-        user_first_name = json['registration_first_name']
-        user_last_name = json['registration_last_name']
-        user_birth_date = json['registration_birth_date']
-        user_phone = json['registration_phone']
-        user_email = json['registration_email']
-        user_password = json['registration_password']
-        license_type = json['registration_type']
-        license_name = json['license_name']
-        license_expiration = json['license_expiration']
-        license_file = files.get('license_file')
-        user_picture = files.get('registration_picture')
+    def createUser(self, files):
+        user_first_name = files['registration_first_name']
+        user_last_name = files['registration_last_name']
+        user_birth_date = files['registration_birth_date']
+        user_phone = files['registration_phone']
+        user_email = files['registration_email']
+        user_password = files['registration_password']
+        license_type = files['registration_type']
+        license_name = files['license_name']
+        license_expiration = files['license_expiration']
+        license_file = files['license_file']
+        license_file.save("uploads/" + license_file.filename)
+        user_picture = files['registration_picture']
+        user_picture.save("uploads/" + user_picture.filename)
         user_dao = UserDAO()
         existing_user = user_dao.getUserByEmail(user_email)
         license_dao = LicenseDAO()
         existing_license = license_dao.getLicenseByName(license_name)
         if not existing_user and not existing_license:  # User with that email and license number does not exist
             aws_handler = AWSHandler()
-            uploaded_license = aws_handler.upload_file(license_file, os.getenv('BUCKET_NAME'))
-            uploaded_picture = aws_handler.upload_file(user_picture, os.getenv('BUCKET_NAME'))
+            license_file_name = 'license_file' + os.getenv('FILE_COUNTER') + '.pdf'
+            uploaded_license = aws_handler.upload_file(license_file, os.getenv('BUCKET_NAME'), license_file_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
+            user_picture_name = 'user_picture' + os.getenv('FILE_COUNTER') + '.png'
+            uploaded_picture = aws_handler.upload_file(user_picture, os.getenv('BUCKET_NAME'), user_picture_name)
+            os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+
             if not uploaded_license or not uploaded_picture:  # Upload failed
                 aws_handler.delete_file(license_file, os.getenv('BUCKET_NAME'))
                 aws_handler.delete_file(user_picture, os.getenv('BUCKET_NAME'))
+                os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) - 2)  # Decrease File Counter by 2
                 return jsonify("Error reading input files"), 409
             license_id = license_dao.createLicense(license_type, license_name, license_expiration,
-                                                   license_file.filename)
+                                                   license_file_name)
             user_id = user_dao.createUser(user_first_name, user_last_name, user_birth_date, user_phone, user_email,
-                                          user_password, license_id, user_picture.filename)
+                                          user_password, license_id, user_picture_name)
             result = build_user_attr_dict(user_id, user_first_name, user_last_name, user_birth_date, user_phone,
-                                          user_email, user_password, license_id.filename, True, user_picture.filename)
+                                          user_email, user_password, license_id, True, user_picture_name)
             return jsonify(result), 201
         else:
             return jsonify("User already exists"), 409
@@ -130,13 +139,15 @@ class BaseUser:
 
     def updateUserPicture(self, user_id, files):
         user_dao = UserDAO()
-        user_picture = files.get('user_picture')
+        user_picture = files['user_picture']
         aws_handler = AWSHandler()
-        uploaded_picture = aws_handler.upload_file(user_picture, os.getenv('BUCKET_NAME'))
+        user_picture.save("uploads/" + user_picture.filename)
+        object_name = 'user_picture' + os.getenv('FILE_COUNTER') + '.pdf'
+        uploaded_picture = aws_handler.upload_file(user_picture.filename, os.getenv('BUCKET_NAME'), object_name)
         if not uploaded_picture:  # Upload failed
-            aws_handler.delete_file(user_picture, os.getenv('BUCKET_NAME'))
             return jsonify("Error reading input files"), 409
-        user_dao.updateUserPicture(user_id, user_picture.filename)
+        os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
+        user_dao.updateUserPicture(user_id, object_name)
         updated_user = user_dao.getUserById(user_id)
         result = build_user_map_dict(updated_user)
         return jsonify(result), 200

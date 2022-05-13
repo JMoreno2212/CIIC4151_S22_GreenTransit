@@ -25,23 +25,26 @@ def build_item_attr_dict(item_id, item_name, item_description, item_quantity, it
 
 class BaseItem:
 
-    def createItem(self, dispensary_id, json, files):
-        item_name = json['item_name']
-        item_description = json['item_description']
-        item_quantity = json['item_quantity']
-        item_price = json['item_price']
-        item_category = json['item_category']
-        item_type = json['item_type']
-        item_picture = files.get('item_picture')
+    def createItem(self, dispensary_id, files):
+        item_name = files['item_name']
+        item_description = files['item_description']
+        item_quantity = files['item_quantity']
+        item_price = files['item_price']
+        item_category = files['item_category']
+        item_type = files['item_type']
+        item_picture = files['item_picture']
+        item_picture.save("uploads/" + item_picture.filename)
         item_dao = ItemDAO()
         aws_handler = AWSHandler()
-        uploaded_picture = aws_handler.upload_file(item_picture, os.getenv('BUCKET_NAME'))
+        item_picture_name = 'item_picture' + os.getenv('FILE_COUNTER') + '.png'
+        uploaded_picture = aws_handler.upload_file(item_picture, os.getenv('BUCKET_NAME'), item_picture_name)
         if not uploaded_picture:  # Upload failed
             return jsonify("Error reading input files"), 409
+        os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
         item_id = item_dao.createItem(item_name, item_description, item_quantity, item_price, item_category, item_type,
-                                      dispensary_id, item_picture.filename)
+                                      dispensary_id, item_picture_name)
         result = build_item_attr_dict(item_id, item_name, item_description, item_quantity, item_price, item_category,
-                                      item_type, dispensary_id, True, item_picture.filename)
+                                      item_type, dispensary_id, True, item_picture_name)
         return jsonify(result), 200
 
     def getAllItems(self):
@@ -153,11 +156,14 @@ class BaseItem:
 
     def updateItemPicture(self, item_id, dispensary_id, files):
         item_dao = ItemDAO()
-        item_picture = files.get('item_picture')
+        item_picture = files['item_picture']
+        item_picture.save("uploads/" + item_picture.filename)
         aws_handler = AWSHandler()
-        uploaded_picture = aws_handler.upload_file(item_picture, os.getenv('BUCKET_NAME'))
+        item_picture_name = 'item_picture' + os.getenv('FILE_COUNTER') + '.png'
+        uploaded_picture = aws_handler.upload_file(item_picture, os.getenv('BUCKET_NAME'), item_picture_name)
         if not uploaded_picture:  # Upload failed
             return jsonify("Error reading input files"), 409
+        os.environ['FILE_COUNTER'] = str(int(os.getenv('FILE_COUNTER')) + 1)  # Increment File Counter
         item_dao.updateItemPicture(item_id, dispensary_id, item_picture.filename)
         updated_item = item_dao.getItemById(item_id)
         result = build_item_map_dict(updated_item)
